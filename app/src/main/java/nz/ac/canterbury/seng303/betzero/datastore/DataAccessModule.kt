@@ -14,6 +14,7 @@ import nz.ac.canterbury.seng303.betzero.viewmodels.DailyLogViewModel
 import nz.ac.canterbury.seng303.betzero.viewmodels.UserProfileViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 
@@ -21,7 +22,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 
 @FlowPreview
 val dataAccessModule = module {
-    single<Storage<UserProfile>> {
+    single<Storage<UserProfile>>(named("userProfile")) {
         PersistentStorage(
             gson = get(),
             type = object: TypeToken<List<UserProfile>>(){}.type,
@@ -31,7 +32,7 @@ val dataAccessModule = module {
     }
 
     // GamblingProfile storage
-    single<Storage<DailyLog>> {
+    single<Storage<DailyLog>>(named("dailyLog")) {
         PersistentStorage(
             gson = get(),
             type = object: TypeToken<List<DailyLog>>(){}.type,
@@ -45,12 +46,12 @@ val dataAccessModule = module {
     //for injecting ViewModel storage attribute (koin)
     viewModel {
         UserProfileViewModel(
-            userProfileStorage = get()
+            userProfileStorage = get(named("userProfile"))
         )
     }
     viewModel {
         DailyLogViewModel(
-            dailyLogStorage = get()
+            dailyLogStorage = get(named("dailyLog"))
         )
     }
 }
