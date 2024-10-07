@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
 object InputValidation {
-    private var namePattern = "^[a-zA-Z\\s]+$".toRegex()
+    private var namePattern = "^[\\p{L}\\s'\\-]+$".toRegex()
 
 
     /**

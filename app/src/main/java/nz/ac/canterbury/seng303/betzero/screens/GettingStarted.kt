@@ -31,7 +31,7 @@ fun GettingStarted(navController: NavController, viewModel: GettingStartedViewMo
     var totalSpentError by remember { mutableStateOf<String?>(null) }
     var dateError by remember { mutableStateOf<String?>(null) }
 
-    // Date picker setup
+    // date picker setup
     val calendar = Calendar.getInstance()
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     val datePickerDialog = DatePickerDialog(
@@ -95,7 +95,7 @@ fun GettingStarted(navController: NavController, viewModel: GettingStartedViewMo
                 value = viewModel.userName.value,
                 onValueChange = {
                     viewModel.userName.value = it
-                    nameError = if (InputValidation.validateUsersName(viewModel.userName.value)) null else "Invalid name. No special characters allowed."
+                    nameError = if (InputValidation.validateUsersName(viewModel.userName.value)) null else "Please enter a name that only consists of letters, -, or '"
                 },
                 label = { Text("What's your name?") },
                 modifier = Modifier
@@ -121,7 +121,7 @@ fun GettingStarted(navController: NavController, viewModel: GettingStartedViewMo
                 value = viewModel.totalSpent.value,
                 onValueChange = {
                     viewModel.totalSpent.value = it
-                    totalSpentError = if (InputValidation.validateTotalSpent(viewModel.totalSpent.value)) null else "Invalid input. Enter a valid non-negative number."
+                    totalSpentError = if (InputValidation.validateTotalSpent(viewModel.totalSpent.value)) null else "Please enter a valid non-negative number."
                 },
                 label = { Text("How much money have you spent?") },
                 modifier = Modifier
