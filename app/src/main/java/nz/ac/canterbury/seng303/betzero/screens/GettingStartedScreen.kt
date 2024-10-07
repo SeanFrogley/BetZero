@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,16 +26,19 @@ import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+
 @Composable
 fun GettingStartedScreen(navController: NavController, viewModel: GettingStartedViewModel = koinViewModel()) {
-    var userName by remember { mutableStateOf("") }
-    var totalSpent by remember { mutableStateOf("") }
-    var selectedDate by remember { mutableStateOf("") }
+    var userName by rememberSaveable { mutableStateOf("") }
+    var totalSpent by rememberSaveable { mutableStateOf("") }
+    var selectedDate by rememberSaveable { mutableStateOf("") }
 
     // error messages state
-    var nameError by remember { mutableStateOf<String?>(null) }
-    var totalSpentError by remember { mutableStateOf<String?>(null) }
-    var dateError by remember { mutableStateOf<String?>(null) }
+    var nameError by rememberSaveable { mutableStateOf<String?>(null) }
+    var totalSpentError by rememberSaveable { mutableStateOf<String?>(null) }
+    var dateError by rememberSaveable { mutableStateOf<String?>(null) }
 
     // date picker setup
     val calendar = Calendar.getInstance()
@@ -59,6 +63,7 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -100,7 +105,7 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                 value = userName,
                 onValueChange = {
                     userName = it
-                    nameError = if (InputValidation.validateUsersName(userName)) null else "Invalid name. No special characters allowed."
+                    nameError = if (InputValidation.validateUsersName(userName)) null else "Please enter a name that only consists of letters, -, or '."
                 },
                 label = { Text("What's your name?") },
                 modifier = Modifier
@@ -126,7 +131,7 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                 value = totalSpent,
                 onValueChange = {
                     totalSpent = it
-                    totalSpentError = if (InputValidation.validateTotalSpent(totalSpent)) null else "Invalid input. Enter a valid non-negative number."
+                    totalSpentError = if (InputValidation.validateTotalSpent(totalSpent)) null else "Please enter a valid non-negative number."
                 },
                 label = { Text("How much money have you spent?") },
                 modifier = Modifier
@@ -166,7 +171,7 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                 )
             }
             dateError = if (selectedDate.isNotEmpty() && !InputValidation.validateDate(selectedDate)) {
-                "Invalid date. The selected date cannot be in the future."
+                "Please enter a date that isn't in the future.ß"
             } else {
                 null
             }
@@ -208,3 +213,4 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
         }
     }
 }
+

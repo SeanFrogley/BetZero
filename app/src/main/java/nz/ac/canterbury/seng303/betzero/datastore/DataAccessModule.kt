@@ -10,6 +10,7 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.FlowPreview
 import nz.ac.canterbury.seng303.betzero.models.DailyLog
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
+import nz.ac.canterbury.seng303.betzero.screens.GettingStartedScreen
 import nz.ac.canterbury.seng303.betzero.viewmodels.DailyLogViewModel
 import nz.ac.canterbury.seng303.betzero.viewmodels.GettingStartedViewModel
 import nz.ac.canterbury.seng303.betzero.viewmodels.InitialViewModel
@@ -55,4 +56,15 @@ val dataAccessModule = module {
             dailyLogStorage = get(named("dailyLog"))
         )
     }
+    viewModel {
+        InitialViewModel(
+            userProfileStorage = get(named("userProfile"))
+        )
+    }
+    viewModel {
+        GettingStartedViewModel(
+            userProfileStorage = get(named("userProfile"))
+        )
+    }
+
 }
