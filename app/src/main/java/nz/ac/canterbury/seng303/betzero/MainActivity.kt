@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import com.example.compose.BetzeroTheme
+import nz.ac.canterbury.seng303.betzero.screens.GettingStarted
 import nz.ac.canterbury.seng303.betzero.screens.OnboardingScreen
 
 
@@ -140,6 +141,9 @@ class MainActivity : ComponentActivity() {
                             }
                             composable("EmergencyScreen") {
                                 EmergencyScreen(navController = navController)
+                            }
+                            composable("GettingStarted") {
+                                GettingStarted(navController = navController)
                             }
                         }
                     }

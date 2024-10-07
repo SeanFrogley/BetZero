@@ -7,6 +7,7 @@ import java.util.Date
  */
 class UserProfile (
     val id: Int,
+    val name: String,
     val totalSpent: Double,
     val totalSaved: Double,
     val startDate: Date

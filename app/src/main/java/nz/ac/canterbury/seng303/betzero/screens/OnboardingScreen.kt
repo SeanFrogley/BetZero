@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -44,7 +45,11 @@ fun OnboardingScreen(navController: NavController) {
                 ) {
                     Text(
                         text = "First of all, congratulations!",
-                        style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.Black),
+                        style = TextStyle(
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        ),
                         textAlign = TextAlign.Center
                     )
                     Spacer(modifier = Modifier.height(8.dp))
@@ -59,13 +64,23 @@ fun OnboardingScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
-                onClick = { navController.navigate("SummariesScreen") /* Move to Information Entering Page just using the Summaries Till I create the other one*/ },
+                onClick = { navController.navigate("GettingStarted") },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 32.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xFF4AB7D6))
+                    .padding(horizontal = 32.dp)
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF4AB7D6)
+                ),
+                shape = MaterialTheme.shapes.medium,
+                elevation = ButtonDefaults.buttonElevation(8.dp)
             ) {
-                Text(text = "Get Started", color = Color.White, fontSize = 16.sp)
+                Text(
+                    text = "Get Started",
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
             }
         }
     }
