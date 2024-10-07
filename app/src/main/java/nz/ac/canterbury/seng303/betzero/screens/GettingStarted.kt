@@ -18,17 +18,20 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import nz.ac.canterbury.seng303.betzero.utils.InputValidation
+import nz.ac.canterbury.seng303.betzero.viewmodels.GettingStartedViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun GettingStarted(navController: NavController) {
-    var userName by remember { mutableStateOf("") }
-    var totalSpent by remember { mutableStateOf("") }
-    var selectedDate by remember { mutableStateOf("") }
+fun GettingStarted(navController: NavController, viewModel: GettingStartedViewModel = viewModel()) {
+    var nameError by remember { mutableStateOf<String?>(null) }
+    var totalSpentError by remember { mutableStateOf<String?>(null) }
+    var dateError by remember { mutableStateOf<String?>(null) }
 
-    // date picker setup
+    // Date picker setup
     val calendar = Calendar.getInstance()
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     val datePickerDialog = DatePickerDialog(
@@ -36,7 +39,7 @@ fun GettingStarted(navController: NavController) {
         { _, year, month, dayOfMonth ->
             val selectedCalendar = Calendar.getInstance()
             selectedCalendar.set(year, month, dayOfMonth)
-            selectedDate = dateFormat.format(selectedCalendar.time)
+            viewModel.selectedDate.value = dateFormat.format(selectedCalendar.time)
         },
         calendar.get(Calendar.YEAR),
         calendar.get(Calendar.MONTH),
@@ -87,32 +90,56 @@ fun GettingStarted(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // input for users name
+            // input for user's name
             OutlinedTextField(
-                value = userName,
-                onValueChange = { userName = it },
+                value = viewModel.userName.value,
+                onValueChange = {
+                    viewModel.userName.value = it
+                    nameError = if (InputValidation.validateUsersName(viewModel.userName.value)) null else "Invalid name. No special characters allowed."
+                },
                 label = { Text("What's your name?") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 textStyle = androidx.compose.ui.text.TextStyle(fontSize = 16.sp),
-                singleLine = true
+                singleLine = true,
+                isError = nameError != null
             )
+            if (nameError != null) {
+                Text(
+                    text = nameError ?: "",
+                    color = MaterialTheme.colorScheme.error,
+                    style = androidx.compose.ui.text.TextStyle(fontSize = 12.sp),
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // input for money spent
+            // input for total money spent
             OutlinedTextField(
-                value = totalSpent,
-                onValueChange = { totalSpent = it },
+                value = viewModel.totalSpent.value,
+                onValueChange = {
+                    viewModel.totalSpent.value = it
+                    totalSpentError = if (InputValidation.validateTotalSpent(viewModel.totalSpent.value)) null else "Invalid input. Enter a valid non-negative number."
+                },
                 label = { Text("How much money have you spent?") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 textStyle = androidx.compose.ui.text.TextStyle(fontSize = 16.sp),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                singleLine = true
+                singleLine = true,
+                isError = totalSpentError != null
             )
+            if (totalSpentError != null) {
+                Text(
+                    text = totalSpentError ?: "",
+                    color = MaterialTheme.colorScheme.error,
+                    style = androidx.compose.ui.text.TextStyle(fontSize = 12.sp),
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -128,18 +155,32 @@ fun GettingStarted(navController: NavController) {
                 elevation = ButtonDefaults.buttonElevation(8.dp)
             ) {
                 Text(
-                    text = if (selectedDate.isEmpty()) "When did you start gambling?" else "Started Gambling: $selectedDate",
+                    text = if (viewModel.selectedDate.value.isEmpty()) "When did you start gambling?" else "Started Gambling: ${viewModel.selectedDate.value}",
                     color = Color.White,
                     fontSize = 16.sp
+                )
+            }
+            dateError = if (viewModel.selectedDate.value.isNotEmpty() && !InputValidation.validateDate(viewModel.selectedDate.value)) {
+                "Invalid date. The selected date cannot be in the future."
+            } else {
+                null
+            }
+            if (dateError != null) {
+                Text(
+                    text = dateError ?: "",
+                    color = MaterialTheme.colorScheme.error,
+                    style = androidx.compose.ui.text.TextStyle(fontSize = 12.sp),
+                    modifier = Modifier.padding(start = 16.dp)
                 )
             }
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            /*TODO create user validation to handle this check and deal with error messages*/
+            // submit button
             Button(
                 onClick = {
-                    if (userName.isNotEmpty() && totalSpent.isNotEmpty() && selectedDate.isNotEmpty()) {
+                    if (nameError == null && totalSpentError == null && dateError == null) {
+                        viewModel.saveUserInfo()
                         navController.navigate("SummariesScreen")
                     }
                 },
@@ -150,7 +191,8 @@ fun GettingStarted(navController: NavController) {
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4AB7D6)),
                 shape = MaterialTheme.shapes.medium,
                 elevation = ButtonDefaults.buttonElevation(8.dp),
-                enabled = userName.isNotEmpty() && totalSpent.isNotEmpty() && selectedDate.isNotEmpty()
+                enabled = (viewModel.userName.value.isNotEmpty() && viewModel.totalSpent.value.isNotEmpty() && viewModel.selectedDate.value.isNotEmpty()) &&
+                        (nameError == null && totalSpentError == null && dateError == null)
             ) {
                 Text(text = "Submit", color = Color.White, fontSize = 16.sp)
             }
