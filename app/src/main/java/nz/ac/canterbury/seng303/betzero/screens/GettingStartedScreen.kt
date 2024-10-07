@@ -18,15 +18,20 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.betzero.utils.InputValidation
 import nz.ac.canterbury.seng303.betzero.viewmodels.GettingStartedViewModel
+import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun GettingStarted(navController: NavController, viewModel: GettingStartedViewModel = viewModel()) {
+fun GettingStartedScreen(navController: NavController, viewModel: GettingStartedViewModel = koinViewModel()) {
+    var userName by remember { mutableStateOf("") }
+    var totalSpent by remember { mutableStateOf("") }
+    var selectedDate by remember { mutableStateOf("") }
+
+    // error messages state
     var nameError by remember { mutableStateOf<String?>(null) }
     var totalSpentError by remember { mutableStateOf<String?>(null) }
     var dateError by remember { mutableStateOf<String?>(null) }
@@ -39,7 +44,7 @@ fun GettingStarted(navController: NavController, viewModel: GettingStartedViewMo
         { _, year, month, dayOfMonth ->
             val selectedCalendar = Calendar.getInstance()
             selectedCalendar.set(year, month, dayOfMonth)
-            viewModel.selectedDate.value = dateFormat.format(selectedCalendar.time)
+            selectedDate = dateFormat.format(selectedCalendar.time)
         },
         calendar.get(Calendar.YEAR),
         calendar.get(Calendar.MONTH),
@@ -92,10 +97,10 @@ fun GettingStarted(navController: NavController, viewModel: GettingStartedViewMo
 
             // input for user's name
             OutlinedTextField(
-                value = viewModel.userName.value,
+                value = userName,
                 onValueChange = {
-                    viewModel.userName.value = it
-                    nameError = if (InputValidation.validateUsersName(viewModel.userName.value)) null else "Please enter a name that only consists of letters, -, or '"
+                    userName = it
+                    nameError = if (InputValidation.validateUsersName(userName)) null else "Invalid name. No special characters allowed."
                 },
                 label = { Text("What's your name?") },
                 modifier = Modifier
@@ -118,10 +123,10 @@ fun GettingStarted(navController: NavController, viewModel: GettingStartedViewMo
 
             // input for total money spent
             OutlinedTextField(
-                value = viewModel.totalSpent.value,
+                value = totalSpent,
                 onValueChange = {
-                    viewModel.totalSpent.value = it
-                    totalSpentError = if (InputValidation.validateTotalSpent(viewModel.totalSpent.value)) null else "Please enter a valid non-negative number."
+                    totalSpent = it
+                    totalSpentError = if (InputValidation.validateTotalSpent(totalSpent)) null else "Invalid input. Enter a valid non-negative number."
                 },
                 label = { Text("How much money have you spent?") },
                 modifier = Modifier
@@ -155,12 +160,12 @@ fun GettingStarted(navController: NavController, viewModel: GettingStartedViewMo
                 elevation = ButtonDefaults.buttonElevation(8.dp)
             ) {
                 Text(
-                    text = if (viewModel.selectedDate.value.isEmpty()) "When did you start gambling?" else "Started Gambling: ${viewModel.selectedDate.value}",
+                    text = if (selectedDate.isEmpty()) "When did you start gambling?" else "Started Gambling: $selectedDate",
                     color = Color.White,
                     fontSize = 16.sp
                 )
             }
-            dateError = if (viewModel.selectedDate.value.isNotEmpty() && !InputValidation.validateDate(viewModel.selectedDate.value)) {
+            dateError = if (selectedDate.isNotEmpty() && !InputValidation.validateDate(selectedDate)) {
                 "Invalid date. The selected date cannot be in the future."
             } else {
                 null
@@ -180,8 +185,13 @@ fun GettingStarted(navController: NavController, viewModel: GettingStartedViewMo
             Button(
                 onClick = {
                     if (nameError == null && totalSpentError == null && dateError == null) {
-                        viewModel.saveUserInfo()
-                        navController.navigate("SummariesScreen")
+                        viewModel.saveUserProfile(
+                            name = userName,
+                            totalSpent = totalSpent.toDouble(),
+                            totalSaved = 0.0,
+                            startDate = SimpleDateFormat("yyyy-MM-dd").parse(selectedDate)
+                        )
+                        navController.navigate("Home")
                     }
                 },
                 modifier = Modifier
@@ -191,8 +201,7 @@ fun GettingStarted(navController: NavController, viewModel: GettingStartedViewMo
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4AB7D6)),
                 shape = MaterialTheme.shapes.medium,
                 elevation = ButtonDefaults.buttonElevation(8.dp),
-                enabled = (viewModel.userName.value.isNotEmpty() && viewModel.totalSpent.value.isNotEmpty() && viewModel.selectedDate.value.isNotEmpty()) &&
-                        (nameError == null && totalSpentError == null && dateError == null)
+                enabled = (userName.isNotEmpty() && totalSpent.isNotEmpty() && selectedDate.isNotEmpty()) && (nameError == null && totalSpentError == null && dateError == null)
             ) {
                 Text(text = "Submit", color = Color.White, fontSize = 16.sp)
             }

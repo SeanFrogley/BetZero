@@ -1,6 +1,6 @@
 package nz.ac.canterbury.seng303.betzero
 
-import android.content.res.Resources
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,8 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Sos
 import androidx.compose.material3.BottomAppBar
@@ -27,32 +28,45 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.compose.BetzeroTheme
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import nz.ac.canterbury.seng303.betzero.screens.AnalyticsScreen
 import nz.ac.canterbury.seng303.betzero.screens.CalendarScreen
-import nz.ac.canterbury.seng303.betzero.screens.SummariesScreen
 import nz.ac.canterbury.seng303.betzero.screens.EmergencyScreen
-import androidx.compose.ui.graphics.Color
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.navigation
-import com.example.compose.BetzeroTheme
-import nz.ac.canterbury.seng303.betzero.screens.GettingStarted
+import nz.ac.canterbury.seng303.betzero.screens.GettingStartedScreen
 import nz.ac.canterbury.seng303.betzero.screens.OnboardingScreen
+import nz.ac.canterbury.seng303.betzero.screens.SummariesScreen
 
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "userProfile")
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val userProfileExists = runBlocking {
+            val userProfileKey = stringPreferencesKey("userProfile")
+            val preferences = dataStore.data.first()
+            val userProfileJson = preferences[userProfileKey]
+            !userProfileJson.isNullOrEmpty()
+        }
+
+        val startDestination = if (userProfileExists) "Home" else "OnBoardingScreen"
+
         setContent {
             BetzeroTheme {
                 val navController = rememberNavController()
@@ -63,13 +77,24 @@ class MainActivity : ComponentActivity() {
                     topBar = {
                         TopAppBar(
                             title = { Text("BetZero") },
+                            actions = {
+                                IconButton(onClick = {
+                                    navController.navigate("UserProfile")
+                                }) {
+                                    Icon(
+                                        imageVector = Icons.Default.AccountCircle,
+                                        contentDescription = "Profile",
+                                        tint = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                }
+                            }
                         )
                     },
                     bottomBar = {
                         val navBackStackEntry by navController.currentBackStackEntryAsState()
                         val currentDestination = navBackStackEntry?.destination
 
-                        if (currentDestination?.route !in listOf("OnBoardingScreen")) {
+                        if (currentDestination?.route !in listOf("OnBoardingScreen", "GettingStartedScreen")) {
                             BottomAppBar(
                                 modifier = Modifier.height(60.dp)
                             ) {
@@ -123,7 +148,7 @@ class MainActivity : ComponentActivity() {
                     }
                 ) {
                     Box(modifier = Modifier.padding(it)) {
-                        NavHost(navController = navController, startDestination = "OnBoardingScreen") {
+                        NavHost(navController = navController, startDestination = startDestination) {
                             composable("OnBoardingScreen") {
                                 OnboardingScreen(navController = navController)
                             }
@@ -142,8 +167,8 @@ class MainActivity : ComponentActivity() {
                             composable("EmergencyScreen") {
                                 EmergencyScreen(navController = navController)
                             }
-                            composable("GettingStarted") {
-                                GettingStarted(navController = navController)
+                            composable("GettingStartedScreen") {
+                                GettingStartedScreen(navController = navController)
                             }
                         }
                     }

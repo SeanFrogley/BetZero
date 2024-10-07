@@ -11,6 +11,7 @@ import kotlinx.coroutines.FlowPreview
 import nz.ac.canterbury.seng303.betzero.models.DailyLog
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
 import nz.ac.canterbury.seng303.betzero.viewmodels.DailyLogViewModel
+import nz.ac.canterbury.seng303.betzero.viewmodels.GettingStartedViewModel
 import nz.ac.canterbury.seng303.betzero.viewmodels.UserProfileViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -52,6 +53,11 @@ val dataAccessModule = module {
     viewModel {
         DailyLogViewModel(
             dailyLogStorage = get(named("dailyLog"))
+        )
+    }
+    viewModel {
+        GettingStartedViewModel(
+            userProfileStorage = get(named("userProfile"))
         )
     }
 }

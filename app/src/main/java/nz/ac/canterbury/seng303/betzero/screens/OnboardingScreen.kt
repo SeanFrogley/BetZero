@@ -64,7 +64,7 @@ fun OnboardingScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
-                onClick = { navController.navigate("GettingStarted") },
+                onClick = { navController.navigate("GettingStartedScreen") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 32.dp)
