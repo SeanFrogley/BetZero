@@ -78,9 +78,7 @@ class MainActivity : ComponentActivity() {
                         TopAppBar(
                             title = { Text("BetZero") },
                             actions = {
-                                IconButton(onClick = {
-                                    navController.navigate("UserProfile")
-                                }) {
+                                IconButton(onClick = { /* take user to user profile page*/ }) {
                                     Icon(
                                         imageVector = Icons.Default.AccountCircle,
                                         contentDescription = "Profile",

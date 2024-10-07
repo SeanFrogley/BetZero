@@ -36,16 +36,19 @@ class GettingStartedViewModel(
         )
         Log.d("DataStoreInsert", "Inserting user profile: $userProfile")
         try {
-            userProfileStorage.insert(userProfile)
-            Log.d("USER_PROFILE_VM", "User profile inserted successfully")
-            _userProfile.value = userProfile
-            viewModelScope.launch {
-                userProfileStorage.getAll()
-                    .collect { profiles ->
-                        Log.i("GettingStartedViewModel", "User Profiles: $profiles")
-                    }
+            val result = userProfileStorage.insert(userProfile).first()
+            if (result == 1) {
+                Log.d("USER_PROFILE_VM", "User profile inserted successfully")
+                _userProfile.value = userProfile
+            } else {
+                Log.e("USER_PROFILE_VM", "User profile insertion failed")
             }
 
+            // Fetch and log all user profiles
+            userProfileStorage.getAll()
+                .collect { profiles ->
+                    Log.i("GettingStartedViewModel", "User Profiles: $profiles")
+                }
         } catch (exception: Exception) {
             Log.e("USER_PROFILE_VM", "Could not insert user profile: $exception")
         }

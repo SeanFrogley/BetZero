@@ -4,10 +4,12 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import nz.ac.canterbury.seng303.betzero.models.Identifiable
 import java.lang.reflect.Type
 
@@ -18,16 +20,16 @@ class PersistentStorage<T>(
     private val preferenceKey: Preferences.Key<String>
 ) : Storage <T> where T: Identifiable {
 
-    override fun insert(data: T): Flow<Int> {
-        return flow {
+    override fun insert(data: T): Flow<Int> = flow {
+        withContext(Dispatchers.IO) {
             val cachedDataClone = getAll().first().toMutableList()
             cachedDataClone.add(data)
-            dataStore.edit {
+            dataStore.edit { preferences ->
                 val jsonString = gson.toJson(cachedDataClone, type)
-                it[preferenceKey] = jsonString
-                emit(OPERATION_SUCCESS)
+                preferences[preferenceKey] = jsonString
             }
         }
+        emit(OPERATION_SUCCESS)
     }
 
     override fun insertAll(data: List<T>): Flow<Int> {
