@@ -55,15 +55,4 @@ val dataAccessModule = module {
             dailyLogStorage = get(named("dailyLog"))
         )
     }
-    viewModel {
-        GettingStartedViewModel(
-            userProfileStorage = get(named("userProfile"))
-        )
-    }
-
-    viewModel {
-        InitialViewModel(
-            userProfileStorage = get(named("userProfile"))
-        )
-    }
 }

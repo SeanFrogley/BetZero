@@ -21,7 +21,6 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Sos
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,12 +29,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -56,8 +53,6 @@ import nz.ac.canterbury.seng303.betzero.screens.GettingStartedScreen
 import nz.ac.canterbury.seng303.betzero.screens.InitialScreen
 import nz.ac.canterbury.seng303.betzero.screens.OnboardingScreen
 import nz.ac.canterbury.seng303.betzero.screens.SummariesScreen
-import nz.ac.canterbury.seng303.betzero.viewmodels.InitialViewModel
-import org.koin.androidx.compose.koinViewModel
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "userProfile")
 
@@ -72,25 +67,22 @@ class MainActivity : ComponentActivity() {
             !userProfileJson.isNullOrEmpty()
         }
 
-        val startDestination = if (userProfileExists) "Home" else "OnBoardingScreen"
-
         setContent {
             BetzeroTheme {
                 val navController = rememberNavController()
                 val iconModifier = Modifier.size(50.dp)
                 val iconColor = MaterialTheme.colorScheme.primary
-                val initialViewModel: InitialViewModel = koinViewModel()
 
                 Scaffold(
                     topBar = {
                         TopAppBar(
                             title = { Text("BetZero") },
                             actions = {
-                                IconButton(onClick = { /* take user to user profile page*/ }) {
+                                IconButton(onClick = { /* navController.navigate("userProfile") this should just take the user to their profile screen, dont think im meant to implement here*/ }) {
                                     Icon(
                                         imageVector = Icons.Default.AccountCircle,
                                         contentDescription = "Profile",
-                                        tint = MaterialTheme.colorScheme.onPrimary
+                                        tint = Color(0xFF42A5F5)
                                     )
                                 }
                             }
