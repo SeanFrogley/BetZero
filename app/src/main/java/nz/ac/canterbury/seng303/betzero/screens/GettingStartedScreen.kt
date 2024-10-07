@@ -171,7 +171,7 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                 )
             }
             dateError = if (selectedDate.isNotEmpty() && !InputValidation.validateDate(selectedDate)) {
-                "Please enter a date that isn't in the future.ß"
+                "Please enter a date that isn't in the future."
             } else {
                 null
             }
