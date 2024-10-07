@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng303.betzero.viewmodels
 
+import android.icu.text.SimpleDateFormat
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -12,6 +13,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import nz.ac.canterbury.seng303.betzero.datastore.Storage
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import kotlin.random.Random
 
@@ -20,19 +24,21 @@ class GettingStartedViewModel(
 ) : ViewModel() {
 
     var _userProfile = mutableStateOf<UserProfile?>(null)
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     fun saveUserProfile(
         name: String,
         totalSpent: Double,
         totalSaved: Double,
-        startDate: Date
+        gamblingStartDate: Date
     ) = viewModelScope.launch {
         val userProfile = UserProfile(
             id = Random.nextInt(0, Int.MAX_VALUE),
             name = name,
             totalSpent = totalSpent,
             totalSaved = totalSaved,
-            startDate = startDate
+            gamblingStartDate = gamblingStartDate,
+            startDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())
         )
         Log.d("DataStoreInsert", "Inserting user profile: $userProfile")
         try {

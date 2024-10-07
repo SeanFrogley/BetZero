@@ -194,7 +194,7 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                             name = userName,
                             totalSpent = totalSpent.toDouble(),
                             totalSaved = 0.0,
-                            startDate = SimpleDateFormat("yyyy-MM-dd").parse(selectedDate)
+                            gamblingStartDate = SimpleDateFormat("yyyy-MM-dd").parse(selectedDate)
                         )
                         navController.navigate("Home")
                     }
