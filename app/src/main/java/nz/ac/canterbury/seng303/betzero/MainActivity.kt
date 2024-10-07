@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Sos
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,9 +30,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -49,8 +53,11 @@ import nz.ac.canterbury.seng303.betzero.screens.AnalyticsScreen
 import nz.ac.canterbury.seng303.betzero.screens.CalendarScreen
 import nz.ac.canterbury.seng303.betzero.screens.EmergencyScreen
 import nz.ac.canterbury.seng303.betzero.screens.GettingStartedScreen
+import nz.ac.canterbury.seng303.betzero.screens.InitialScreen
 import nz.ac.canterbury.seng303.betzero.screens.OnboardingScreen
 import nz.ac.canterbury.seng303.betzero.screens.SummariesScreen
+import nz.ac.canterbury.seng303.betzero.viewmodels.InitialViewModel
+import org.koin.androidx.compose.koinViewModel
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "userProfile")
 
@@ -72,6 +79,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val iconModifier = Modifier.size(50.dp)
                 val iconColor = MaterialTheme.colorScheme.primary
+                val initialViewModel: InitialViewModel = koinViewModel()
 
                 Scaffold(
                     topBar = {
@@ -146,7 +154,10 @@ class MainActivity : ComponentActivity() {
                     }
                 ) {
                     Box(modifier = Modifier.padding(it)) {
-                        NavHost(navController = navController, startDestination = startDestination) {
+                        NavHost(navController = navController, startDestination = "InitialScreen") {
+                            composable("InitialScreen") {
+                                InitialScreen(navController = navController)
+                            }
                             composable("OnBoardingScreen") {
                                 OnboardingScreen(navController = navController)
                             }
@@ -175,6 +186,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 
 @Composable
 fun Home(navController: NavController) {
