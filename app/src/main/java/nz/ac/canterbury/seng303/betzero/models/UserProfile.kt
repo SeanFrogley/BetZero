@@ -7,11 +7,18 @@ import java.util.Date
  */
 class UserProfile (
     val id: Int,
+    val name: String,
     val totalSpent: Double,
     val totalSaved: Double,
+    val gamblingStartDate: Date,
     val startDate: Date
 ) : Identifiable {
     override fun getIdentifier(): Int {
         return id;
     }
+
+    override fun toString(): String {
+        return "UserProfile(id=$id, name=$name, totalSpent=$totalSpent, totalSaved=$totalSaved, gamblingStartDate=$gamblingStartDate, startDate=$startDate)"
+    }
+
 }

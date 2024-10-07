@@ -10,7 +10,10 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.FlowPreview
 import nz.ac.canterbury.seng303.betzero.models.DailyLog
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
+import nz.ac.canterbury.seng303.betzero.screens.GettingStartedScreen
 import nz.ac.canterbury.seng303.betzero.viewmodels.DailyLogViewModel
+import nz.ac.canterbury.seng303.betzero.viewmodels.GettingStartedViewModel
+import nz.ac.canterbury.seng303.betzero.viewmodels.InitialViewModel
 import nz.ac.canterbury.seng303.betzero.viewmodels.UserProfileViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -43,7 +46,6 @@ val dataAccessModule = module {
 
     single { Gson() }
 
-    //for injecting ViewModel storage attribute (koin)
     viewModel {
         UserProfileViewModel(
             userProfileStorage = get(named("userProfile"))
@@ -54,4 +56,15 @@ val dataAccessModule = module {
             dailyLogStorage = get(named("dailyLog"))
         )
     }
+    viewModel {
+        InitialViewModel(
+            userProfileStorage = get(named("userProfile"))
+        )
+    }
+    viewModel {
+        GettingStartedViewModel(
+            userProfileStorage = get(named("userProfile"))
+        )
+    }
+
 }
