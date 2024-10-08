@@ -38,6 +38,20 @@ object UserUtil {
         return roundToTwoDecimalPlaces(dailySavings * daysBetween)
     }
 
+    fun createSavingsData(overallSavings: Double, dailySavings: Double, size: Int): List<Float> {
+        return List(size) { index ->
+            if (index == 0) overallSavings.toFloat() else (overallSavings + dailySavings * index).toFloat()
+        }
+    }
+
+    fun createDateList(size: Int): List<Date> {
+        return List(size) { index ->
+            val calendar = Calendar.getInstance()
+            calendar.add(Calendar.DAY_OF_YEAR, index)
+            calendar.time
+        }
+    }
+
     fun createUser(): UserProfile {
         val calendar = Calendar.getInstance()
 
