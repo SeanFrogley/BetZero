@@ -1,3 +1,5 @@
+package nz.ac.canterbury.seng303.betzero.utils
+
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -18,12 +20,22 @@ object UserUtil {
 
     fun calculateDailySavings(totalSpent: Double, gamblingStartDate: Date, serviceStartDate: Date): Double {
         val daysBetween = calculateDaysBetween(gamblingStartDate, serviceStartDate)
-
         return if (daysBetween > 0) {
             roundToTwoDecimalPlaces(totalSpent / daysBetween)
         } else {
             0.0
         }
+    }
+
+    fun calculateProjectedSavings(dailySavings: Double): Pair<Double, Double> {
+        val monthlySavings = roundToTwoDecimalPlaces(dailySavings * 30)
+        val yearlySavings = roundToTwoDecimalPlaces(dailySavings * 365)
+        return Pair(monthlySavings, yearlySavings)
+    }
+
+    fun calculateTotalSavings(dailySavings: Double, startDate: Date, endDate: Date): Double {
+        val daysBetween = calculateDaysBetween(startDate, endDate)
+        return roundToTwoDecimalPlaces(dailySavings * daysBetween)
     }
 
     fun createUser(): UserProfile {
@@ -33,10 +45,10 @@ object UserUtil {
         calendar.add(Calendar.YEAR, -1)
         val gamblingStartDate = calendar.time
 
-        // set start date to 1 month ago
+        // set last gambled date to 1 month ago
         calendar.time = Date()
         calendar.add(Calendar.MONTH, -1)
-        val startDate = calendar.time
+        val lastGambledDate = calendar.time
 
         val id = 1
         val name = "John Doe"
@@ -46,7 +58,7 @@ object UserUtil {
         val dailySavings = calculateDailySavings(
             totalSpent = totalSpent,
             gamblingStartDate = gamblingStartDate,
-            serviceStartDate = startDate
+            serviceStartDate = lastGambledDate
         )
 
         val roundedTotalSpent = roundToTwoDecimalPlaces(totalSpent)
@@ -59,7 +71,7 @@ object UserUtil {
             totalSaved = roundedTotalSaved,
             dailySavings = dailySavings,
             gamblingStartDate = gamblingStartDate,
-            lastGambledDate = startDate
+            lastGambledDate = lastGambledDate
         )
     }
 }

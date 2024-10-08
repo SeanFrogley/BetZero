@@ -1,7 +1,5 @@
 package nz.ac.canterbury.seng303.betzero.viewmodels
 
-import UserUtil.calculateDailySavings
-import UserUtil.roundToTwoDecimalPlaces
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -10,6 +8,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.betzero.datastore.Storage
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
+import nz.ac.canterbury.seng303.betzero.utils.UserUtil.calculateDailySavings
+import nz.ac.canterbury.seng303.betzero.utils.UserUtil.calculateTotalSavings
+import nz.ac.canterbury.seng303.betzero.utils.UserUtil.roundToTwoDecimalPlaces
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Date
@@ -24,9 +25,8 @@ class GettingStartedViewModel(
     fun saveUserProfile(
         name: String,
         totalSpent: Double,
-        totalSaved: Double,
         gamblingStartDate: Date,
-        lastGambledDate: Date  // Add lastGambledDate parameter
+        lastGambledDate: Date
     ) = viewModelScope.launch {
         val startDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())
         val dailySavings = calculateDailySavings(
@@ -34,6 +34,12 @@ class GettingStartedViewModel(
             gamblingStartDate = gamblingStartDate,
             serviceStartDate = startDate
         )
+        val totalSaved = calculateTotalSavings(
+            dailySavings = dailySavings,
+            startDate = gamblingStartDate,
+            endDate = lastGambledDate
+        )
+
         val roundedTotalSpent = roundToTwoDecimalPlaces(totalSpent)
         val roundedTotalSaved = roundToTwoDecimalPlaces(totalSaved)
 

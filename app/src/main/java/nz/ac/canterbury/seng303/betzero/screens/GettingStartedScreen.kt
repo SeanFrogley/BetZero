@@ -238,7 +238,6 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                         viewModel.saveUserProfile(
                             name = userName,
                             totalSpent = totalSpent.toDouble(),
-                            totalSaved = 0.0,
                             gamblingStartDate = SimpleDateFormat("yyyy-MM-dd").parse(selectedStartDate),
                             lastGambledDate = SimpleDateFormat("yyyy-MM-dd").parse(selectedLastGambledDate)
                         )

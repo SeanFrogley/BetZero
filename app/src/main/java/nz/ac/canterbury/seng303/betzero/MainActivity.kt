@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng303.betzero
 
+import AnalyticsScreen
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -46,7 +47,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.compose.BetzeroTheme
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import nz.ac.canterbury.seng303.betzero.screens.AnalyticsScreen
 import nz.ac.canterbury.seng303.betzero.screens.CalendarScreen
 import nz.ac.canterbury.seng303.betzero.screens.EmergencyScreen
 import nz.ac.canterbury.seng303.betzero.screens.GettingStartedScreen

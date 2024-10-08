@@ -1,10 +1,6 @@
 package nz.ac.canterbury.seng303.betzero.models
 
-import UserUtil.calculateDaysBetween
-import UserUtil.roundToTwoDecimalPlaces
-import java.util.Calendar
 import java.util.Date
-import java.util.concurrent.TimeUnit
 
 /**
  * user profile stores all of the meta data for a user. these are sample attributes
