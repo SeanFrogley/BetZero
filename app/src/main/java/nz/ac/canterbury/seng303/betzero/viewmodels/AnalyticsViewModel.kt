@@ -21,7 +21,7 @@ class AnalyticsViewModel(
             try {
                 val userProfiles = userProfileStorage.getAll().first()
                 if (userProfiles.isNotEmpty()) {
-                    _userProfile.value = userProfiles.first()  // Assuming only one profile for simplicity
+                    _userProfile.value = userProfiles.first()
                 } else {
                     _userProfile.value = null
                 }
