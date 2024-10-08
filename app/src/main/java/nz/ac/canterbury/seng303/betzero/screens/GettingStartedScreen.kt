@@ -28,27 +28,42 @@ import java.util.*
 
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
 
 @Composable
 fun GettingStartedScreen(navController: NavController, viewModel: GettingStartedViewModel = koinViewModel()) {
     var userName by rememberSaveable { mutableStateOf("") }
     var totalSpent by rememberSaveable { mutableStateOf("") }
-    var selectedDate by rememberSaveable { mutableStateOf("") }
+    var selectedStartDate by rememberSaveable { mutableStateOf("") }
+    var selectedLastGambledDate by rememberSaveable { mutableStateOf("") }
 
-    // error messages state
     var nameError by rememberSaveable { mutableStateOf<String?>(null) }
     var totalSpentError by rememberSaveable { mutableStateOf<String?>(null) }
-    var dateError by rememberSaveable { mutableStateOf<String?>(null) }
+    var startDateError by rememberSaveable { mutableStateOf<String?>(null) }
+    var lastGambledDateError by rememberSaveable { mutableStateOf<String?>(null) }
 
-    // date picker setup
     val calendar = Calendar.getInstance()
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-    val datePickerDialog = DatePickerDialog(
+
+    val datePickerDialogStart = DatePickerDialog(
         LocalContext.current,
         { _, year, month, dayOfMonth ->
             val selectedCalendar = Calendar.getInstance()
             selectedCalendar.set(year, month, dayOfMonth)
-            selectedDate = dateFormat.format(selectedCalendar.time)
+            selectedStartDate = dateFormat.format(selectedCalendar.time)
+        },
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_MONTH)
+    )
+
+    val datePickerDialogLastGambled = DatePickerDialog(
+        LocalContext.current,
+        { _, year, month, dayOfMonth ->
+            val selectedCalendar = Calendar.getInstance()
+            selectedCalendar.set(year, month, dayOfMonth)
+            selectedLastGambledDate = dateFormat.format(selectedCalendar.time)
         },
         calendar.get(Calendar.YEAR),
         calendar.get(Calendar.MONTH),
@@ -100,7 +115,6 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // input for user's name
             OutlinedTextField(
                 value = userName,
                 onValueChange = {
@@ -126,7 +140,6 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // input for total money spent
             OutlinedTextField(
                 value = totalSpent,
                 onValueChange = {
@@ -153,31 +166,64 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // date selector for when they began gambling
-            Button(
-                onClick = { datePickerDialog.show() },
+            OutlinedTextField(
+                value = selectedStartDate,
+                onValueChange = { },
+                readOnly = true,
+                label = { Text("When did you start gambling?") },
+                trailingIcon = {
+                    IconButton(onClick = { datePickerDialogStart.show() }) {
+                        Icon(Icons.Default.CalendarMonth, contentDescription = "Select start date")
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .height(56.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4AB7D6)),
-                shape = MaterialTheme.shapes.medium,
-                elevation = ButtonDefaults.buttonElevation(8.dp)
-            ) {
-                Text(
-                    text = if (selectedDate.isEmpty()) "When did you start gambling?" else "Started Gambling: $selectedDate",
-                    color = Color.White,
-                    fontSize = 16.sp
-                )
-            }
-            dateError = if (selectedDate.isNotEmpty() && !InputValidation.validateDate(selectedDate)) {
-                "Please enter a date that isn't in the future."
+            )
+            startDateError = if (selectedStartDate.isNotEmpty() && !InputValidation.validateDate(selectedStartDate)) {
+                "Please enter a valid start date that isn't in the future."
+            } else if (selectedStartDate.isNotEmpty() && selectedLastGambledDate.isNotEmpty()
+                && !InputValidation.validateStartAndLastGambledDate(selectedStartDate, selectedLastGambledDate)) {
+                "The start date should be before or the same as the last gambled date."
             } else {
                 null
             }
-            if (dateError != null) {
+            if (startDateError != null) {
                 Text(
-                    text = dateError ?: "",
+                    text = startDateError ?: "",
+                    color = MaterialTheme.colorScheme.error,
+                    style = androidx.compose.ui.text.TextStyle(fontSize = 12.sp),
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = selectedLastGambledDate,
+                onValueChange = { },
+                readOnly = true,
+                label = { Text("When did you last gamble?") },
+                trailingIcon = {
+                    IconButton(onClick = { datePickerDialogLastGambled.show() }) {
+                        Icon(Icons.Default.CalendarMonth, contentDescription = "Select last gambled date")
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            )
+            lastGambledDateError = if (selectedLastGambledDate.isNotEmpty() && !InputValidation.validateDate(selectedLastGambledDate)) {
+                "Please enter a valid last gambled date that isn't in the future."
+            } else if (selectedLastGambledDate.isNotEmpty() && selectedLastGambledDate.isNotEmpty()
+                && !InputValidation.validateStartAndLastGambledDate(selectedStartDate, selectedLastGambledDate)) {
+                "The start date should be before or the same as the last gambled date."
+            } else {
+                null
+            }
+            if (lastGambledDateError != null) {
+                Text(
+                    text = lastGambledDateError ?: "",
                     color = MaterialTheme.colorScheme.error,
                     style = androidx.compose.ui.text.TextStyle(fontSize = 12.sp),
                     modifier = Modifier.padding(start = 16.dp)
@@ -186,15 +232,15 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // submit button
             Button(
                 onClick = {
-                    if (nameError == null && totalSpentError == null && dateError == null) {
+                    if (nameError == null && totalSpentError == null && startDateError == null && lastGambledDateError == null) {
                         viewModel.saveUserProfile(
                             name = userName,
                             totalSpent = totalSpent.toDouble(),
                             totalSaved = 0.0,
-                            gamblingStartDate = SimpleDateFormat("yyyy-MM-dd").parse(selectedDate)
+                            gamblingStartDate = SimpleDateFormat("yyyy-MM-dd").parse(selectedStartDate),
+                            lastGambledDate = SimpleDateFormat("yyyy-MM-dd").parse(selectedLastGambledDate)
                         )
                         navController.navigate("Home")
                     }
@@ -206,11 +252,11 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4AB7D6)),
                 shape = MaterialTheme.shapes.medium,
                 elevation = ButtonDefaults.buttonElevation(8.dp),
-                enabled = (userName.isNotEmpty() && totalSpent.isNotEmpty() && selectedDate.isNotEmpty()) && (nameError == null && totalSpentError == null && dateError == null)
+                enabled = (userName.isNotEmpty() && totalSpent.isNotEmpty() && selectedStartDate.isNotEmpty() && selectedLastGambledDate.isNotEmpty())
+                        && (nameError == null && totalSpentError == null && startDateError == null && lastGambledDateError == null)
             ) {
                 Text(text = "Submit", color = Color.White, fontSize = 16.sp)
             }
         }
     }
 }
-

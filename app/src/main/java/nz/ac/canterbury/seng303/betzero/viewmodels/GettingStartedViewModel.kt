@@ -1,28 +1,18 @@
 package nz.ac.canterbury.seng303.betzero.viewmodels
 
 import UserUtil.calculateDailySavings
-import UserUtil.calculateDaysBetween
 import UserUtil.roundToTwoDecimalPlaces
-import android.icu.text.SimpleDateFormat
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import nz.ac.canterbury.seng303.betzero.datastore.Storage
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
-import java.math.BigDecimal
-import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.Date
-import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
 class GettingStartedViewModel(
@@ -35,7 +25,8 @@ class GettingStartedViewModel(
         name: String,
         totalSpent: Double,
         totalSaved: Double,
-        gamblingStartDate: Date
+        gamblingStartDate: Date,
+        lastGambledDate: Date  // Add lastGambledDate parameter
     ) = viewModelScope.launch {
         val startDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())
         val dailySavings = calculateDailySavings(
@@ -52,8 +43,8 @@ class GettingStartedViewModel(
             totalSpent = roundedTotalSpent,
             totalSaved = roundedTotalSaved,
             gamblingStartDate = gamblingStartDate,
-            startDate = startDate,
-            dailySavings = dailySavings
+            dailySavings = dailySavings,
+            lastGambledDate = lastGambledDate
         )
         Log.d("DataStoreInsert", "Inserting user profile: $userProfile")
         try {

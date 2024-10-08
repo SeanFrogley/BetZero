@@ -43,7 +43,7 @@ object UserUtil {
         val totalSpent = 1000.0
         val totalSaved = 0.0
 
-        val dailySavings = UserUtil.calculateDailySavings(
+        val dailySavings = calculateDailySavings(
             totalSpent = totalSpent,
             gamblingStartDate = gamblingStartDate,
             serviceStartDate = startDate
@@ -59,7 +59,7 @@ object UserUtil {
             totalSaved = roundedTotalSaved,
             dailySavings = dailySavings,
             gamblingStartDate = gamblingStartDate,
-            startDate = startDate
+            lastGambledDate = startDate
         )
     }
 }

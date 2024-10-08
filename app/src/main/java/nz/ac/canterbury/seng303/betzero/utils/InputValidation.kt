@@ -40,4 +40,25 @@ object InputValidation {
             false
         }
     }
+
+    /**
+     * Validates that the start date is before or on the same day as the last gambled date.
+     * @param startGambleDate The input start date string.
+     * @param lastGambledDate The input last gambled date string.
+     * @return True if the start date is before or the same as the last gambled date, otherwise false.
+     */
+    fun validateStartAndLastGambledDate(startGambleDate: String?, lastGambledDate: String?): Boolean {
+        if (startGambleDate.isNullOrEmpty() || lastGambledDate.isNullOrEmpty()) {
+            return true
+        }
+
+        return try {
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            val startDate = LocalDate.parse(startGambleDate, formatter)
+            val lastDate = LocalDate.parse(lastGambledDate, formatter)
+            startDate.isBefore(lastDate) || startDate.isEqual(lastDate)
+        } catch (e: DateTimeParseException) {
+            false
+        }
+    }
 }
