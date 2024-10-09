@@ -84,7 +84,7 @@ class MainActivity : ComponentActivity() {
                                     Icon(
                                         imageVector = Icons.Default.AccountCircle,
                                         contentDescription = "Profile",
-                                        tint = Color.Black
+                                        tint = iconColor
                                     )
                                 }
                             }

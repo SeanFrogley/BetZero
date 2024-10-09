@@ -29,6 +29,7 @@ import java.util.Date
 import java.util.Locale
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 
 @Composable
 fun UserProfileScreen(navController: NavController, viewModel: UserProfileViewModel = koinViewModel()) {
@@ -65,16 +66,15 @@ fun UserProfileScreen(navController: NavController, viewModel: UserProfileViewMo
             value = "$currentStreak ${if (currentStreak == 1L) "day" else "days"}"
         )
 
-        // Add the button here
         Button(
             onClick = { navController.navigate("UpdateUserProfileScreen")},
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0D47A1)),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 16.dp)
         ) {
-            Text(text = "Update User Information", color = Color.White, fontSize = 16.sp)
+            Text(text = "Update User Profile", color = Color.White, fontSize = 16.sp)
         }
     }
 }
