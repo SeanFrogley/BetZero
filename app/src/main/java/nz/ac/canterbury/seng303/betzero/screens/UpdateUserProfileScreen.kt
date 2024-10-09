@@ -11,7 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.betzero.viewmodels.UpdateUserProfileViewModel
-import nz.ac.canterbury.seng303.betzero.viewmodels.UserProfileViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

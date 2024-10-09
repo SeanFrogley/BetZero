@@ -10,7 +10,6 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.FlowPreview
 import nz.ac.canterbury.seng303.betzero.models.DailyLog
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
-import nz.ac.canterbury.seng303.betzero.screens.GettingStartedScreen
 import nz.ac.canterbury.seng303.betzero.viewmodels.AnalyticsViewModel
 import nz.ac.canterbury.seng303.betzero.viewmodels.DailyLogViewModel
 import nz.ac.canterbury.seng303.betzero.viewmodels.GettingStartedViewModel
