@@ -1,5 +1,7 @@
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.awaitTouchSlopOrCancellation
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -154,7 +156,13 @@ fun InfoRow(title: String, value: String, rightValue: String? = null) {
 }
 
 @Composable
-fun BarChart(barData: List<Float>, dateList: List<Date>, dailySavings: Double, barColor: Color = Color(0xFF4CAF50)) {
+fun BarChart(
+    barData: List<Float>,
+    dateList: List<Date>,
+    dailySavings: Double,
+    barColor: Color = Color(0xFF4CAF50),  // Default green color
+    selectedBarColor: Color = Color(0xFF1E88E5)  // Color for selected bar
+) {
     val maxBarHeight = 300f
     val padding = 4.dp
     val spacing = 20f
@@ -164,28 +172,45 @@ fun BarChart(barData: List<Float>, dateList: List<Date>, dailySavings: Double, b
     var showPopup by remember { mutableStateOf(false) }
     var popupPosition by remember { mutableStateOf(Offset.Zero) }
 
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(200.dp)) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+    ) {
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(300.dp)
                 .padding(padding)
                 .pointerInput(Unit) {
-                    detectTapGestures { tapOffset ->
-                        val totalAvailableWidth = size.width
-                        val barWidth =
-                            (totalAvailableWidth - (barData.size - 1) * spacing) / barData.size
+                    awaitPointerEventScope {
+                        while (true) {
+                            val event = awaitPointerEvent()
+                            val press = event.changes.firstOrNull()
 
-                        barData.forEachIndexed { index, _ ->
-                            val barXStart = index * (barWidth + spacing)
-                            val barXEnd = barXStart + barWidth
+                            press?.let {
+                                if (press.pressed) {
+                                    val totalAvailableWidth = size.width
+                                    val barWidth = (totalAvailableWidth - (barData.size - 1) * spacing) / barData.size
 
-                            if (tapOffset.x in barXStart..barXEnd) {
-                                selectedBarIndex = index
-                                popupPosition = tapOffset
-                                showPopup = true
+                                    barData.forEachIndexed { index, _ ->
+                                        val barXStart = index * (barWidth + spacing)
+                                        val barXEnd = barXStart + barWidth
+
+                                        if (press.position.x in barXStart..barXEnd) {
+                                            selectedBarIndex = index
+                                            popupPosition = press.position
+                                            showPopup = true
+                                        }
+                                    }
+                                } else {
+                                    showPopup = false
+                                    selectedBarIndex = -1
+                                }
+                            }
+                            if (!press?.pressed!!) {
+                                showPopup = false
+                                selectedBarIndex = -1
                             }
                         }
                     }
@@ -197,8 +222,10 @@ fun BarChart(barData: List<Float>, dateList: List<Date>, dailySavings: Double, b
             barData.forEachIndexed { index, value ->
                 val barHeight = (value / maxValue) * maxBarHeight
 
+                val currentBarColor = if (index == selectedBarIndex) selectedBarColor else barColor
+
                 drawRoundRect(
-                    color = barColor,
+                    color = currentBarColor,
                     topLeft = Offset(x = (index * (barWidth + spacing)), y = size.height - barHeight),
                     size = androidx.compose.ui.geometry.Size(width = barWidth, height = barHeight),
                     cornerRadius = androidx.compose.ui.geometry.CornerRadius(12f)
@@ -206,13 +233,16 @@ fun BarChart(barData: List<Float>, dateList: List<Date>, dailySavings: Double, b
             }
         }
 
+        // Popup for showing the selected bar details
         if (showPopup && selectedBarIndex != -1) {
             val selectedValue = barData[selectedBarIndex]
             val selectedDate = dateList[selectedBarIndex]
             val dateFormatter = SimpleDateFormat("MMM d, yyyy", Locale.US)
-            val projectedAmount = selectedValue + (dailySavings * selectedBarIndex)
 
-            Popup(alignment = Alignment.TopStart, offset = IntOffset(popupPosition.x.toInt(), popupPosition.y.toInt())) {
+            Popup(
+                alignment = Alignment.TopStart,
+                offset = IntOffset(popupPosition.x.toInt(), popupPosition.y.toInt())
+            ) {
                 Box(
                     modifier = Modifier
                         .background(Color.White, shape = RoundedCornerShape(8.dp))
