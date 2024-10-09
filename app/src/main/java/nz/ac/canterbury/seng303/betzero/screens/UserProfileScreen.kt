@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +27,8 @@ import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 
 @Composable
 fun UserProfileScreen(navController: NavController, viewModel: UserProfileViewModel = koinViewModel()) {
@@ -61,6 +64,18 @@ fun UserProfileScreen(navController: NavController, viewModel: UserProfileViewMo
             title = "Current Streak",
             value = "$currentStreak ${if (currentStreak == 1L) "day" else "days"}"
         )
+
+        // Add the button here
+        Button(
+            onClick = { navController.navigate("UpdateUserProfileScreen")},
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0D47A1)),
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp)
+        ) {
+            Text(text = "Update User Information", color = Color.White, fontSize = 16.sp)
+        }
     }
 }
 
@@ -76,5 +91,4 @@ fun InfoRow(title: String, value: String) {
         Text(text = value, fontSize = 16.sp, fontWeight = FontWeight.Bold)
     }
 }
-
 

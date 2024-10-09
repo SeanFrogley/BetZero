@@ -53,6 +53,7 @@ import nz.ac.canterbury.seng303.betzero.screens.GettingStartedScreen
 import nz.ac.canterbury.seng303.betzero.screens.InitialScreen
 import nz.ac.canterbury.seng303.betzero.screens.OnboardingScreen
 import nz.ac.canterbury.seng303.betzero.screens.SummariesScreen
+import nz.ac.canterbury.seng303.betzero.screens.UpdateUserProfileScreen
 import nz.ac.canterbury.seng303.betzero.screens.UserProfileScreen
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "userProfile")
@@ -174,6 +175,9 @@ class MainActivity : ComponentActivity() {
                             }
                             composable("UserProfileScreen") {
                                 UserProfileScreen(navController = navController)
+                            }
+                            composable("UpdateUserProfileScreen") {
+                                UpdateUserProfileScreen(navController = navController)
                             }
                         }
                     }

@@ -15,6 +15,7 @@ import nz.ac.canterbury.seng303.betzero.viewmodels.AnalyticsViewModel
 import nz.ac.canterbury.seng303.betzero.viewmodels.DailyLogViewModel
 import nz.ac.canterbury.seng303.betzero.viewmodels.GettingStartedViewModel
 import nz.ac.canterbury.seng303.betzero.viewmodels.InitialViewModel
+import nz.ac.canterbury.seng303.betzero.viewmodels.UpdateUserProfileViewModel
 import nz.ac.canterbury.seng303.betzero.viewmodels.UserProfileViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -69,6 +70,11 @@ val dataAccessModule = module {
     }
     viewModel {
         AnalyticsViewModel(
+            userProfileStorage = get(named("userProfile"))
+        )
+    }
+    viewModel {
+        UpdateUserProfileViewModel(
             userProfileStorage = get(named("userProfile"))
         )
     }
