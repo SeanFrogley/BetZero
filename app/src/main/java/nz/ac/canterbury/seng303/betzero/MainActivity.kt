@@ -33,11 +33,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -45,8 +43,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.compose.BetzeroTheme
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import nz.ac.canterbury.seng303.betzero.screens.CalendarScreen
 import nz.ac.canterbury.seng303.betzero.screens.EmergencyScreen
 import nz.ac.canterbury.seng303.betzero.screens.GettingStartedScreen
@@ -56,18 +52,10 @@ import nz.ac.canterbury.seng303.betzero.screens.SummariesScreen
 import nz.ac.canterbury.seng303.betzero.screens.UpdateUserProfileScreen
 import nz.ac.canterbury.seng303.betzero.screens.UserProfileScreen
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "userProfile")
-
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val userProfileExists = runBlocking {
-            val userProfileKey = stringPreferencesKey("userProfile")
-            val preferences = dataStore.data.first()
-            val userProfileJson = preferences[userProfileKey]
-            !userProfileJson.isNullOrEmpty()
-        }
 
         setContent {
             BetzeroTheme {
@@ -77,15 +65,20 @@ class MainActivity : ComponentActivity() {
 
                 Scaffold(
                     topBar = {
+                        val navBackStackEntry by navController.currentBackStackEntryAsState()
+                        val currentDestination = navBackStackEntry?.destination
                         TopAppBar(
                             title = { Text("BetZero") },
                             actions = {
-                                IconButton(onClick = { navController.navigate("userProfileScreen") }) {
-                                    Icon(
-                                        imageVector = Icons.Default.AccountCircle,
-                                        contentDescription = "Profile",
-                                        tint = iconColor
-                                    )
+                                if (currentDestination?.route !in listOf("OnBoardingScreen", "GettingStartedScreen")) {
+                                    IconButton(onClick = { navController.navigate("userProfileScreen") }) {
+                                        Icon(
+                                            imageVector = Icons.Default.AccountCircle,
+                                            contentDescription = "Profile",
+                                            modifier = iconModifier,
+                                            tint = iconColor
+                                        )
+                                    }
                                 }
                             }
                         )

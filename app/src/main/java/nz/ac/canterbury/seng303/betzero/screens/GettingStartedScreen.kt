@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng303.betzero.screens
 import android.app.DatePickerDialog
 import android.icu.util.Calendar
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -122,6 +123,18 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                     nameError = if (InputValidation.validateUsersName(userName)) null else "Please enter a name that only consists of letters, -, or '."
                 },
                 label = { Text("What's your name?") },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedBorderColor = Color.Black,
+                    unfocusedBorderColor = Color.Black,
+                    focusedLabelColor = Color.Black,
+                    unfocusedLabelColor = Color.Black,
+                    focusedTrailingIconColor = Color.Black,
+                    unfocusedTrailingIconColor = Color.Black,
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
@@ -147,6 +160,18 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                     totalSpentError = if (InputValidation.validateTotalSpent(totalSpent)) null else "Please enter a valid non-negative number."
                 },
                 label = { Text("How much money have you spent?") },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedBorderColor = Color.Black,
+                    unfocusedBorderColor = Color.Black,
+                    focusedLabelColor = Color.Black,
+                    unfocusedLabelColor = Color.Black,
+                    focusedTrailingIconColor = Color.Black,
+                    unfocusedTrailingIconColor = Color.Black,
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
@@ -166,20 +191,34 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
-                value = selectedStartDate,
-                onValueChange = { },
-                readOnly = true,
-                label = { Text("When did you start gambling?") },
-                trailingIcon = {
-                    IconButton(onClick = { datePickerDialogStart.show() }) {
-                        Icon(Icons.Default.CalendarMonth, contentDescription = "Select start date")
-                    }
-                },
+
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-            )
+            ) {
+                OutlinedTextField(
+                    value = selectedStartDate,
+                    onValueChange = { },
+                    readOnly = true,
+                    label = { Text("When did you start gambling?") },
+                    enabled = false,
+                    trailingIcon = {
+                        Icon(Icons.Default.CalendarMonth, contentDescription = "Select start date")
+                    },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        disabledTextColor = Color.Black,
+                        disabledContainerColor = Color.Transparent,
+                        disabledBorderColor = Color.Black,
+                        disabledLabelColor = Color.Black,
+                        disabledTrailingIconColor = Color.Black
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { datePickerDialogStart.show() }
+                )
+            }
+
             startDateError = if (selectedStartDate.isNotEmpty() && !InputValidation.validateDate(selectedStartDate)) {
                 "Please enter a valid start date that isn't in the future."
             } else if (selectedStartDate.isNotEmpty() && selectedLastGambledDate.isNotEmpty()
@@ -199,20 +238,32 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
-                value = selectedLastGambledDate,
-                onValueChange = { },
-                readOnly = true,
-                label = { Text("When did you last gamble?") },
-                trailingIcon = {
-                    IconButton(onClick = { datePickerDialogLastGambled.show() }) {
-                        Icon(Icons.Default.CalendarMonth, contentDescription = "Select last gambled date")
-                    }
-                },
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-            )
+            ) {
+                OutlinedTextField(
+                    value = selectedLastGambledDate,
+                    onValueChange = { },
+                    readOnly = true,
+                    label = { Text("When did you last gamble?") },
+                    enabled = false,
+                    trailingIcon = {
+                        Icon(Icons.Default.CalendarMonth, contentDescription = "Select last gambled date")
+                    },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        disabledTextColor = Color.Black,
+                        disabledContainerColor = Color.Transparent,
+                        disabledBorderColor = Color.Black,
+                        disabledLabelColor = Color.Black,
+                        disabledTrailingIconColor = Color.Black
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { datePickerDialogLastGambled.show() }
+                )
+            }
             lastGambledDateError = if (selectedLastGambledDate.isNotEmpty() && !InputValidation.validateDate(selectedLastGambledDate)) {
                 "Please enter a valid last gambled date that isn't in the future."
             } else if (selectedLastGambledDate.isNotEmpty() && selectedLastGambledDate.isNotEmpty()
