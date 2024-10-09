@@ -4,7 +4,6 @@ import android.app.DatePickerDialog
 import android.icu.util.Calendar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -282,7 +281,7 @@ fun UpdateUserProfileScreen(navController: NavController, viewModel: UpdateUserP
             Button(
                 onClick = {
                     if (nameError == null && totalSpentError == null && startDateError == null && lastGambledDateError == null) {
-                        viewModel.saveUserProfile(
+                        viewModel.updateUserProfile(
                             id = userProfile?.id ?: 0,
                             name = userName,
                             totalSpent = totalSpent.toDouble(),

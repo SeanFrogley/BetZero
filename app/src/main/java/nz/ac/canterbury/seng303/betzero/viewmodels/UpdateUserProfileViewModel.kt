@@ -14,7 +14,6 @@ import nz.ac.canterbury.seng303.betzero.utils.UserUtil.roundToTwoDecimalPlaces
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Date
-import kotlin.random.Random
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
@@ -43,7 +42,7 @@ class UpdateUserProfileViewModel (
     }
 
 
-    fun saveUserProfile(
+    fun updateUserProfile(
         id: Int,
         name: String,
         totalSpent: Double,
