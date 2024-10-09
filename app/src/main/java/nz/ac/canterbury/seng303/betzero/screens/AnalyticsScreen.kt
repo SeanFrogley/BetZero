@@ -160,8 +160,8 @@ fun BarChart(
     barData: List<Float>,
     dateList: List<Date>,
     dailySavings: Double,
-    barColor: Color = Color(0xFF4CAF50),  // Default green color
-    selectedBarColor: Color = Color(0xFF1E88E5)  // Color for selected bar
+    barColor: Color = Color(0xFF4CAF50),
+    selectedBarColor: Color = Color(0xFF1E88E5)
 ) {
     val maxBarHeight = 300f
     val padding = 4.dp
@@ -233,7 +233,6 @@ fun BarChart(
             }
         }
 
-        // Popup for showing the selected bar details
         if (showPopup && selectedBarIndex != -1) {
             val selectedValue = barData[selectedBarIndex]
             val selectedDate = dateList[selectedBarIndex]
