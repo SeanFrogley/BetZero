@@ -10,7 +10,7 @@ import nz.ac.canterbury.seng303.betzero.datastore.Storage
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
 
 
-class UserProfileViewModel (
+class UpdateUserProfileViewModel (
     private val userProfileStorage: Storage<UserProfile>
 ) : ViewModel() {
 
