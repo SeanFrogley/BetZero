@@ -1,21 +1,18 @@
 package nz.ac.canterbury.seng303.betzero.viewmodels
 
-import android.icu.text.SimpleDateFormat
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import nz.ac.canterbury.seng303.betzero.datastore.Storage
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
+import nz.ac.canterbury.seng303.betzero.utils.UserUtil.calculateDailySavings
+import nz.ac.canterbury.seng303.betzero.utils.UserUtil.calculateTotalSavings
+import nz.ac.canterbury.seng303.betzero.utils.UserUtil.roundToTwoDecimalPlaces
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.Date
 import kotlin.random.Random
 
@@ -24,21 +21,36 @@ class GettingStartedViewModel(
 ) : ViewModel() {
 
     var _userProfile = mutableStateOf<UserProfile?>(null)
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     fun saveUserProfile(
         name: String,
         totalSpent: Double,
-        totalSaved: Double,
-        gamblingStartDate: Date
+        gamblingStartDate: Date,
+        lastGambledDate: Date
     ) = viewModelScope.launch {
+        val startDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())
+        val dailySavings = calculateDailySavings(
+            totalSpent = totalSpent,
+            gamblingStartDate = gamblingStartDate,
+            serviceStartDate = startDate
+        )
+        val totalSaved = calculateTotalSavings(
+            dailySavings = dailySavings,
+            startDate = gamblingStartDate,
+            endDate = lastGambledDate
+        )
+
+        val roundedTotalSpent = roundToTwoDecimalPlaces(totalSpent)
+        val roundedTotalSaved = roundToTwoDecimalPlaces(totalSaved)
+
         val userProfile = UserProfile(
             id = Random.nextInt(0, Int.MAX_VALUE),
             name = name,
-            totalSpent = totalSpent,
-            totalSaved = totalSaved,
+            totalSpent = roundedTotalSpent,
+            totalSaved = roundedTotalSaved,
             gamblingStartDate = gamblingStartDate,
-            startDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())
+            dailySavings = dailySavings,
+            lastGambledDate = lastGambledDate
         )
         Log.d("DataStoreInsert", "Inserting user profile: $userProfile")
         try {
@@ -49,8 +61,6 @@ class GettingStartedViewModel(
             } else {
                 Log.e("USER_PROFILE_VM", "User profile insertion failed")
             }
-
-            // Fetch and log all user profiles
             userProfileStorage.getAll()
                 .collect { profiles ->
                     Log.i("GettingStartedViewModel", "User Profiles: $profiles")

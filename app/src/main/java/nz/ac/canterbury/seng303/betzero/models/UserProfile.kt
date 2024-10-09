@@ -10,15 +10,15 @@ class UserProfile (
     val name: String,
     val totalSpent: Double,
     val totalSaved: Double,
+    val dailySavings: Double,
     val gamblingStartDate: Date,
-    val startDate: Date
+    val lastGambledDate: Date
 ) : Identifiable {
     override fun getIdentifier(): Int {
         return id;
     }
 
     override fun toString(): String {
-        return "UserProfile(id=$id, name=$name, totalSpent=$totalSpent, totalSaved=$totalSaved, gamblingStartDate=$gamblingStartDate, startDate=$startDate)"
+        return "UserProfile(id=$id, name=$name, totalSpent=$totalSpent, totalSaved=$totalSaved, dailySavings=$dailySavings, gamblingStartDate=$gamblingStartDate, startDate=$lastGambledDate)"
     }
-
 }
