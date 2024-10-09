@@ -53,6 +53,7 @@ import nz.ac.canterbury.seng303.betzero.screens.GettingStartedScreen
 import nz.ac.canterbury.seng303.betzero.screens.InitialScreen
 import nz.ac.canterbury.seng303.betzero.screens.OnboardingScreen
 import nz.ac.canterbury.seng303.betzero.screens.SummariesScreen
+import nz.ac.canterbury.seng303.betzero.screens.UserProfileScreen
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "userProfile")
 
@@ -78,11 +79,11 @@ class MainActivity : ComponentActivity() {
                         TopAppBar(
                             title = { Text("BetZero") },
                             actions = {
-                                IconButton(onClick = { /* navController.navigate("userProfile") this should just take the user to their profile screen, dont think im meant to implement here*/ }) {
+                                IconButton(onClick = { navController.navigate("userProfileScreen") }) {
                                     Icon(
                                         imageVector = Icons.Default.AccountCircle,
                                         contentDescription = "Profile",
-                                        tint = Color(0xFF42A5F5)
+                                        tint = Color.Black
                                     )
                                 }
                             }
@@ -170,6 +171,9 @@ class MainActivity : ComponentActivity() {
                             }
                             composable("GettingStartedScreen") {
                                 GettingStartedScreen(navController = navController)
+                            }
+                            composable("UserProfileScreen") {
+                                UserProfileScreen(navController = navController)
                             }
                         }
                     }
