@@ -50,9 +50,8 @@ fun AnalyticsScreen(navController: NavController, viewModel: AnalyticsViewModel 
 
     val daysSinceStart = userProfile?.let {
         val currentDate = Date()
-        UserUtil.calculateDaysBetween(it.gamblingStartDate, currentDate)
+        UserUtil.calculateDaysBetween(it.lastGambledDate, currentDate)
     } ?: 0
-    val startDate = userProfile?.gamblingStartDate?.toString() ?: "N/A"
     var isMonthlyView by rememberSaveable { mutableStateOf(false) }
 
     val size = if (isMonthlyView) 30 else 7
@@ -112,7 +111,7 @@ fun AnalyticsScreen(navController: NavController, viewModel: AnalyticsViewModel 
 
         InfoRow(
             title = "Days since start date",
-            value = "$startDate",
+            value = "$daysSinceStart",
             rightValue = "$daysSinceStart ${if (daysSinceStart == 1L) "day" else "days"}"
         )
 
