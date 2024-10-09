@@ -123,8 +123,8 @@ fun AnalyticsScreen(navController: NavController, viewModel: AnalyticsViewModel 
 
         InfoRow(
             title = "Overall saved",
-            value = "$${String.format(Locale.US, "%.2f", overallSavings)} × $daysSinceStart days",
-            rightValue = "$${String.format(Locale.US, "%.2f", overallSavings * daysSinceStart)}"
+            value = "$${String.format(Locale.US, "%.2f", dailySavings)} × $daysSinceStart days",
+            rightValue = "$${String.format(Locale.US, "%.2f", dailySavings * daysSinceStart)}"
         )
 
         Divider(modifier = Modifier.padding(vertical = 8.dp))
