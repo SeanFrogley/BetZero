@@ -78,5 +78,4 @@ val dataAccessModule = module {
             userProfileStorage = get(named("userProfile"))
         )
     }
-
 }
