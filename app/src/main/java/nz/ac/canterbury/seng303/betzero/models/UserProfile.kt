@@ -12,7 +12,7 @@ class UserProfile (
     val totalSaved: Double,
     val dailySavings: Double,
     val gamblingStartDate: Date,
-    val lastGambledDate: Date
+    val lastGambledDate: Date,
 ) : Identifiable {
     override fun getIdentifier(): Int {
         return id;
