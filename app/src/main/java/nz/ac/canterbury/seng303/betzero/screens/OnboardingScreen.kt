@@ -1,15 +1,7 @@
 package nz.ac.canterbury.seng303.betzero.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,7 +24,7 @@ fun OnboardingScreen(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background( if (isSystemInDarkTheme()) Color(0xFF2a6278) else Color(0xFFafddf0) )          // TODO change to colour resource and abstract to color.kt file
+            .background(Color(0xFF87CEEB))
     ) {
 
         Column(
@@ -45,7 +37,7 @@ fun OnboardingScreen(navController: NavController) {
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.background)
+                    .background(Color.White)
                     .padding(16.dp)
             ) {
                 Column(
@@ -56,14 +48,14 @@ fun OnboardingScreen(navController: NavController) {
                         style = TextStyle(
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onBackground
+                            color = Color.Black
                         ),
                         textAlign = TextAlign.Center
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "You have now taken a big step towards sobriety.",
-                        style = TextStyle(fontSize = 14.sp, color = MaterialTheme.colorScheme.secondary),
+                        style = TextStyle(fontSize = 14.sp, color = Color.Gray),
                         textAlign = TextAlign.Center
                     )
                 }
@@ -85,7 +77,7 @@ fun OnboardingScreen(navController: NavController) {
             ) {
                 Text(
                     text = "Get Started",
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = Color.White,
                     fontSize = 16.sp,
                     modifier = Modifier.padding(vertical = 4.dp)
                 )

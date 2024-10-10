@@ -40,7 +40,7 @@ fun SummariesScreen(navController: NavController) {
             recordings = RecordingUtil.getAllRecordings(context).map { file ->
                 DailyLog(
                     id = file.hashCode(),
-                    feeling = "Unknown", // Replace with actual mood if available
+                    feeling = file.name, // Replace with actual mood if available
                     voiceMemo = file.name,
                     date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(file.lastModified()))
                 )

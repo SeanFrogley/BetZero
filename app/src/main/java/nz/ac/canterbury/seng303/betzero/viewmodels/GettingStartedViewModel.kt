@@ -39,7 +39,7 @@ class GettingStartedViewModel(
             startDate = gamblingStartDate,
             endDate = lastGambledDate
         )
-        val balance = 10000
+
         val roundedTotalSpent = roundToTwoDecimalPlaces(totalSpent)
         val roundedTotalSaved = roundToTwoDecimalPlaces(totalSaved)
 

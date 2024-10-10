@@ -12,7 +12,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -64,6 +63,7 @@ fun AnalyticsScreen(navController: NavController, viewModel: AnalyticsViewModel 
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
+            .background(Color.White)
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -89,11 +89,11 @@ fun AnalyticsScreen(navController: NavController, viewModel: AnalyticsViewModel 
                 checked = isMonthlyView,
                 onCheckedChange = { isMonthlyView = it },
                 colors = SwitchDefaults.colors(
-                    checkedThumbColor =MaterialTheme.colorScheme.primary,
-                    uncheckedThumbColor = MaterialTheme.colorScheme.primary,
+                    checkedThumbColor = Color(0xFF4CAF50),
+                    uncheckedThumbColor = Color(0xFF4CAF50),
 
-                    checkedTrackColor = MaterialTheme.colorScheme.onPrimary,
-                    uncheckedTrackColor = MaterialTheme.colorScheme.onPrimary
+                    checkedTrackColor = Color(0xFFB0BEC5),
+                    uncheckedTrackColor = Color(0xFFB0BEC5)
                 )
             )
             Text(text = "Monthly", fontSize = 16.sp)
@@ -238,12 +238,12 @@ fun BarChart(
             ) {
                 Box(
                     modifier = Modifier
-                        .background(MaterialTheme.colorScheme.background, shape = RoundedCornerShape(8.dp))
+                        .background(Color.White, shape = RoundedCornerShape(8.dp))
                         .padding(8.dp)
                 ) {
                     Text(
                         text = "${dateFormatter.format(selectedDate)}\nSaved: $${String.format(Locale.US, "%.2f", selectedValue)}",
-                        color = MaterialTheme.colorScheme.onBackground,
+                        color = Color.Black,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
                     )
