@@ -116,7 +116,7 @@ fun ThreePositionSwitch(
     Box(
         modifier = Modifier
             .background(
-                color = MaterialTheme.colorScheme.secondary, // Secondary color for the background
+                color = MaterialTheme.colorScheme.primaryContainer, // Secondary color for the background
                 shape = RoundedCornerShape(26.dp) // Rounded corners
             )
             .fillMaxWidth() // Take up the full width
@@ -135,10 +135,13 @@ fun ThreePositionSwitch(
                         .weight(1f)
                         .padding(4.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (selectedOption == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
+                        containerColor = if (selectedOption == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer
                     )
                 ) {
-                    Text(text = option)
+                    Text(
+                        text = option,
+                        color = if (selectedOption == index) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimaryContainer
+                    )
                 }
             }
         }
