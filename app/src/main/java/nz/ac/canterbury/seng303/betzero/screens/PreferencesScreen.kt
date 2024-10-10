@@ -102,7 +102,7 @@ fun ThreePositionSwitch(
                 Button(
                     onClick = {
                         onOptionSelected(index)
-                        Toast.makeText(context, "You must restart the app to see the changes.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "Theme applied! App restart required!", Toast.LENGTH_LONG).show()
                     },
                     modifier = Modifier
                         .weight(1f)
