@@ -21,6 +21,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
@@ -65,16 +66,14 @@ fun PreferencesScreen(navController: NavController, viewModel: PreferencesViewMo
 
         Text(text = "Preferences", fontWeight = FontWeight.Bold, fontSize = 20.sp)
 
-        Divider(modifier = Modifier.padding(vertical = 8.dp))
-
 
         Text(text = "Application Colour Theme", fontSize = 16.sp)
-
 
         ThreePositionSwitch(
             selectedOption = selectedOption,
             onOptionSelected = { newIndex ->
                 selectedOption = newIndex
+                viewModel.updateThemeSettings(newIndex)
             }
         )
 

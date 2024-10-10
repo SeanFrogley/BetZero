@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.betzero.datastore.Storage
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
@@ -33,18 +34,57 @@ class PreferencesViewModel (
         }
     }
 
-    // This function can be called when user changes theme preference
-    fun setDarkTheme(enabled: Boolean) {
-        viewModelScope.launch {
-            _isDarkTheme.emit(enabled)
-        }
-    }
-
     fun setIsSystemInDarkTheme(enabled : Boolean) {
         isSystemInDarkTheme = enabled
         updateTheme()
     }
 
+    fun updateThemeSettings(selectedOption: Int) {
+        viewModelScope.launch {
+            val currentProfile = userProfile.firstOrNull()
+            var isUserEnforcedTheme = false
+            var isDarkMode = false
+
+            // Check if the currentProfile is null before proceeding
+            if (currentProfile != null) {
+
+                when (selectedOption) {
+                    0 -> { // Light
+                        isUserEnforcedTheme = true
+                        isDarkMode = false
+                    }
+                    1 -> { // System
+                        isUserEnforcedTheme = false
+                        isDarkMode = isSystemInDarkTheme
+                    }
+                    2 -> { // Dark
+                        isUserEnforcedTheme = true
+                        isDarkMode = true
+                    }
+                    else -> {
+                        return@launch
+                    }
+
+                }
+
+                val updatedProfile = UserProfile(
+                    currentProfile.id,
+                    currentProfile.name,
+                    currentProfile.totalSpent,
+                    currentProfile.totalSaved,
+                    currentProfile.dailySavings,
+                    currentProfile.gamblingStartDate,
+                    currentProfile.lastGambledDate,
+                    isDarkMode,
+                    isUserEnforcedTheme
+                )
+
+                // Use the edit method to update the user profile in storage
+                userProfileStorage.edit(currentProfile.id, updatedProfile)
+                updateTheme()
+            }
+        }
+    }
 
     init {
         viewModelScope.launch {
@@ -61,7 +101,4 @@ class PreferencesViewModel (
             }
         }
     }
-
-
-
 }
