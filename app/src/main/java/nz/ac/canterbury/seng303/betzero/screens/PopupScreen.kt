@@ -112,12 +112,12 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
                             }
                             isRecording = !isRecording
                         },
-                        modifier = Modifier.size(100.dp).align(Alignment.CenterHorizontally) // Center the record button
+                        modifier = Modifier.size(100.dp).align(Alignment.CenterHorizontally)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Mic,
                             contentDescription = if (isRecording) "Stop Recording" else "Record",
-                            modifier = Modifier.size(64.dp) // Adjust the size of the mic icon
+                            modifier = Modifier.size(64.dp)
                         )
                     }
                 } else {
@@ -131,7 +131,7 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    IconButton(onClick = { selectedMood = "Happy" }, modifier = Modifier.size(48.dp)) { // Medium size for the icon buttons
+                    IconButton(onClick = { selectedMood = "Happy" }, modifier = Modifier.size(48.dp)) {
                         Icon(
                             imageVector = Icons.Default.SentimentVerySatisfied,
                             contentDescription = "Happy",
@@ -139,7 +139,7 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
                             tint = if (selectedMood == "Happy") Color.Yellow else Color.Gray
                         )
                     }
-                    IconButton(onClick = { selectedMood = "Neutral" }, modifier = Modifier.size(48.dp)) { // Medium size for the icon buttons
+                    IconButton(onClick = { selectedMood = "Neutral" }, modifier = Modifier.size(48.dp)) {
                         Icon(
                             imageVector = Icons.Default.SentimentNeutral,
                             contentDescription = "Neutral",
@@ -147,7 +147,7 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
                             tint = if (selectedMood == "Neutral") Color.Yellow else Color.Gray
                         )
                     }
-                    IconButton(onClick = { selectedMood = "Sad" }, modifier = Modifier.size(48.dp)) { // Medium size for the icon buttons
+                    IconButton(onClick = { selectedMood = "Sad" }, modifier = Modifier.size(48.dp)) {
                         Icon(
                             imageVector = Icons.Default.SentimentVeryDissatisfied,
                             contentDescription = "Sad",
