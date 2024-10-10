@@ -10,9 +10,11 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.FlowPreview
 import nz.ac.canterbury.seng303.betzero.models.DailyLog
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
+import nz.ac.canterbury.seng303.betzero.screens.EmergencyScreen
 import nz.ac.canterbury.seng303.betzero.screens.GettingStartedScreen
 import nz.ac.canterbury.seng303.betzero.viewmodels.AnalyticsViewModel
 import nz.ac.canterbury.seng303.betzero.viewmodels.DailyLogViewModel
+import nz.ac.canterbury.seng303.betzero.viewmodels.EmergencyViewModel
 import nz.ac.canterbury.seng303.betzero.viewmodels.GettingStartedViewModel
 import nz.ac.canterbury.seng303.betzero.viewmodels.InitialViewModel
 import nz.ac.canterbury.seng303.betzero.viewmodels.UpdateUserProfileViewModel
@@ -75,6 +77,11 @@ val dataAccessModule = module {
     }
     viewModel {
         UpdateUserProfileViewModel(
+            userProfileStorage = get(named("userProfile"))
+        )
+    }
+    viewModel {
+        EmergencyViewModel(
             userProfileStorage = get(named("userProfile"))
         )
     }
