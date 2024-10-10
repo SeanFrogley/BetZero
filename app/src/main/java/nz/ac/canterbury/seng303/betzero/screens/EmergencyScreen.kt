@@ -1,7 +1,17 @@
 package nz.ac.canterbury.seng303.betzero.screens
 
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,12 +20,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,10 +43,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -47,40 +68,88 @@ import org.koin.androidx.compose.koinViewModel
 fun EmergencyScreen(navController: NavController, viewModel: EmergencyViewModel = koinViewModel()) {
     var showDialog by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
+    var showArticlesDialog by rememberSaveable { mutableStateOf(false) }
+    var showSlotMachineDialog by rememberSaveable { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button(
-            onClick = {
-                if (viewModel.balance >= 5) {
-                    showDialog = true
-                } else {
-                    Toast.makeText(context, "You are out of coins!", Toast.LENGTH_SHORT).show()
-                }
-            },
+        Row(
             modifier = Modifier
-                .size(80.dp),
-            shape = RoundedCornerShape(12.dp)
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Icon(
-                imageVector = Icons.Filled.AttachMoney,
-                contentDescription = "Open Slot Machine",
-                tint = Color.White,
-                modifier = Modifier.size(48.dp)
-            )
+            Button(
+                onClick = {
+                    if (viewModel.balance >= 5) {
+                        showDialog = true
+                    } else {
+                        Toast.makeText(context, "You are out of coins!", Toast.LENGTH_SHORT).show()
+                    }
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .height(100.dp)
+                    .padding(8.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.AttachMoney,
+                        contentDescription = "Open Slots",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+            }
+
+            Button(
+                onClick = {
+                    showArticlesDialog = true
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .height(100.dp)
+                    .padding(8.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.MenuBook,
+                        contentDescription = "Articles Icon",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+            }
         }
 
-        if (showDialog) {
+        if (showSlotMachineDialog) {
             SlotMachinePopup(
-                onClose = { showDialog = false },
+                onClose = { showSlotMachineDialog = false },
                 viewModel = viewModel
             )
         }
+
+        if (showArticlesDialog) {
+            ArticlesPopup(onClose = { showArticlesDialog = false })
+        }
     }
 }
+
 
 @Composable
 fun SlotMachinePopup(onClose: () -> Unit, viewModel: EmergencyViewModel) {
@@ -192,3 +261,169 @@ fun AnimatedReel(shape: SlotShape, isSpinning: Boolean) {
         }
     }
 }
+
+@Composable
+fun ArticlesPopup(onClose: () -> Unit) {
+    val context = LocalContext.current  // To open links
+    val articles = listOf(
+        Article(
+            title = "Be inspired to quit: Success stories from ex-smokers in the region",
+            url = "https://www.who.int/westernpacific/news-room/feature-stories/item/be-inspired-to-quit-success-stories-from-ex-smokers-in-the-region"
+        ),
+        Article(
+            title = "Five action steps for quitting an addiction",
+            url = "https://www.health.harvard.edu/diseases-and-conditions/five-action-steps-for-quitting-an-addiction"
+        ),
+        Article(
+            title = "I need a strong motivation to quit gambling",
+            url = "https://www.quora.com/I-need-a-strong-motivation-to-quit-gambling-About-2-years-ago-I-was-introduced-to-sport-betting-by-my-brother-and-the-thing-is-killing-me-secretly-and-its-hard-for-me-to-quit-What-can-I-do"
+        ),
+        Article(
+            title = "How to stop gambling",
+            url = "https://www.gatewayfoundation.org/blog/how-to-stop-gambling/"
+        ),
+        Article(
+            title = "Road to recovery from gambling addiction",
+            url = "https://www.alustforlife.com/voice/road-to-recovery-from-gambling-addiction"
+        ),
+        Article(
+            title = "Gambling: How to change your habits",
+            url = "https://www.betterhealth.vic.gov.au/health/healthyliving/gambling-how-to-change-your-habits"
+        )
+    )
+
+    Dialog(
+        onDismissRequest = { onClose() },
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Surface(
+            modifier = Modifier
+                .fillMaxSize(0.9f)
+                .padding(16.dp),
+            color = MaterialTheme.colorScheme.surface,
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Inspiring Articles",
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+
+                    articles.chunked(2).forEach { rowArticles ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            rowArticles.forEach { article ->
+                                Button(
+                                    onClick = {
+                                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(article.url))
+                                        context.startActivity(intent)
+                                    },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(100.dp)
+                                        .padding(8.dp),
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.MenuBook,
+                                            contentDescription = article.title,
+                                            tint = Color.White,
+                                            modifier = Modifier.size(24.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        ScrollingText(
+                                            text = article.title,
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Button(
+                        onClick = { onClose() },
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text("Close")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ScrollingText(text: String) {
+    var textWidth by remember { mutableStateOf(0f) }
+    var boxWidth by remember { mutableStateOf(0f) }
+
+    val isScrollable = textWidth > boxWidth
+
+    val offsetX = remember { Animatable(0f) }
+
+    LaunchedEffect(isScrollable, textWidth, boxWidth) {
+        offsetX.stop()
+        if (isScrollable) {
+            val fullScrollWidth = textWidth - boxWidth
+            offsetX.updateBounds(-fullScrollWidth, 0f)
+            offsetX.animateTo(
+                targetValue = -fullScrollWidth,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(durationMillis = 6000, easing = LinearEasing),
+                    repeatMode = RepeatMode.Restart
+                )
+            )
+        } else {
+            offsetX.snapTo(0f)
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clipToBounds()
+            .onGloballyPositioned { layoutCoordinates ->
+                boxWidth = layoutCoordinates.size.width.toFloat()
+            }
+    ) {
+        Text(
+            text = text,
+            maxLines = 1,
+            fontWeight = FontWeight.Medium,
+            color = Color.White,
+            modifier = Modifier
+                .offset { IntOffset(x = offsetX.value.toInt(), y = 0) }
+                .wrapContentWidth(unbounded = true)
+                .onGloballyPositioned { layoutCoordinates ->
+                    textWidth = layoutCoordinates.size.width.toFloat()
+                }
+        )
+    }
+}
+
+
+
+data class Article(
+    val title: String,
+    val url: String
+)
