@@ -4,6 +4,8 @@ import AnalyticsScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -48,14 +51,26 @@ import nz.ac.canterbury.seng303.betzero.screens.PreferencesScreen
 import nz.ac.canterbury.seng303.betzero.screens.SummariesScreen
 import nz.ac.canterbury.seng303.betzero.screens.UpdateUserProfileScreen
 import nz.ac.canterbury.seng303.betzero.screens.UserProfileScreen
+import nz.ac.canterbury.seng303.betzero.viewmodels.PreferencesViewModel
+import org.koin.android.ext.android.inject
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
+    private val preferencesViewModel: PreferencesViewModel by inject()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            BetzeroTheme {
+            //set whether the system is in dark mode as it must come from a composable
+            preferencesViewModel.setIsSystemInDarkTheme(isSystemInDarkTheme())
+
+
+            val isDarkTheme by preferencesViewModel.isDarkTheme.collectAsStateWithLifecycle()
+
+
+            BetzeroTheme(darkTheme = isDarkTheme) {
                 val navController = rememberNavController()
                 val iconModifier = Modifier.size(50.dp)
                 val iconColor = MaterialTheme.colorScheme.primary
