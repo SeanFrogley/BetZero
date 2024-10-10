@@ -23,6 +23,6 @@ class UserProfile (
     }
 
     override fun toString(): String {
-        return "UserProfile(id=$id, name=$name, totalSpent=$totalSpent, totalSaved=$totalSaved, dailySavings=$dailySavings, gamblingStartDate=$gamblingStartDate, startDate=$lastGambledDate)"
+        return "UserProfile(id=$id, name=$name, totalSpent=$totalSpent, totalSaved=$totalSaved, dailySavings=$dailySavings, gamblingStartDate=$gamblingStartDate, startDate=$lastGambledDate, isDarkMode=$isDarkMode, isUserEnforcedTheme=$isUserEnforcedTheme)"
     }
 }

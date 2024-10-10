@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng303.betzero.viewmodels
 
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -79,8 +80,22 @@ class PreferencesViewModel (
                     isUserEnforcedTheme
                 )
 
-                // Use the edit method to update the user profile in storage
-                userProfileStorage.edit(currentProfile.id, updatedProfile)
+                Log.d("DataStoreInsert", "Updating user profile: $updatedProfile")
+                try {
+                    val result = userProfileStorage.edit(updatedProfile.getIdentifier(), updatedProfile).first()
+                    if (result == 1) {
+                        Log.d("USER_PROFILE_VM", "User profile updated successfully")
+                        _userProfile.value = updatedProfile
+                    } else {
+                        Log.e("USER_PROFILE_VM", "User profile update failed")
+                    }
+                    userProfileStorage.getAll()
+                        .collect { profiles ->
+                            Log.i("UpdateUserProfileViewModel", "User Profiles: $profiles")
+                        }
+                } catch (exception: Exception) {
+                    Log.e("USER_PROFILE_VM", "Could not update user profile: $exception")
+                }
                 updateTheme()
             }
         }

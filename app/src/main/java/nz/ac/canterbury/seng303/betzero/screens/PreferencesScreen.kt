@@ -33,6 +33,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,11 +48,16 @@ import java.util.Locale
 @Composable
 fun PreferencesScreen(navController: NavController, viewModel: PreferencesViewModel = koinViewModel()) {
     val userProfile by viewModel.userProfile.collectAsState()
-    val dateFormatter = SimpleDateFormat("MMM-dd-yyyy", Locale.US)
-    val currentDate = Date()
-    val currentStreak = userProfile?.let {
-        UserUtil.calculateDaysBetween(it.lastGambledDate, currentDate)
-    } ?: 0
+
+    var isDarkMode by rememberSaveable { mutableStateOf(false) }
+    var isUserEnforcedTheme by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(userProfile) {
+        userProfile?.let {
+            isDarkMode = it.isDarkMode
+            isUserEnforcedTheme = it.isUserEnforcedTheme
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -63,6 +69,12 @@ fun PreferencesScreen(navController: NavController, viewModel: PreferencesViewMo
     ) {
 
         var selectedOption by remember { mutableStateOf(0) }
+
+        if (isUserEnforcedTheme) {
+            selectedOption = if (isDarkMode) 2 else 0
+        } else {
+            selectedOption = 1
+        }
 
         Text(text = "Preferences", fontWeight = FontWeight.Bold, fontSize = 20.sp)
 
@@ -77,28 +89,7 @@ fun PreferencesScreen(navController: NavController, viewModel: PreferencesViewMo
             }
         )
 
-        Button(
-            onClick = { navController.navigate("UserProfileScreen") },
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp)
-        ) {
-            Text(text = "Save", fontSize = 16.sp)
-        }
 
-        Button(
-            onClick = { navController.navigate("UserProfileScreen") },
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                contentColor = MaterialTheme.colorScheme.onSecondary
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Text(text = "Back", fontSize = 16.sp)
-        }
 
     }
 }
