@@ -52,21 +52,21 @@ class PersistentStorage<T>(
         }
     }
 
-    override fun edit(identifier: Int, data: T): Flow<Int> {
-        return flow {
+    override fun edit(identifier: Int, data: T): Flow<Int> = flow {
+        withContext(Dispatchers.IO) {
             val cachedDataClone = getAll().first().toMutableList()
             val index = cachedDataClone.indexOfFirst { it.getIdentifier() == identifier }
             if (index != -1) {
                 cachedDataClone[index] = data  // Update the item with the new data
-                dataStore.edit {  // Save the updated list
+                dataStore.edit {  preferences ->
                     val jsonString = gson.toJson(cachedDataClone, type)
-                    it[preferenceKey] = jsonString
-                    emit(OPERATION_SUCCESS)
+                    preferences[preferenceKey] = jsonString
                 }
             } else {
                 emit(OPERATION_FAILURE)  // Handle the case when the item with the given identifier is not found
             }
         }
+        emit(OPERATION_SUCCESS)
     }
 
     override fun get(where: (T) -> Boolean): Flow<T> {
