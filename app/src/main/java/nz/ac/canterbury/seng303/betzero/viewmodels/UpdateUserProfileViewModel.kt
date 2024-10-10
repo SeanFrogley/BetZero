@@ -16,7 +16,6 @@ import java.time.ZoneId
 import java.util.Date
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.withContext
 
 
 class UpdateUserProfileViewModel (
@@ -64,6 +63,8 @@ class UpdateUserProfileViewModel (
         val roundedTotalSpent = roundToTwoDecimalPlaces(totalSpent)
         val roundedTotalSaved = roundToTwoDecimalPlaces(totalSaved)
 
+        val currentProfile = _userProfile.value
+
         val userProfile = UserProfile(
             id = id,
             name = name,
@@ -71,7 +72,10 @@ class UpdateUserProfileViewModel (
             totalSaved = roundedTotalSaved,
             gamblingStartDate = gamblingStartDate,
             dailySavings = dailySavings,
-            lastGambledDate = lastGambledDate
+            lastGambledDate = lastGambledDate,
+
+            isDarkMode = currentProfile?.isDarkMode ?: false,
+            isUserEnforcedTheme = currentProfile?.isUserEnforcedTheme ?: false
         )
         Log.d("DataStoreInsert", "Updating user profile: $userProfile")
         try {

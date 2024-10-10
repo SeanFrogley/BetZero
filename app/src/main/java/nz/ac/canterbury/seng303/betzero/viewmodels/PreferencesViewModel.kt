@@ -56,7 +56,7 @@ class PreferencesViewModel (
                     }
                     1 -> { // System
                         isUserEnforcedTheme = false
-                        isDarkMode = isSystemInDarkTheme
+                        isDarkMode = false
                     }
                     2 -> { // Dark
                         isUserEnforcedTheme = true
