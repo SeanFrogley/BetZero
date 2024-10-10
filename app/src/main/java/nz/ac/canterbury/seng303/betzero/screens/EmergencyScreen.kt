@@ -37,12 +37,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material3.Icon
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 
 @Composable
 fun EmergencyScreen(navController: NavController, viewModel: EmergencyViewModel = koinViewModel()) {
-    var showDialog by remember { mutableStateOf(false) }
+    var showDialog by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
 
     Column(
