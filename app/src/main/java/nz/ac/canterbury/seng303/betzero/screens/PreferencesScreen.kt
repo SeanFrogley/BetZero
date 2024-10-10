@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
@@ -31,6 +32,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -59,12 +61,15 @@ fun PreferencesScreen(navController: NavController, viewModel: PreferencesViewMo
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-
-
-
-        //new
-
         var selectedOption by remember { mutableStateOf(0) }
+
+        Text(text = "Preferences", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+
+        Divider(modifier = Modifier.padding(vertical = 8.dp))
+
+
+        Text(text = "Application Colour Theme", fontSize = 16.sp)
+
 
         ThreePositionSwitch(
             selectedOption = selectedOption,
@@ -72,9 +77,6 @@ fun PreferencesScreen(navController: NavController, viewModel: PreferencesViewMo
                 selectedOption = newIndex
             }
         )
-
-
-        //end of new
 
         Button(
             onClick = { navController.navigate("UserProfileScreen") },
@@ -100,47 +102,45 @@ fun PreferencesScreen(navController: NavController, viewModel: PreferencesViewMo
         }
 
     }
-
-
 }
 
 
-    @Composable
-    fun ThreePositionSwitch(
-        selectedOption: Int,
-        onOptionSelected: (Int) -> Unit
+@Composable
+fun ThreePositionSwitch(
+    selectedOption: Int,
+    onOptionSelected: (Int) -> Unit
+) {
+    val options = listOf("Light", "System", "Dark")
+
+    // Box to contain the rounded background
+    Box(
+        modifier = Modifier
+            .background(
+                color = MaterialTheme.colorScheme.secondary, // Secondary color for the background
+                shape = RoundedCornerShape(26.dp) // Rounded corners
+            )
+            .fillMaxWidth() // Take up the full width
     ) {
-        val options = listOf("Light", "System", "Dark")
 
-        // Box to contain the rounded background
-        Box(
+        Row(
             modifier = Modifier
-                .background(
-                    color = MaterialTheme.colorScheme.secondary, // Secondary color for the background
-                    shape = RoundedCornerShape(26.dp) // Rounded corners
-                )
-                .fillMaxWidth() // Take up the full width
+                .padding(horizontal = 6.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = 6.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                options.forEachIndexed { index, option ->
-                    Button(
-                        onClick = { onOptionSelected(index) },
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(4.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (selectedOption == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
-                        )
-                    ) {
-                        Text(text = option)
-                    }
+            options.forEachIndexed { index, option ->
+                Button(
+                    onClick = { onOptionSelected(index) },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(4.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (selectedOption == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
+                    )
+                ) {
+                    Text(text = option)
                 }
             }
         }
     }
+}
