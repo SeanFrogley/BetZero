@@ -53,6 +53,7 @@ import nz.ac.canterbury.seng303.betzero.screens.UpdateUserProfileScreen
 import nz.ac.canterbury.seng303.betzero.screens.UserProfileScreen
 import nz.ac.canterbury.seng303.betzero.viewmodels.PreferencesViewModel
 import org.koin.android.ext.android.inject
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
@@ -197,7 +198,7 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun Home(navController: NavController) {
+fun Home(navController: NavController, viewModel: PreferencesViewModel = koinViewModel()) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,

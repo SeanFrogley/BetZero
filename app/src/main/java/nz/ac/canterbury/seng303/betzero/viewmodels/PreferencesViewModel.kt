@@ -21,14 +21,13 @@ class PreferencesViewModel (
     private val _isDarkTheme = MutableStateFlow(isSystemInDarkTheme) // Initially follow system theme
     val isDarkTheme: StateFlow<Boolean> = _isDarkTheme
 
-    // Function to update dark theme based on system and user preferences
     private fun updateTheme() {
         viewModelScope.launch {
             _userProfile.value?.let { profile ->
                 if (profile.isUserEnforcedTheme) {
-                    _isDarkTheme.emit(profile.isDarkMode)  // Use user's preference
+                    _isDarkTheme.emit(profile.isDarkMode)
                 } else {
-                    _isDarkTheme.emit(isSystemInDarkTheme)  // Use system theme
+                    _isDarkTheme.emit(isSystemInDarkTheme)
                 }
             }
         }
@@ -53,6 +52,7 @@ class PreferencesViewModel (
                 val userProfiles = userProfileStorage.getAll().first()
                 if (userProfiles.isNotEmpty()) {
                     _userProfile.value = userProfiles.first()
+                    updateTheme()
                 } else {
                     _userProfile.value = null
                 }
