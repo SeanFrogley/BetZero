@@ -73,15 +73,21 @@ class UpdateUserProfileViewModel (
             dailySavings = dailySavings,
             lastGambledDate = lastGambledDate
         )
-        Log.d("DataStoreInsert", "Inserting user profile: $userProfile")
+        Log.d("DataStoreInsert", "Updating user profile: $userProfile")
         try {
-            withContext(Dispatchers.IO) {
-                userProfileStorage.edit(userProfile.id, userProfile)
+            val result = userProfileStorage.edit(userProfile.getIdentifier(), userProfile).first()
+            if (result == 1) {
+                Log.d("USER_PROFILE_VM", "User profile updated successfully")
+                _userProfile.value = userProfile
+            } else {
+                Log.e("USER_PROFILE_VM", "User profile update failed")
             }
-            Log.d("USER_PROFILE_VM", "User profile inserted successfully")
-            _userProfile.value = userProfile
+            userProfileStorage.getAll()
+                .collect { profiles ->
+                    Log.i("UpdateUserProfileViewModel", "User Profiles: $profiles")
+                }
         } catch (exception: Exception) {
-            Log.e("USER_PROFILE_VM", "Could not insert user profile: $exception")
+            Log.e("USER_PROFILE_VM", "Could not update user profile: $exception")
         }
 
     }
