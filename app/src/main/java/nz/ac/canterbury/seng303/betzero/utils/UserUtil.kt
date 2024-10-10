@@ -68,6 +68,7 @@ object UserUtil {
         val name = "John Doe"
         val totalSpent = 1000.0
         val totalSaved = 0.0
+        val balance = 10000
 
         val dailySavings = calculateDailySavings(
             totalSpent = totalSpent,

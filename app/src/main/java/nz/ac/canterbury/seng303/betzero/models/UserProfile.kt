@@ -19,7 +19,7 @@ class UserProfile (
     val isUserEnforcedTheme: Boolean = false
 ) : Identifiable {
     override fun getIdentifier(): Int {
-        return id
+        return id;
     }
 
     override fun toString(): String {
