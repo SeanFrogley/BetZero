@@ -44,6 +44,7 @@ import nz.ac.canterbury.seng303.betzero.screens.EmergencyScreen
 import nz.ac.canterbury.seng303.betzero.screens.GettingStartedScreen
 import nz.ac.canterbury.seng303.betzero.screens.InitialScreen
 import nz.ac.canterbury.seng303.betzero.screens.OnboardingScreen
+import nz.ac.canterbury.seng303.betzero.screens.PreferencesScreen
 import nz.ac.canterbury.seng303.betzero.screens.SummariesScreen
 import nz.ac.canterbury.seng303.betzero.screens.UpdateUserProfileScreen
 import nz.ac.canterbury.seng303.betzero.screens.UserProfileScreen
@@ -167,6 +168,9 @@ class MainActivity : ComponentActivity() {
                             }
                             composable("UpdateUserProfileScreen") {
                                 UpdateUserProfileScreen(navController = navController)
+                            }
+                            composable("PreferencesScreen") {
+                                PreferencesScreen(navController = navController)
                             }
                         }
                     }

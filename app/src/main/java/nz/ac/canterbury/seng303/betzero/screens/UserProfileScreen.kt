@@ -10,6 +10,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -69,6 +71,19 @@ fun UserProfileScreen(navController: NavController, viewModel: UserProfileViewMo
                 .padding(vertical = 16.dp)
         ) {
             Text(text = "Update User Profile", fontSize = 16.sp)
+        }
+
+        Button(
+            onClick = { navController.navigate("PreferencesScreen")},
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Text(text = "Preferences", fontSize = 16.sp)
         }
     }
 }
