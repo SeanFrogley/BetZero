@@ -1,21 +1,18 @@
 package nz.ac.canterbury.seng303.betzero.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import android.widget.CalendarView
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 
 @Composable
 fun CalendarScreen(navController: NavController) {
-    Column(
+    AndroidView(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Calendar Screen")
-    }
+        factory = { context ->
+            CalendarView(context)
+        }
+    )
 }
