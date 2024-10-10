@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachMoney
@@ -373,7 +374,6 @@ fun ArticlesPopup(onClose: () -> Unit) {
 
 @Composable
 fun ScrollingText(text: String) {
-    // States to hold the text width and box width
     var textWidth by remember { mutableStateOf(0f) }
     var boxWidth by remember { mutableStateOf(0f) }
 
@@ -408,17 +408,19 @@ fun ScrollingText(text: String) {
     ) {
         Text(
             text = text,
-            modifier = Modifier
-                .offset { IntOffset(x = offsetX.value.toInt(), y = 0) }
-                .onGloballyPositioned { layoutCoordinates ->
-                    textWidth = layoutCoordinates.size.width.toFloat()
-                },
             maxLines = 1,
             fontWeight = FontWeight.Medium,
-            color = Color.White
+            color = Color.White,
+            modifier = Modifier
+                .offset { IntOffset(x = offsetX.value.toInt(), y = 0) }
+                .wrapContentWidth(unbounded = true)
+                .onGloballyPositioned { layoutCoordinates ->
+                    textWidth = layoutCoordinates.size.width.toFloat()
+                }
         )
     }
 }
+
 
 
 data class Article(
