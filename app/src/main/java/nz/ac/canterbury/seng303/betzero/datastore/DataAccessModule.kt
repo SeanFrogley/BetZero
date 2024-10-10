@@ -36,7 +36,7 @@ val dataAccessModule = module {
         )
     }
 
-    // GamblingProfile storage
+    // Summaries storage
     single<Storage<DailyLog>>(named("dailyLog")) {
         PersistentStorage(
             gson = get(),
