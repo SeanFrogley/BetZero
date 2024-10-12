@@ -53,7 +53,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import nz.ac.canterbury.seng303.betzero.viewmodels.EmergencyViewModel
-import nz.ac.canterbury.seng303.betzero.viewmodels.SlotShape
+import nz.ac.canterbury.seng303.betzero.models.SlotShape
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
