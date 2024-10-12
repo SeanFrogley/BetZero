@@ -14,13 +14,18 @@ import java.util.Date
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -102,6 +107,8 @@ fun CalendarDatesGrid(streakDays: List<Date>, calendar: Calendar) {
     val firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1
     val weeks = (firstDayOfWeek + daysInMonth + 6) / 7
 
+    var selectedDate by remember { mutableStateOf<Date?>(null) }
+
     Column {
         var dayCounter = 1
 
@@ -122,32 +129,73 @@ fun CalendarDatesGrid(streakDays: List<Date>, calendar: Calendar) {
                         Box(modifier = Modifier.weight(1f)) {
                             DayBox(
                                 day = dayCounter,
-                                isStreakDay = normalizedStreakDays.contains(normalizedDate)
+                                isStreakDay = normalizedStreakDays.contains(normalizedDate),
+                                onClick = {
+                                    selectedDate = date
+                                }
                             )
                         }
-
                         dayCounter++
                     }
+                }
+            }
+        }
+
+        if (selectedDate != null) {
+            ShowDayDetails(date = selectedDate!!, onDismiss = { selectedDate = null })
+        }
+    }
+}
+
+@Composable
+fun ShowDayDetails(date: Date, onDismiss: () -> Unit) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .fillMaxHeight(0.6f)
+                .padding(16.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color.White),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Details for ${SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(date)}",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(text = "Some info about this day...")
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(onClick = onDismiss) {
+                    Text(text = "Close")
                 }
             }
         }
     }
 }
 
-
 @Composable
-fun DayBox(day: Int, isStreakDay: Boolean) {
+fun DayBox(day: Int, isStreakDay: Boolean, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(40.dp)
-            .background(if (isStreakDay) Color(0xFF4CAF50) else Color.Transparent),
+            .clip(RoundedCornerShape(8.dp))
+            .background(if (isStreakDay) Color.Yellow else Color.Transparent)
+            .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         Text(text = "$day", fontSize = 16.sp, fontWeight = FontWeight.Bold)
     }
 }
-
 
 fun getMonthName(month: Int): String {
     val monthFormat = SimpleDateFormat("MMMM", Locale.getDefault())
