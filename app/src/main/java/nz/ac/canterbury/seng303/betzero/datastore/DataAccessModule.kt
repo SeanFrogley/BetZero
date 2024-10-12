@@ -91,4 +91,9 @@ val dataAccessModule = module {
             userProfileStorage = get(named("userProfile"))
         )
     }
+    viewModel {
+        HomeViewModel(
+            userProfileStorage = get(named("userProfile"))
+        )
+    }
 }

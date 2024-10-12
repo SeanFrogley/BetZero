@@ -24,6 +24,7 @@ class GettingStartedViewModel(
 
     fun saveUserProfile(
         name: String,
+        age: Int,
         totalSpent: Double,
         gamblingStartDate: Date,
         lastGambledDate: Date
@@ -46,6 +47,7 @@ class GettingStartedViewModel(
         val userProfile = UserProfile(
             id = Random.nextInt(0, Int.MAX_VALUE),
             name = name,
+            age = age,
             totalSpent = roundedTotalSpent,
             totalSaved = roundedTotalSaved,
             gamblingStartDate = gamblingStartDate,

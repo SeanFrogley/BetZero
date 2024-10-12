@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng303.betzero
 
 import AnalyticsScreen
+import HomeScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -168,7 +169,7 @@ class MainActivity : ComponentActivity() {
                                 AnalyticsScreen(navController = navController)
                             }
                             composable("Home") {
-                                Home(navController = navController)
+                                HomeScreen(navController = navController)
                             }
                             composable("SummariesScreen") {
                                 SummariesScreen(navController = navController)
