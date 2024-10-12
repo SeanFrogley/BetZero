@@ -66,7 +66,6 @@ fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = 
         CustomCalendar(streakDays = streakDays, dailyLogs = dailyLogs, modifier = Modifier.fillMaxSize())
     }
 }
-
 @Composable
 fun CustomCalendar(
     streakDays: List<Date>,
@@ -88,26 +87,38 @@ fun CustomCalendar(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "${getMonthName(displayedMonth)} $displayedYear",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Row {
-                Text(text = "<", modifier = Modifier.padding(8.dp).clickable {
+                text = "<",
+                modifier = Modifier.padding(8.dp).clickable {
                     calendar.add(Calendar.MONTH, -1)
                     displayedMonth = calendar.get(Calendar.MONTH)
                     displayedYear = calendar.get(Calendar.YEAR)
-                })
-                Text(text = ">", modifier = Modifier.padding(8.dp).clickable {
+                },
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Text(
+                text = "${getMonthName(displayedMonth)} $displayedYear",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            )
+
+            Text(
+                text = ">",
+                modifier = Modifier.padding(8.dp).clickable {
                     calendar.add(Calendar.MONTH, 1)
                     displayedMonth = calendar.get(Calendar.MONTH)
                     displayedYear = calendar.get(Calendar.YEAR)
-                })
-            }
+                },
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
@@ -124,6 +135,7 @@ fun CustomCalendar(
         )
     }
 }
+
 
 @Composable
 fun CalendarDatesGrid(streakDays: List<Date>, calendar: Calendar, dailyLogs: List<DailyLog>) {
