@@ -126,12 +126,12 @@ fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = 
             CustomCalendar(
                 streakDays = streakDays,
                 dailyLogs = dailyLogs,
+                relapseLogs = relapseLogs,
                 modifier = Modifier.fillMaxSize()
             )
         }
     }
 }
-
 
 
 @Composable
@@ -291,6 +291,7 @@ fun ShowRelapseForm(
 fun CustomCalendar(
     streakDays: List<Date>,
     dailyLogs: List<DailyLog>,
+    relapseLogs: List<RelapseLog>,
     modifier: Modifier = Modifier
 ) {
     val calendar = rememberSaveable { Calendar.getInstance() }
@@ -356,14 +357,20 @@ fun CustomCalendar(
         CalendarDatesGrid(
             streakDays = streakDays,
             calendar = calendar,
-            dailyLogs = dailyLogs
+            dailyLogs = dailyLogs,
+            relapseLogs = relapseLogs
         )
     }
 }
 
 
 @Composable
-fun CalendarDatesGrid(streakDays: List<Date>, calendar: Calendar, dailyLogs: List<DailyLog>) {
+fun CalendarDatesGrid(
+    streakDays: List<Date>,
+    calendar: Calendar,
+    dailyLogs: List<DailyLog>,
+    relapseLogs: List<RelapseLog>
+) {
     val normalizedStreakDays = streakDays.map { stripTime(it) }
 
     val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
@@ -396,12 +403,14 @@ fun CalendarDatesGrid(streakDays: List<Date>, calendar: Calendar, dailyLogs: Lis
 
                         val dateStr = dateFormatter.format(normalizedDate)
                         val hasLog = dailyLogs.any { it.date == dateStr }
+                        val hasRelapse = relapseLogs.any { it.date == dateStr }
 
                         Box(modifier = Modifier.weight(1f)) {
                             DayBox(
                                 day = dayCounter,
                                 isStreakDay = normalizedStreakDays.contains(normalizedDate),
                                 hasLog = hasLog,
+                                hasRelapse = hasRelapse,
                                 onClick = {
                                     selectedDate = date
                                 }
@@ -416,13 +425,20 @@ fun CalendarDatesGrid(streakDays: List<Date>, calendar: Calendar, dailyLogs: Lis
         if (selectedDate != null) {
             val selectedDateStr = dateFormatter.format(selectedDate!!)
             val filteredLogs = dailyLogs.filter { it.date == selectedDateStr }
-            ShowDayDetails(date = selectedDate!!, logs = filteredLogs, onDismiss = { selectedDate = null })
+            val filteredRelapseLogs = relapseLogs.filter { it.date == selectedDateStr }
+
+            ShowDayDetails(
+                date = selectedDate!!,
+                logs = filteredLogs,
+                relapseLogs = filteredRelapseLogs,
+                onDismiss = { selectedDate = null }
+            )
         }
     }
 }
 
 @Composable
-fun ShowDayDetails(date: Date, logs: List<DailyLog>, onDismiss: () -> Unit) {
+fun ShowDayDetails(date: Date, logs: List<DailyLog>, relapseLogs: List<RelapseLog>, onDismiss: () -> Unit) {
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false)
@@ -447,12 +463,29 @@ fun ShowDayDetails(date: Date, logs: List<DailyLog>, onDismiss: () -> Unit) {
                         .padding(top = 16.dp)
                 )
 
-                if (logs.isNotEmpty()) {
+                if (logs.isNotEmpty() || relapseLogs.isNotEmpty()) {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp)
                     ) {
+                        if (relapseLogs.isNotEmpty()) {
+                            items(relapseLogs) { relapse ->
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp)
+                                        .background(Color.Red.copy(alpha = 0.2f))
+                                        .padding(8.dp)
+                                ) {
+                                    Column {
+                                        Text(text = "Relapse Date: ${relapse.date}", color = Color.Red)
+                                        Text(text = "Amount Spent: \$${relapse.amountSpent}", color = Color.Red)
+                                    }
+                                }
+                            }
+                        }
+
                         items(logs) { entry ->
                             Box(
                                 modifier = Modifier
@@ -477,8 +510,7 @@ fun ShowDayDetails(date: Date, logs: List<DailyLog>, onDismiss: () -> Unit) {
                                             contentDescription = entry.feeling
                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
-                                        Button(onClick = {
-                                        }) {
+                                        Button(onClick = { /* idk how to do this stuff but it should play the recording */ }) {
                                             Text(text = "Play")
                                         }
                                     }
@@ -487,7 +519,10 @@ fun ShowDayDetails(date: Date, logs: List<DailyLog>, onDismiss: () -> Unit) {
                         }
                     }
                 } else {
-                    Text(text = "No logs available for this day", modifier = Modifier.align(Alignment.CenterHorizontally))
+                    Text(
+                        text = "No logs or relapse available for this day",
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
                 }
 
                 Row(
@@ -510,8 +545,15 @@ fun ShowDayDetails(date: Date, logs: List<DailyLog>, onDismiss: () -> Unit) {
 }
 
 @Composable
-fun DayBox(day: Int, isStreakDay: Boolean, hasLog: Boolean, onClick: () -> Unit) {
+fun DayBox(
+    day: Int,
+    isStreakDay: Boolean,
+    hasLog: Boolean,
+    hasRelapse: Boolean,
+    onClick: () -> Unit
+) {
     val backgroundColor = when {
+        hasRelapse -> Color.Red
         hasLog -> Color.Green
         isStreakDay -> Color.Yellow
         else -> Color.Transparent
