@@ -91,7 +91,7 @@ fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = 
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Current Streak: ${streakDays.size} days",
+            text = "You have been gamble free for ${streakDays.size - 1} ${if (streakDays.size - 1 == 1) "day!" else "days!"}",
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
