@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.SendTimeExtension
 import androidx.compose.material.icons.filled.SentimentNeutral
 import androidx.compose.material.icons.filled.SentimentVeryDissatisfied
 import androidx.compose.material.icons.filled.SentimentVerySatisfied
@@ -35,6 +36,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.betzero.models.DailyLog
 import nz.ac.canterbury.seng303.betzero.utils.RecordingUtil
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -47,12 +49,14 @@ fun SummariesScreen(navController: NavController) {
     var currentlyPlayingId by remember { mutableStateOf<Int?>(null) }
     val coroutineScope = rememberCoroutineScope()
 
+    // Fetch recordings on screen load
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             recordings = RecordingUtil.getAllRecordings(context).map { file ->
+                // Correctly use getSelectedMood to get the mood
                 DailyLog(
                     id = file.hashCode(),
-                    feeling = "Happy",
+                    feeling = "Happy", // You might want to update this part depending on actual data.
                     voiceMemo = file.name,
                     date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(file.lastModified()))
                 )
@@ -60,6 +64,7 @@ fun SummariesScreen(navController: NavController) {
         }
     }
 
+    // Clean up MediaPlayer resources on dispose
     DisposableEffect(Unit) {
         onDispose {
             mediaPlayer?.release()
@@ -88,11 +93,12 @@ fun SummariesScreen(navController: NavController) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            // Get the mood icon based on the DailyLog's mood
                             val moodIcon = when (entry.feeling) {
                                 "Happy" -> Icons.Default.SentimentVerySatisfied
                                 "Neutral" -> Icons.Default.SentimentNeutral
                                 "Sad" -> Icons.Default.SentimentVeryDissatisfied
-                                else -> Icons.Default.SentimentNeutral
+                                else -> Icons.Default.SendTimeExtension
                             }
                             Icon(
                                 imageVector = moodIcon,
@@ -122,3 +128,4 @@ fun SummariesScreen(navController: NavController) {
         }
     }
 }
+

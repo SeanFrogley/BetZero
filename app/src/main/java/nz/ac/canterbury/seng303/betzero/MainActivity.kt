@@ -27,6 +27,7 @@ import nz.ac.canterbury.seng303.betzero.screens.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -151,7 +152,9 @@ class MainActivity : ComponentActivity() {
                             Dialog(onDismissRequest = { showPopup.value = false }) {
                                 PopupScreen(
                                     onDismiss = { showPopup.value = false },
-                                    onSave = { /* Handle save action */ }
+                                    onSave = { dailyLog ->
+                                        // Handle any additional actions after saving, if needed
+                                    }
                                 )
                             }
                         }
@@ -161,6 +164,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 
 @Composable
 fun Home(navController: NavController) {

@@ -26,6 +26,7 @@ import java.util.Date
 import java.util.Locale
 import kotlin.random.Random
 
+// PopupScreen.kt
 @Composable
 fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
     val context = LocalContext.current
@@ -126,12 +127,13 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Divider()
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Choose an option:", fontSize = 18.sp, modifier = Modifier.align(Alignment.CenterHorizontally))
+                Text("Choose a Mood:", fontSize = 18.sp, modifier = Modifier.align(Alignment.CenterHorizontally))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    IconButton(onClick = { selectedMood = "Happy" }, modifier = Modifier.size(48.dp)) {
+                    IconButton(
+                        onClick = { selectedMood = "Happy" }, modifier = Modifier.size(48.dp)) {
                         Icon(
                             imageVector = Icons.Default.SentimentVerySatisfied,
                             contentDescription = "Happy",
@@ -172,8 +174,8 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
                         val formattedDate = dateFormat.format(Date())
                         val entry = DailyLog(
                             id = Random.nextInt(),
-                            feeling = selectedMood !!,
-                            voiceMemo = voiceMemoPath ?: "",
+                            feeling = selectedMood!!,
+                            voiceMemo = voiceMemoPath!!,
                             date = formattedDate
                         )
                         onSave(entry)
