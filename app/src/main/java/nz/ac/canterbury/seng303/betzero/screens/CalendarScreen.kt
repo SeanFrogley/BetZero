@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.SentimentNeutral
 import androidx.compose.material.icons.filled.SentimentVeryDissatisfied
 import androidx.compose.material.icons.filled.SentimentVerySatisfied
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -31,12 +32,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -58,11 +61,14 @@ fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = 
     val userProfile by viewModel.userProfile.collectAsState()
     val dailyLogs = listOf(
         DailyLog(id = 1, feeling = "Happy", voiceMemo = "path/to/memo1", date = "2024-10-09"),
+        DailyLog(id = 1, feeling = "Happy", voiceMemo = "path/to/memo1", date = "2024-10-09"),
         DailyLog(id = 2, feeling = "Sad", voiceMemo = "path/to/memo2", date = "2024-10-10"),
         DailyLog(id = 3, feeling = "Neutral", voiceMemo = "path/to/memo3", date = "2024-10-11")
     )
     val startDate = userProfile?.lastGambledDate ?: Date()
     val streakDays = UserUtil.getAllDatesSinceStart(startDate)
+
+    var showModal by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -73,18 +79,74 @@ fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = 
     ) {
         Text(
             text = "Current Streak: ${streakDays.size} days",
-            color = Color.Black,
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        Divider()
+        Divider(Modifier.padding(16.dp))
 
-        Box(modifier = Modifier.fillMaxSize()) {
+        Button(
+            onClick = { showModal = true },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .clip(RoundedCornerShape(8.dp))
+        ) {
+            Text("Log Relapse", color = Color.White, fontSize = 16.sp)
+        }
+
+        if (showModal) {
+            ShowRelapseForm(onDismiss = { showModal = false })
+        }
+
+        Divider(Modifier.padding(16.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
             CustomCalendar(
                 streakDays = streakDays,
                 dailyLogs = dailyLogs,
                 modifier = Modifier.fillMaxSize()
             )
+        }
+    }
+}
+
+
+@Composable
+fun ShowRelapseForm(onDismiss: () -> Unit) {
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .fillMaxHeight(0.7f)
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color.White)
+                .padding(16.dp)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Log relapse",
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    onClick = { onDismiss() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                ) {
+                    Text("Close", color = Color.White, fontSize = 16.sp)
+                }
+            }
         }
     }
 }
@@ -95,10 +157,10 @@ fun CustomCalendar(
     dailyLogs: List<DailyLog>,
     modifier: Modifier = Modifier
 ) {
-    val calendar = remember { Calendar.getInstance() }
+    val calendar = rememberSaveable { Calendar.getInstance() }
 
-    var displayedMonth by remember { mutableStateOf(calendar.get(Calendar.MONTH)) }
-    var displayedYear by remember { mutableStateOf(calendar.get(Calendar.YEAR)) }
+    var displayedMonth by rememberSaveable { mutableStateOf(calendar.get(Calendar.MONTH)) }
+    var displayedYear by rememberSaveable { mutableStateOf(calendar.get(Calendar.YEAR)) }
 
     LaunchedEffect(displayedMonth, displayedYear) {
         calendar.set(Calendar.MONTH, displayedMonth)
@@ -131,7 +193,7 @@ fun CustomCalendar(
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f),
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                textAlign = TextAlign.Center
             )
 
             Text(
