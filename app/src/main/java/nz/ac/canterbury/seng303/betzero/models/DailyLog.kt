@@ -15,4 +15,8 @@ class DailyLog (
     override fun getIdentifier(): Int {
         return id;
     }
+
+    override fun toString(): String {
+        return "DailyLog(id=$id, date=$date)"
+    }
 }

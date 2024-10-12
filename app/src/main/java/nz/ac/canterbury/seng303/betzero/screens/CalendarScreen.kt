@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng303.betzero.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -14,8 +15,15 @@ import java.util.Date
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.SentimentNeutral
+import androidx.compose.material.icons.filled.SentimentVeryDissatisfied
+import androidx.compose.material.icons.filled.SentimentVerySatisfied
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import nz.ac.canterbury.seng303.betzero.models.DailyLog
 import nz.ac.canterbury.seng303.betzero.utils.CalendarUtil.getMonthName
 import nz.ac.canterbury.seng303.betzero.utils.CalendarUtil.stripTime
 import nz.ac.canterbury.seng303.betzero.viewmodels.CalendarViewModel
@@ -35,19 +44,23 @@ import java.util.*
 @Composable
 fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = koinViewModel()) {
     val userProfile by viewModel.userProfile.collectAsState()
-    val dailyLogs by viewModel.dailyLogs.collectAsState()
+    val dailyLogs = listOf(
+        DailyLog(id = 1, feeling = "Happy", voiceMemo = "path/to/memo1", date = "2024-10-11"),
+        DailyLog(id = 2, feeling = "Sad", voiceMemo = "path/to/memo2", date = "2024-10-10"),
+        DailyLog(id = 3, feeling = "Neutral", voiceMemo = "path/to/memo3", date = "2024-10-09")
+    )
     val startDate = userProfile?.lastGambledDate ?: Date()
 
     val streakDays = UserUtil.getAllDatesSinceStart(startDate)
-
     Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        CustomCalendar(streakDays = streakDays, modifier = Modifier.fillMaxSize())
+        CustomCalendar(streakDays = streakDays, dailyLogs = dailyLogs, modifier = Modifier.fillMaxSize())
     }
 }
 
 @Composable
 fun CustomCalendar(
     streakDays: List<Date>,
+    dailyLogs: List<DailyLog>,
     modifier: Modifier = Modifier
 ) {
     val calendar = remember { Calendar.getInstance() }
@@ -96,13 +109,14 @@ fun CustomCalendar(
 
         CalendarDatesGrid(
             streakDays = streakDays,
-            calendar = calendar
+            calendar = calendar,
+            dailyLogs = dailyLogs
         )
     }
 }
 
 @Composable
-fun CalendarDatesGrid(streakDays: List<Date>, calendar: Calendar) {
+fun CalendarDatesGrid(streakDays: List<Date>, calendar: Calendar, dailyLogs: List<DailyLog>) {
     val normalizedStreakDays = streakDays.map { stripTime(it) }
 
     val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
@@ -145,13 +159,16 @@ fun CalendarDatesGrid(streakDays: List<Date>, calendar: Calendar) {
         }
 
         if (selectedDate != null) {
-            ShowDayDetails(date = selectedDate!!, onDismiss = { selectedDate = null })
+            val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val selectedDateStr = dateFormatter.format(selectedDate!!)
+            val filteredLogs = dailyLogs.filter { it.date == selectedDateStr }
+            ShowDayDetails(date = selectedDate!!, logs = filteredLogs, onDismiss = { selectedDate = null })
         }
     }
 }
 
 @Composable
-fun ShowDayDetails(date: Date, onDismiss: () -> Unit) {
+fun ShowDayDetails(date: Date, logs: List<DailyLog>, onDismiss: () -> Unit) {
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false)
@@ -164,37 +181,74 @@ fun ShowDayDetails(date: Date, onDismiss: () -> Unit) {
                 .clip(RoundedCornerShape(16.dp))
                 .background(Color.White)
         ) {
-            Text(
-                text = SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(date),
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 16.dp)
-            )
-
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.align(Alignment.Center)
+                modifier = Modifier.fillMaxSize()
             ) {
-                Spacer(modifier = Modifier.height(32.dp))
-                Text(text = "Some info about this day...")
-            }
+                Text(
+                    text = SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(date),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(top = 16.dp)
+                )
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .align(Alignment.BottomEnd),
-                horizontalArrangement = Arrangement.End
-            ) {
-                Button(
-                    onClick = onDismiss,
-                    modifier = Modifier.width(120.dp),
-                    shape = RoundedCornerShape(8.dp)
+                if (logs.isNotEmpty()) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                    ) {
+                        items(logs) { entry ->
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp)
+                                    .background(Color.LightGray)
+                                    .padding(8.dp)
+                            ) {
+                                Column {
+                                    Text(text = "Date: ${entry.date}")
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        val moodIcon = when (entry.feeling) {
+                                            "Happy" -> Icons.Default.SentimentVerySatisfied
+                                            "Neutral" -> Icons.Default.SentimentNeutral
+                                            "Sad" -> Icons.Default.SentimentVeryDissatisfied
+                                            else -> Icons.Default.SentimentNeutral
+                                        }
+                                        Icon(
+                                            imageVector = moodIcon,
+                                            contentDescription = entry.feeling
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Button(onClick = {
+                                        }) {
+                                            Text(text = "Play Voice Memo")
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    Text(text = "No logs available for this day", modifier = Modifier.align(Alignment.CenterHorizontally))
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.End
                 ) {
-                    Text(text = "Close")
+                    Button(
+                        onClick = onDismiss,
+                        modifier = Modifier.width(120.dp),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(text = "Close")
+                    }
                 }
             }
         }
