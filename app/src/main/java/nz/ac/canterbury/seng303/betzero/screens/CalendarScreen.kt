@@ -126,6 +126,9 @@ fun CalendarDatesGrid(streakDays: List<Date>, calendar: Calendar, dailyLogs: Lis
 
     var selectedDate by remember { mutableStateOf<Date?>(null) }
 
+    // Define dateFormatter here so it's available throughout the function
+    val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
     Column {
         var dayCounter = 1
 
@@ -143,10 +146,14 @@ fun CalendarDatesGrid(streakDays: List<Date>, calendar: Calendar, dailyLogs: Lis
 
                         val normalizedDate = stripTime(date)
 
+                        val dateStr = dateFormatter.format(normalizedDate)
+                        val hasLog = dailyLogs.any { it.date == dateStr }
+
                         Box(modifier = Modifier.weight(1f)) {
                             DayBox(
                                 day = dayCounter,
                                 isStreakDay = normalizedStreakDays.contains(normalizedDate),
+                                hasLog = hasLog,
                                 onClick = {
                                     selectedDate = date
                                 }
@@ -159,7 +166,6 @@ fun CalendarDatesGrid(streakDays: List<Date>, calendar: Calendar, dailyLogs: Lis
         }
 
         if (selectedDate != null) {
-            val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val selectedDateStr = dateFormatter.format(selectedDate!!)
             val filteredLogs = dailyLogs.filter { it.date == selectedDateStr }
             ShowDayDetails(date = selectedDate!!, logs = filteredLogs, onDismiss = { selectedDate = null })
@@ -225,7 +231,7 @@ fun ShowDayDetails(date: Date, logs: List<DailyLog>, onDismiss: () -> Unit) {
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Button(onClick = {
                                         }) {
-                                            Text(text = "Play Voice Memo")
+                                            Text(text = "Play")
                                         }
                                     }
                                 }
@@ -256,13 +262,19 @@ fun ShowDayDetails(date: Date, logs: List<DailyLog>, onDismiss: () -> Unit) {
 }
 
 @Composable
-fun DayBox(day: Int, isStreakDay: Boolean, onClick: () -> Unit) {
+fun DayBox(day: Int, isStreakDay: Boolean, hasLog: Boolean, onClick: () -> Unit) {
+    val backgroundColor = when {
+        hasLog -> Color.Green
+        isStreakDay -> Color.Yellow
+        else -> Color.Transparent
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(40.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(if (isStreakDay) Color.Yellow else Color.Transparent)
+            .background(backgroundColor)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
