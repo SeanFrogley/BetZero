@@ -105,7 +105,7 @@ fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = 
         }
 
         if (showModal) {
-            ShowRelapseForm(onDismiss = { showModal = false })
+            ShowRelapseForm(viewModel = viewModel, onDismiss = { showModal = false })
         }
 
         Divider(Modifier.padding(16.dp))
@@ -125,7 +125,7 @@ fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = 
 
 
 @Composable
-fun ShowRelapseForm(onDismiss: () -> Unit) {
+fun ShowRelapseForm(viewModel: CalendarViewModel, onDismiss: () -> Unit) {
     var selectedDate by remember { mutableStateOf("") }
     var amountSpent by remember { mutableStateOf("") }
     var dateError by remember { mutableStateOf<String?>(null) }
@@ -231,23 +231,38 @@ fun ShowRelapseForm(onDismiss: () -> Unit) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Button(
-                    onClick = {
-                        if (dateError == null && amountSpentError == null) {
-                            onDismiss()
-                        }
-                    },
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                        .padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("Close", color = Color.White, fontSize = 16.sp)
+                    Button(
+                        onClick = { onDismiss() },
+                        modifier = Modifier.width(120.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
+                    ) {
+                        Text("Cancel", color = Color.White, fontSize = 16.sp)
+                    }
+
+                    Button(
+                        onClick = {
+                            // Call the viewModel's update function
+                            viewModel.updateUserProfile(amountSpent.toDouble(), SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(selectedDate))
+                            onDismiss()
+                        },
+                        modifier = Modifier.width(120.dp),
+                        enabled = (selectedDate.isNotEmpty() && amountSpent.isNotEmpty() && dateError == null && amountSpentError == null),
+                        colors = ButtonDefaults.buttonColors(containerColor = if (dateError == null && amountSpentError == null) Color.Green else Color.Gray)
+                    ) {
+                        Text("Submit", color = Color.White, fontSize = 16.sp)
+                    }
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun CustomCalendar(
