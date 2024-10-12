@@ -14,7 +14,6 @@ import java.util.Date
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -96,6 +95,8 @@ fun CustomCalendar(
 
 @Composable
 fun CalendarDatesGrid(streakDays: List<Date>, calendar: Calendar) {
+    val normalizedStreakDays = streakDays.map { stripTime(it) }
+
     val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
     calendar.set(Calendar.DAY_OF_MONTH, 1)
     val firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1
@@ -116,10 +117,12 @@ fun CalendarDatesGrid(streakDays: List<Date>, calendar: Calendar) {
                             set(Calendar.DAY_OF_MONTH, dayCounter)
                         }.time
 
+                        val normalizedDate = stripTime(date)
+
                         Box(modifier = Modifier.weight(1f)) {
                             DayBox(
                                 day = dayCounter,
-                                isStreakDay = streakDays.contains(date)
+                                isStreakDay = normalizedStreakDays.contains(normalizedDate)
                             )
                         }
 
@@ -130,6 +133,7 @@ fun CalendarDatesGrid(streakDays: List<Date>, calendar: Calendar) {
         }
     }
 }
+
 
 @Composable
 fun DayBox(day: Int, isStreakDay: Boolean) {
@@ -145,11 +149,21 @@ fun DayBox(day: Int, isStreakDay: Boolean) {
 }
 
 
-// Helper function to get month names
 fun getMonthName(month: Int): String {
     val monthFormat = SimpleDateFormat("MMMM", Locale.getDefault())
     val cal = Calendar.getInstance().apply {
         set(Calendar.MONTH, month)
     }
     return monthFormat.format(cal.time)
+}
+
+fun stripTime(date: Date): Date {
+    val calendar = Calendar.getInstance().apply {
+        time = date
+        set(Calendar.HOUR_OF_DAY, 0)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }
+    return calendar.time
 }
