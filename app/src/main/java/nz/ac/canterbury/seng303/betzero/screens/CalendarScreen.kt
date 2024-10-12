@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import nz.ac.canterbury.seng303.betzero.utils.CalendarUtil.getMonthName
+import nz.ac.canterbury.seng303.betzero.utils.CalendarUtil.stripTime
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -159,19 +161,23 @@ fun ShowDayDetails(date: Date, onDismiss: () -> Unit) {
                 .fillMaxHeight(0.6f)
                 .padding(16.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .background(Color.White),
-            contentAlignment = Alignment.Center
+                .background(Color.White)
         ) {
+            Text(
+                text = SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(date),
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 16.dp)
+            )
+
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.align(Alignment.Center)
             ) {
-                Text(
-                    text = "Details for ${SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(date)}",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(32.dp))
                 Text(text = "Some info about this day...")
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(onClick = onDismiss) {
@@ -195,23 +201,4 @@ fun DayBox(day: Int, isStreakDay: Boolean, onClick: () -> Unit) {
     ) {
         Text(text = "$day", fontSize = 16.sp, fontWeight = FontWeight.Bold)
     }
-}
-
-fun getMonthName(month: Int): String {
-    val monthFormat = SimpleDateFormat("MMMM", Locale.getDefault())
-    val cal = Calendar.getInstance().apply {
-        set(Calendar.MONTH, month)
-    }
-    return monthFormat.format(cal.time)
-}
-
-fun stripTime(date: Date): Date {
-    val calendar = Calendar.getInstance().apply {
-        time = date
-        set(Calendar.HOUR_OF_DAY, 0)
-        set(Calendar.MINUTE, 0)
-        set(Calendar.SECOND, 0)
-        set(Calendar.MILLISECOND, 0)
-    }
-    return calendar.time
 }
