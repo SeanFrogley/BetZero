@@ -12,11 +12,14 @@ import nz.ac.canterbury.seng303.betzero.models.UserProfile
 
 class CalendarViewModel(
     private val userProfileStorage: Storage<UserProfile>,
-    private val dailyLogStorage: Storage<DailyLog> // Injecting dailyLogStorage
+    private val dailyLogStorage: Storage<DailyLog>
 ) : ViewModel() {
 
     private val _userProfile = MutableStateFlow<UserProfile?>(null)
     val userProfile: StateFlow<UserProfile?> get() = _userProfile
+
+    private val _dailyLogs = MutableStateFlow<List<DailyLog>>(emptyList())
+    val dailyLogs: StateFlow<List<DailyLog>> get() = _dailyLogs
 
     init {
         viewModelScope.launch {
@@ -29,6 +32,12 @@ class CalendarViewModel(
                 }
             } catch (e: Exception) {
                 _userProfile.value = null
+            }
+            try {
+                val logs = dailyLogStorage.getAll().first()
+                _dailyLogs.value = logs
+            } catch (e: Exception) {
+                _dailyLogs.value = emptyList()
             }
         }
     }

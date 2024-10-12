@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng303.betzero.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -55,17 +56,18 @@ import java.util.Locale
 fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = koinViewModel()) {
     val userProfile by viewModel.userProfile.collectAsState()
     val dailyLogs = listOf(
-        DailyLog(id = 1, feeling = "Happy", voiceMemo = "path/to/memo1", date = "2024-10-11"),
+        DailyLog(id = 1, feeling = "Happy", voiceMemo = "path/to/memo1", date = "2024-10-09"),
         DailyLog(id = 2, feeling = "Sad", voiceMemo = "path/to/memo2", date = "2024-10-10"),
-        DailyLog(id = 3, feeling = "Neutral", voiceMemo = "path/to/memo3", date = "2024-10-09")
+        DailyLog(id = 3, feeling = "Neutral", voiceMemo = "path/to/memo3", date = "2024-10-11")
     )
     val startDate = userProfile?.lastGambledDate ?: Date()
-
     val streakDays = UserUtil.getAllDatesSinceStart(startDate)
+
     Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         CustomCalendar(streakDays = streakDays, dailyLogs = dailyLogs, modifier = Modifier.fillMaxSize())
     }
 }
+
 @Composable
 fun CustomCalendar(
     streakDays: List<Date>,
