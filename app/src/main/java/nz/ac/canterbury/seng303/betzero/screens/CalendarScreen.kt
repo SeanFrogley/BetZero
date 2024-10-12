@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.SentimentNeutral
 import androidx.compose.material.icons.filled.SentimentVeryDissatisfied
 import androidx.compose.material.icons.filled.SentimentVerySatisfied
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -63,8 +64,28 @@ fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = 
     val startDate = userProfile?.lastGambledDate ?: Date()
     val streakDays = UserUtil.getAllDatesSinceStart(startDate)
 
-    Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        CustomCalendar(streakDays = streakDays, dailyLogs = dailyLogs, modifier = Modifier.fillMaxSize())
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Current Streak: ${streakDays.size} days",
+            color = Color.Black,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        Divider()
+
+        Box(modifier = Modifier.fillMaxSize()) {
+            CustomCalendar(
+                streakDays = streakDays,
+                dailyLogs = dailyLogs,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }
 
@@ -94,11 +115,13 @@ fun CustomCalendar(
         ) {
             Text(
                 text = "<",
-                modifier = Modifier.padding(8.dp).clickable {
-                    calendar.add(Calendar.MONTH, -1)
-                    displayedMonth = calendar.get(Calendar.MONTH)
-                    displayedYear = calendar.get(Calendar.YEAR)
-                },
+                modifier = Modifier
+                    .padding(8.dp)
+                    .clickable {
+                        calendar.add(Calendar.MONTH, -1)
+                        displayedMonth = calendar.get(Calendar.MONTH)
+                        displayedYear = calendar.get(Calendar.YEAR)
+                    },
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -113,11 +136,13 @@ fun CustomCalendar(
 
             Text(
                 text = ">",
-                modifier = Modifier.padding(8.dp).clickable {
-                    calendar.add(Calendar.MONTH, 1)
-                    displayedMonth = calendar.get(Calendar.MONTH)
-                    displayedYear = calendar.get(Calendar.YEAR)
-                },
+                modifier = Modifier
+                    .padding(8.dp)
+                    .clickable {
+                        calendar.add(Calendar.MONTH, 1)
+                        displayedMonth = calendar.get(Calendar.MONTH)
+                        displayedYear = calendar.get(Calendar.YEAR)
+                    },
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -159,7 +184,9 @@ fun CalendarDatesGrid(streakDays: List<Date>, calendar: Calendar, dailyLogs: Lis
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                 for (dayOfWeek in 0..6) {
                     if (week == 0 && dayOfWeek < firstDayOfWeek || dayCounter > daysInMonth) {
-                        Box(modifier = Modifier.weight(1f).height(40.dp))
+                        Box(modifier = Modifier
+                            .weight(1f)
+                            .height(40.dp))
                     } else {
                         val date = Calendar.getInstance().apply {
                             set(Calendar.YEAR, calendar.get(Calendar.YEAR))
