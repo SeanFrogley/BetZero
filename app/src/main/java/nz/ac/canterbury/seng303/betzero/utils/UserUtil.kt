@@ -52,6 +52,19 @@ object UserUtil {
         }
     }
 
+    fun getAllDatesSinceStart(startDate: Date): List<Date> {
+        val datesList = mutableListOf<Date>()
+        val calendar = Calendar.getInstance()
+        calendar.time = startDate
+
+        while (calendar.time.before(Date()) || calendar.time == Date()) {
+            datesList.add(calendar.time)
+            calendar.add(Calendar.DAY_OF_MONTH, 1)
+        }
+
+        return datesList
+    }
+
     fun createUser(): UserProfile {
         val calendar = Calendar.getInstance()
 
