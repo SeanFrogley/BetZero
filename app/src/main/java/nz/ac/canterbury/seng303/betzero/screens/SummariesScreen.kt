@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material.icons.filled.SendTimeExtension
 import androidx.compose.material.icons.filled.SentimentNeutral
 import androidx.compose.material.icons.filled.SentimentVeryDissatisfied
@@ -49,20 +50,26 @@ fun SummariesScreen(navController: NavController) {
     var currentlyPlayingId by remember { mutableStateOf<Int?>(null) }
     val coroutineScope = rememberCoroutineScope()
 
-    // Fetch recordings on screen load
     LaunchedEffect(Unit) {
         coroutineScope.launch {
-            recordings = RecordingUtil.getAllRecordings(context).map { file ->
-                // Correctly use getSelectedMood to get the mood
-                DailyLog(
-                    id = file.hashCode(),
-                    feeling = "Happy", // You might want to update this part depending on actual data.
-                    voiceMemo = file.name,
-                    date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(file.lastModified()))
-                )
-            }
+            recordings = RecordingUtil.getAllRecordings(context)
+                .sortedByDescending { it.lastModified() } // Sort files by last modified date in descending order
+                .mapNotNull { file ->
+                    val feeling = RecordingUtil.getMoodFromFile(file)
+                    if (feeling != null) {
+                        DailyLog(
+                            id = file.hashCode(),
+                            feeling = feeling,
+                            voiceMemo = file.name,
+                            date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(file.lastModified()))
+                        )
+                    } else {
+                        null // Skip entries without a valid mood
+                    }
+                }
         }
     }
+
 
     // Clean up MediaPlayer resources on dispose
     DisposableEffect(Unit) {
@@ -87,18 +94,13 @@ fun SummariesScreen(navController: NavController) {
                         .padding(8.dp)
                 ) {
                     Column {
-                        Text(
-                            text = entry.date
-                        )
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            // Get the mood icon based on the DailyLog's mood
+                        Text(text = entry.date)
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             val moodIcon = when (entry.feeling) {
                                 "Happy" -> Icons.Default.SentimentVerySatisfied
                                 "Neutral" -> Icons.Default.SentimentNeutral
                                 "Sad" -> Icons.Default.SentimentVeryDissatisfied
-                                else -> Icons.Default.SendTimeExtension
+                                else -> Icons.Default.QuestionMark
                             }
                             Icon(
                                 imageVector = moodIcon,
@@ -128,4 +130,3 @@ fun SummariesScreen(navController: NavController) {
         }
     }
 }
-

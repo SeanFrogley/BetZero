@@ -10,12 +10,19 @@ class VoiceRecorder(private val context: Context) {
     private var mediaRecorder: MediaRecorder? = null
     private var outputFile: String? = null
 
-    fun startRecording() {
+    fun startRecording(mood: String) {
         val externalDir = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
         if (externalDir != null && !externalDir.exists()) {
             externalDir.mkdirs()
-        }
-        outputFile = "${externalDir?.absolutePath}/audiorecordtest_${System.currentTimeMillis()}.mp3"
+        }      // Create a timestamp to make the file name unique
+        val timeStamp = System.currentTimeMillis()
+
+        val sanitizedMood = mood.replace(Regex("[^a-zA-Z0-9]"), "_")
+
+        // Construct the file name with the user's name, mood, and timestamp
+        outputFile = "${externalDir?.absolutePath}/audiorecord_${sanitizedMood}_$timeStamp.mp3"
+
+
         mediaRecorder = MediaRecorder().apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
@@ -36,10 +43,6 @@ class VoiceRecorder(private val context: Context) {
             release()
         }
         mediaRecorder = null
-        return outputFile
-    }
-
-    fun getOutputFile(): String? {
         return outputFile
     }
 }
