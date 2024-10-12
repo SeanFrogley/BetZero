@@ -51,7 +51,7 @@ val dataAccessModule = module {
     single<Storage<RelapseLog>>(named("relapseLog")) {
         PersistentStorage(
             gson = get(),
-            type = object: TypeToken<List<DailyLog>>(){}.type,
+            type = object: TypeToken<List<RelapseLog>>(){}.type,
             preferenceKey = stringPreferencesKey("relapseLog"),
             dataStore = androidContext().dataStore
         )

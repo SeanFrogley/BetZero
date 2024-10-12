@@ -55,6 +55,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.betzero.models.DailyLog
+import nz.ac.canterbury.seng303.betzero.models.RelapseLog
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
 import nz.ac.canterbury.seng303.betzero.utils.CalendarUtil.getMonthName
 import nz.ac.canterbury.seng303.betzero.utils.CalendarUtil.stripTime
@@ -269,6 +270,7 @@ fun ShowRelapseForm(
                                 gamblingStartDate = userProfile.gamblingStartDate,
                                 lastGambledDate = if (parsedDate.after(userProfile.lastGambledDate)) parsedDate else userProfile.lastGambledDate
                             )
+                            viewModel.insertRelapseLog(selectedDate, amountSpent)
 
                             onDismiss()
                         },

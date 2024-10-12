@@ -17,9 +17,12 @@ import nz.ac.canterbury.seng303.betzero.models.UserProfile
 import nz.ac.canterbury.seng303.betzero.utils.UserUtil.calculateDailySavings
 import nz.ac.canterbury.seng303.betzero.utils.UserUtil.calculateTotalSavings
 import nz.ac.canterbury.seng303.betzero.utils.UserUtil.roundToTwoDecimalPlaces
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Date
+import java.util.Locale
+import kotlin.random.Random
 
 class CalendarViewModel(
     private val userProfileStorage: Storage<UserProfile>,
@@ -119,6 +122,28 @@ class CalendarViewModel(
         } catch (exception: Exception) {
             withContext(Dispatchers.Main) {
                 Log.e("USER_PROFILE_VM", "Could not update user profile: $exception")
+            }
+        }
+    }
+
+    fun insertRelapseLog(selectedDate: String, amountSpent: String) = viewModelScope.launch {
+        val parsedAmount = amountSpent.toDoubleOrNull() ?: 0.0
+        val parsedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(selectedDate) ?: Date()
+
+        val newRelapseLog = RelapseLog(
+            id = Random.nextInt(0, Int.MAX_VALUE),
+            date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(parsedDate),
+            amountSpent = parsedAmount
+        )
+
+        // Insert the new relapse log into the storage
+        relapseLogStorage.insert(newRelapseLog).collect { result ->
+            if (result == 1) {
+                // Update the relapse logs state
+                _relapseLogs.value = _relapseLogs.value + newRelapseLog
+                Log.d("RelapseLog", "Relapse log inserted successfully")
+            } else {
+                Log.e("RelapseLog", "Failed to insert relapse log")
             }
         }
     }
