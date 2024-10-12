@@ -28,13 +28,14 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import nz.ac.canterbury.seng303.betzero.utils.CalendarUtil.getMonthName
 import nz.ac.canterbury.seng303.betzero.utils.CalendarUtil.stripTime
+import nz.ac.canterbury.seng303.betzero.viewmodels.CalendarViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun CalendarScreen(navController: NavController, viewModel: AnalyticsViewModel = koinViewModel()) {
+fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = koinViewModel()) {
     val userProfile by viewModel.userProfile.collectAsState()
-
+    val dailyLogs by viewModel.dailyLogs.collectAsState()
     val startDate = userProfile?.lastGambledDate ?: Date()
 
     val streakDays = UserUtil.getAllDatesSinceStart(startDate)
@@ -179,8 +180,20 @@ fun ShowDayDetails(date: Date, onDismiss: () -> Unit) {
             ) {
                 Spacer(modifier = Modifier.height(32.dp))
                 Text(text = "Some info about this day...")
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = onDismiss) {
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .align(Alignment.BottomEnd),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier.width(120.dp),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
                     Text(text = "Close")
                 }
             }
