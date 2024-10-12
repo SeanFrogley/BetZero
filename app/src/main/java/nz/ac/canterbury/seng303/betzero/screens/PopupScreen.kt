@@ -35,6 +35,7 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
     var showExitConfirmation by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
+    // Request permission for recording
     val requestPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean -> hasRecordingPermission = isGranted }
@@ -49,7 +50,7 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
             }
         }
     }
-
+    // If the user wants to exit the pop-up dialog, display warning
     if (showExitConfirmation) {
         AlertDialog(
             onDismissRequest = { showExitConfirmation = false },
@@ -71,6 +72,7 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
         )
     }
 
+    // Main content of the popup dialog
     AlertDialog(
         onDismissRequest = { showExitConfirmation = true },
         title = {
@@ -93,7 +95,6 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Moved Mood Selection before Recording Button
                 Text("How are you feeling today?", fontSize = 18.sp, modifier = Modifier.align(Alignment.CenterHorizontally))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -134,11 +135,11 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
                         )
                     }
                 }
+                // Dividers!
                 Spacer(modifier = Modifier.height(16.dp))
                 Divider()
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Recording Button
                 if (hasRecordingPermission) {
                     Button(
                         onClick = {
@@ -178,7 +179,6 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
                 }
-
                 Spacer(modifier = Modifier.height(16.dp))
                 Divider()
                 Spacer(modifier = Modifier.height(8.dp))

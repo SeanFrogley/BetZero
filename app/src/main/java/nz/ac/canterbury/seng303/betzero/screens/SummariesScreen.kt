@@ -53,7 +53,7 @@ fun SummariesScreen(navController: NavController) {
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             recordings = RecordingUtil.getAllRecordings(context)
-                .sortedByDescending { it.lastModified() } // Sort files by last modified date in descending order
+                .sortedByDescending { it.lastModified() }
                 .mapNotNull { file ->
                     val feeling = RecordingUtil.getMoodFromFile(file)
                     if (feeling != null) {
@@ -70,8 +70,6 @@ fun SummariesScreen(navController: NavController) {
         }
     }
 
-
-    // Clean up MediaPlayer resources on dispose
     DisposableEffect(Unit) {
         onDispose {
             mediaPlayer?.release()
@@ -94,8 +92,12 @@ fun SummariesScreen(navController: NavController) {
                         .padding(8.dp)
                 ) {
                     Column {
-                        Text(text = entry.date)
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = entry.date
+                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             val moodIcon = when (entry.feeling) {
                                 "Happy" -> Icons.Default.SentimentVerySatisfied
                                 "Neutral" -> Icons.Default.SentimentNeutral
@@ -106,8 +108,11 @@ fun SummariesScreen(navController: NavController) {
                                 imageVector = moodIcon,
                                 contentDescription = entry.feeling
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Button(onClick = {
+                            Spacer(
+                                modifier = Modifier.width(8.dp)
+                            )
+                            Button(
+                                onClick = {
                                 if (currentlyPlayingId == entry.id) {
                                     mediaPlayer?.pause()
                                     currentlyPlayingId = null

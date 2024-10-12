@@ -14,12 +14,12 @@ class VoiceRecorder(private val context: Context) {
         val externalDir = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
         if (externalDir != null && !externalDir.exists()) {
             externalDir.mkdirs()
-        }      // Create a timestamp to make the file name unique
+        }    // Timestamp to make file name unique
         val timeStamp = System.currentTimeMillis()
 
         val sanitizedMood = mood.replace(Regex("[^a-zA-Z0-9]"), "_")
 
-        // Construct the file name with the user's name, mood, and timestamp
+        // File name will contain the mood and the timestamp
         outputFile = "${externalDir?.absolutePath}/audiorecord_${sanitizedMood}_$timeStamp.mp3"
 
 
