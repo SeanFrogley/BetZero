@@ -2,6 +2,9 @@ package nz.ac.canterbury.seng303.betzero.screens
 
 import android.app.DatePickerDialog
 import android.icu.util.Calendar
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -274,6 +277,20 @@ fun UpdateUserProfileScreen(navController: NavController, viewModel: UpdateUserP
                     style = androidx.compose.ui.text.TextStyle(fontSize = 12.sp),
                     modifier = Modifier.padding(start = 16.dp)
                 )
+            }
+
+            val launcher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.GetContent()
+            ) { uri: Uri? ->
+                uri?.let {
+                    // Save the URI or convert the image to base64 and update UserProfile
+//                    val updatedProfile = currentUserProfile.copy(profilePictureUri = it.toString())
+//                    viewModel.updateProfile(updatedProfile)
+                }
+            }
+
+            Button(onClick = { launcher.launch("image/*") }) {
+                Text("Select Profile Picture")
             }
 
             Spacer(modifier = Modifier.height(32.dp))

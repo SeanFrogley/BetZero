@@ -14,6 +14,9 @@ class UserProfile (
     val gamblingStartDate: Date,
     val lastGambledDate: Date,
 
+    //User profile picture
+//    val profilePictureUri: String? = null,
+
     //Preferences data
     val isDarkMode: Boolean = false,
     val isUserEnforcedTheme: Boolean = false
