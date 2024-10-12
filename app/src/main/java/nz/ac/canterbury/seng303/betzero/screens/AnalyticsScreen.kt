@@ -1,8 +1,5 @@
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.awaitTouchSlopOrCancellation
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,7 +38,6 @@ import nz.ac.canterbury.seng303.betzero.utils.UserUtil
 import nz.ac.canterbury.seng303.betzero.viewmodels.AnalyticsViewModel
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -55,9 +51,8 @@ fun AnalyticsScreen(navController: NavController, viewModel: AnalyticsViewModel 
 
     val daysSinceStart = userProfile?.let {
         val currentDate = Date()
-        UserUtil.calculateDaysBetween(it.gamblingStartDate, currentDate)
+        UserUtil.calculateDaysBetween(it.lastGambledDate, currentDate)
     } ?: 0
-    val startDate = userProfile?.gamblingStartDate?.toString() ?: "N/A"
     var isMonthlyView by rememberSaveable { mutableStateOf(false) }
 
     val size = if (isMonthlyView) 30 else 7
@@ -69,7 +64,6 @@ fun AnalyticsScreen(navController: NavController, viewModel: AnalyticsViewModel 
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .background(Color.White)
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -95,11 +89,11 @@ fun AnalyticsScreen(navController: NavController, viewModel: AnalyticsViewModel 
                 checked = isMonthlyView,
                 onCheckedChange = { isMonthlyView = it },
                 colors = SwitchDefaults.colors(
-                    checkedThumbColor = Color(0xFF4CAF50),
-                    uncheckedThumbColor = Color(0xFF4CAF50),
+                    checkedThumbColor =MaterialTheme.colorScheme.primary,
+                    uncheckedThumbColor = MaterialTheme.colorScheme.primary,
 
-                    checkedTrackColor = Color(0xFFB0BEC5),
-                    uncheckedTrackColor = Color(0xFFB0BEC5)
+                    checkedTrackColor = MaterialTheme.colorScheme.onPrimary,
+                    uncheckedTrackColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
             Text(text = "Monthly", fontSize = 16.sp)
@@ -117,7 +111,7 @@ fun AnalyticsScreen(navController: NavController, viewModel: AnalyticsViewModel 
 
         InfoRow(
             title = "Days since start date",
-            value = "$startDate",
+            value = "$daysSinceStart",
             rightValue = "$daysSinceStart ${if (daysSinceStart == 1L) "day" else "days"}"
         )
 
@@ -244,12 +238,12 @@ fun BarChart(
             ) {
                 Box(
                     modifier = Modifier
-                        .background(Color.White, shape = RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.background, shape = RoundedCornerShape(8.dp))
                         .padding(8.dp)
                 ) {
                     Text(
                         text = "${dateFormatter.format(selectedDate)}\nSaved: $${String.format(Locale.US, "%.2f", selectedValue)}",
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
                     )

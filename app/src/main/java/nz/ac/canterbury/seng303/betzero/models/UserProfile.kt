@@ -12,13 +12,17 @@ class UserProfile (
     val totalSaved: Double,
     val dailySavings: Double,
     val gamblingStartDate: Date,
-    val lastGambledDate: Date
+    val lastGambledDate: Date,
+
+    //Preferences data
+    val isDarkMode: Boolean = false,
+    val isUserEnforcedTheme: Boolean = false
 ) : Identifiable {
     override fun getIdentifier(): Int {
         return id;
     }
 
     override fun toString(): String {
-        return "UserProfile(id=$id, name=$name, totalSpent=$totalSpent, totalSaved=$totalSaved, dailySavings=$dailySavings, gamblingStartDate=$gamblingStartDate, startDate=$lastGambledDate)"
+        return "UserProfile(id=$id, name=$name, totalSpent=$totalSpent, totalSaved=$totalSaved, dailySavings=$dailySavings, gamblingStartDate=$gamblingStartDate, startDate=$lastGambledDate, isDarkMode=$isDarkMode, isUserEnforcedTheme=$isUserEnforcedTheme)"
     }
 }

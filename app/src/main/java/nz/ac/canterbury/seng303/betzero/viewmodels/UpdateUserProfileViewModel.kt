@@ -1,9 +1,9 @@
 package nz.ac.canterbury.seng303.betzero.viewmodels
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.betzero.datastore.Storage
@@ -14,15 +14,35 @@ import nz.ac.canterbury.seng303.betzero.utils.UserUtil.roundToTwoDecimalPlaces
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Date
-import kotlin.random.Random
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
-class GettingStartedViewModel(
+
+class UpdateUserProfileViewModel (
     private val userProfileStorage: Storage<UserProfile>
 ) : ViewModel() {
 
-    var _userProfile = mutableStateOf<UserProfile?>(null)
+    private val _userProfile = MutableStateFlow<UserProfile?>(null)
+    val userProfile: StateFlow<UserProfile?> get() = _userProfile
 
-    fun saveUserProfile(
+    init {
+        viewModelScope.launch {
+            try {
+                val userProfiles = userProfileStorage.getAll().first()
+                if (userProfiles.isNotEmpty()) {
+                    _userProfile.value = userProfiles.first()
+                } else {
+                    _userProfile.value = null
+                }
+            } catch (e: Exception) {
+                _userProfile.value = null
+            }
+        }
+    }
+
+
+    fun updateUserProfile(
+        id: Int,
         name: String,
         totalSpent: Double,
         gamblingStartDate: Date,
@@ -39,34 +59,40 @@ class GettingStartedViewModel(
             startDate = gamblingStartDate,
             endDate = lastGambledDate
         )
-        val balance = 10000
+
         val roundedTotalSpent = roundToTwoDecimalPlaces(totalSpent)
         val roundedTotalSaved = roundToTwoDecimalPlaces(totalSaved)
 
+        val currentProfile = _userProfile.value
+
         val userProfile = UserProfile(
-            id = Random.nextInt(0, Int.MAX_VALUE),
+            id = id,
             name = name,
             totalSpent = roundedTotalSpent,
             totalSaved = roundedTotalSaved,
             gamblingStartDate = gamblingStartDate,
             dailySavings = dailySavings,
-            lastGambledDate = lastGambledDate
+            lastGambledDate = lastGambledDate,
+
+            isDarkMode = currentProfile?.isDarkMode ?: false,
+            isUserEnforcedTheme = currentProfile?.isUserEnforcedTheme ?: false
         )
-        Log.d("DataStoreInsert", "Inserting user profile: $userProfile")
+        Log.d("DataStoreInsert", "Updating user profile: $userProfile")
         try {
-            val result = userProfileStorage.insert(userProfile).first()
+            val result = userProfileStorage.edit(userProfile.getIdentifier(), userProfile).first()
             if (result == 1) {
-                Log.d("USER_PROFILE_VM", "User profile inserted successfully")
+                Log.d("USER_PROFILE_VM", "User profile updated successfully")
                 _userProfile.value = userProfile
             } else {
-                Log.e("USER_PROFILE_VM", "User profile insertion failed")
+                Log.e("USER_PROFILE_VM", "User profile update failed")
             }
             userProfileStorage.getAll()
                 .collect { profiles ->
-                    Log.i("GettingStartedViewModel", "User Profiles: $profiles")
+                    Log.i("UpdateUserProfileViewModel", "User Profiles: $profiles")
                 }
         } catch (exception: Exception) {
-            Log.e("USER_PROFILE_VM", "Could not insert user profile: $exception")
+            Log.e("USER_PROFILE_VM", "Could not update user profile: $exception")
         }
+
     }
 }

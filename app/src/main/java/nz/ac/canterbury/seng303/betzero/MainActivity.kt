@@ -1,10 +1,11 @@
 package nz.ac.canterbury.seng303.betzero
 
 import AnalyticsScreen
-import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,57 +34,64 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.compose.BetzeroTheme
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import nz.ac.canterbury.seng303.betzero.screens.CalendarScreen
 import nz.ac.canterbury.seng303.betzero.screens.EmergencyScreen
 import nz.ac.canterbury.seng303.betzero.screens.GettingStartedScreen
 import nz.ac.canterbury.seng303.betzero.screens.InitialScreen
 import nz.ac.canterbury.seng303.betzero.screens.OnboardingScreen
+import nz.ac.canterbury.seng303.betzero.screens.PreferencesScreen
 import nz.ac.canterbury.seng303.betzero.screens.SummariesScreen
-
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "userProfile")
+import nz.ac.canterbury.seng303.betzero.screens.UpdateUserProfileScreen
+import nz.ac.canterbury.seng303.betzero.screens.UserProfileScreen
+import nz.ac.canterbury.seng303.betzero.viewmodels.PreferencesViewModel
+import org.koin.android.ext.android.inject
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
+    private val preferencesViewModel: PreferencesViewModel by inject()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val userProfileExists = runBlocking {
-            val userProfileKey = stringPreferencesKey("userProfile")
-            val preferences = dataStore.data.first()
-            val userProfileJson = preferences[userProfileKey]
-            !userProfileJson.isNullOrEmpty()
-        }
 
         setContent {
-            BetzeroTheme {
+            //set whether the system is in dark mode as it must come from a composable
+            preferencesViewModel.setIsSystemInDarkTheme(isSystemInDarkTheme())
+
+
+            val isDarkTheme by preferencesViewModel.isDarkTheme.collectAsStateWithLifecycle()
+
+
+            BetzeroTheme(darkTheme = isDarkTheme) {
                 val navController = rememberNavController()
                 val iconModifier = Modifier.size(50.dp)
                 val iconColor = MaterialTheme.colorScheme.primary
 
                 Scaffold(
                     topBar = {
+                        val navBackStackEntry by navController.currentBackStackEntryAsState()
+                        val currentDestination = navBackStackEntry?.destination
                         TopAppBar(
                             title = { Text("BetZero") },
                             actions = {
-                                IconButton(onClick = { /* navController.navigate("userProfile") this should just take the user to their profile screen, dont think im meant to implement here*/ }) {
-                                    Icon(
-                                        imageVector = Icons.Default.AccountCircle,
-                                        contentDescription = "Profile",
-                                        tint = Color(0xFF42A5F5)
-                                    )
+                                if (currentDestination?.route !in listOf("OnBoardingScreen", "GettingStartedScreen")) {
+                                    IconButton(onClick = { navController.navigate("userProfileScreen") }) {
+                                        Icon(
+                                            imageVector = Icons.Default.AccountCircle,
+                                            contentDescription = "Profile",
+                                            modifier = iconModifier,
+                                            tint = iconColor
+                                        )
+                                    }
                                 }
                             }
                         )
@@ -171,6 +179,15 @@ class MainActivity : ComponentActivity() {
                             composable("GettingStartedScreen") {
                                 GettingStartedScreen(navController = navController)
                             }
+                            composable("UserProfileScreen") {
+                                UserProfileScreen(navController = navController)
+                            }
+                            composable("UpdateUserProfileScreen") {
+                                UpdateUserProfileScreen(navController = navController)
+                            }
+                            composable("PreferencesScreen") {
+                                PreferencesScreen(navController = navController)
+                            }
                         }
                     }
                 }
@@ -181,7 +198,7 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun Home(navController: NavController) {
+fun Home(navController: NavController, viewModel: PreferencesViewModel = koinViewModel()) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,

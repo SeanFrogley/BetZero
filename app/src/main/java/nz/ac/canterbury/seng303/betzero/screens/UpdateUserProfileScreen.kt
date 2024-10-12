@@ -4,7 +4,6 @@ import android.app.DatePickerDialog
 import android.icu.util.Calendar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +26,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -43,17 +44,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.betzero.utils.InputValidation
-import nz.ac.canterbury.seng303.betzero.viewmodels.GettingStartedViewModel
+import nz.ac.canterbury.seng303.betzero.viewmodels.UpdateUserProfileViewModel
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun GettingStartedScreen(navController: NavController, viewModel: GettingStartedViewModel = koinViewModel()) {
+fun UpdateUserProfileScreen(navController: NavController, viewModel: UpdateUserProfileViewModel = koinViewModel()) {
+    val userProfile by viewModel.userProfile.collectAsState()
+
     var userName by rememberSaveable { mutableStateOf("") }
     var totalSpent by rememberSaveable { mutableStateOf("") }
     var selectedStartDate by rememberSaveable { mutableStateOf("") }
     var selectedLastGambledDate by rememberSaveable { mutableStateOf("") }
+
+    // Use LaunchedEffect to set initial values from userProfile
+    LaunchedEffect(userProfile) {
+        userProfile?.let {
+            userName = it.name
+            totalSpent = it.totalSpent.toString() // Convert to String
+            selectedStartDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(it.gamblingStartDate)
+            selectedLastGambledDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(it.lastGambledDate)
+        }
+    }
 
     var nameError by rememberSaveable { mutableStateOf<String?>(null) }
     var totalSpentError by rememberSaveable { mutableStateOf<String?>(null) }
@@ -90,7 +103,6 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background( if (isSystemInDarkTheme()) Color(0xFF2a6278) else Color(0xFFafddf0) )          // TODO change to colour resource and abstract to color.kt file
     ) {
         Column(
             modifier = Modifier
@@ -110,20 +122,11 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Let's get started!",
+                        text = "Edit your profile",     //TODO string to move to string resource
                         style = androidx.compose.ui.text.TextStyle(
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onBackground
-                        ),
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Can you answer some questions for us?",
-                        style = androidx.compose.ui.text.TextStyle(
-                            fontSize = 14.sp,
-                            color = MaterialTheme.colorScheme.secondary
                         ),
                         textAlign = TextAlign.Center
                     )
@@ -278,13 +281,14 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
             Button(
                 onClick = {
                     if (nameError == null && totalSpentError == null && startDateError == null && lastGambledDateError == null) {
-                        viewModel.saveUserProfile(
+                        viewModel.updateUserProfile(
+                            id = userProfile?.id ?: 0,
                             name = userName,
                             totalSpent = totalSpent.toDouble(),
                             gamblingStartDate = SimpleDateFormat("yyyy-MM-dd").parse(selectedStartDate),
                             lastGambledDate = SimpleDateFormat("yyyy-MM-dd").parse(selectedLastGambledDate)
                         )
-                        navController.navigate("Home")
+                        navController.navigate("userProfileScreen")
                     }
                 },
                 modifier = Modifier
