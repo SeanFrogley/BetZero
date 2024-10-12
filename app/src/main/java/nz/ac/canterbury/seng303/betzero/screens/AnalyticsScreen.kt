@@ -176,7 +176,7 @@ fun BarChart(
                 .fillMaxWidth()
                 .height(300.dp)
                 .padding(padding)
-                .pointerInput(Unit) {
+                .pointerInput(barData.size) {
                     awaitPointerEventScope {
                         while (true) {
                             val event = awaitPointerEvent()
