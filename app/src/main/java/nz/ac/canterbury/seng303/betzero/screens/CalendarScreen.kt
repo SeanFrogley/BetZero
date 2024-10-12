@@ -70,6 +70,8 @@ import java.util.Locale
 @Composable
 fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = koinViewModel()) {
     val userProfile by viewModel.userProfile.collectAsState()
+    val relapseLogs by viewModel.relapseLogs.collectAsState()
+    Log.i("Screen", relapseLogs.toString())
     val dailyLogs = listOf(
         DailyLog(id = 1, feeling = "Happy", voiceMemo = "path/to/memo1", date = "2024-10-09"),
         DailyLog(id = 2, feeling = "Sad", voiceMemo = "path/to/memo2", date = "2024-10-10"),
@@ -142,7 +144,6 @@ fun ShowRelapseForm(
     var dateError by remember { mutableStateOf<String?>(null) }
     var amountSpentError by remember { mutableStateOf<String?>(null) }
 
-    // Date picker setup
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
     val datePickerDialog = DatePickerDialog(

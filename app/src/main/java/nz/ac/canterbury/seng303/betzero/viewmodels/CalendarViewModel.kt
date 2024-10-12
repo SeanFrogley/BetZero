@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import nz.ac.canterbury.seng303.betzero.datastore.Storage
 import nz.ac.canterbury.seng303.betzero.models.DailyLog
+import nz.ac.canterbury.seng303.betzero.models.RelapseLog
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
 import nz.ac.canterbury.seng303.betzero.utils.UserUtil.calculateDailySavings
 import nz.ac.canterbury.seng303.betzero.utils.UserUtil.calculateTotalSavings
@@ -22,7 +23,8 @@ import java.util.Date
 
 class CalendarViewModel(
     private val userProfileStorage: Storage<UserProfile>,
-    private val dailyLogStorage: Storage<DailyLog>
+    private val dailyLogStorage: Storage<DailyLog>,
+    private val relapseLogStorage: Storage<RelapseLog>
 ) : ViewModel() {
 
     private val _userProfile = MutableStateFlow<UserProfile?>(null)
@@ -31,9 +33,13 @@ class CalendarViewModel(
     private val _dailyLogs = MutableStateFlow<List<DailyLog>>(emptyList())
     val dailyLogs: StateFlow<List<DailyLog>> get() = _dailyLogs
 
+    private val _relapseLogs = MutableStateFlow<List<RelapseLog>>(emptyList())
+    val relapseLogs: StateFlow<List<RelapseLog>> get() = _relapseLogs
+
     init {
         viewModelScope.launch {
             try {
+                // Retrieve user profile
                 val userProfiles = userProfileStorage.getAll().first()
                 if (userProfiles.isNotEmpty()) {
                     _userProfile.value = userProfiles.first()
@@ -43,11 +49,19 @@ class CalendarViewModel(
             } catch (e: Exception) {
                 _userProfile.value = null
             }
+
             try {
                 val logs = dailyLogStorage.getAll().first()
                 _dailyLogs.value = logs
             } catch (e: Exception) {
                 _dailyLogs.value = emptyList()
+            }
+
+            try {
+                val relapseLogEntries = relapseLogStorage.getAll().first()
+                _relapseLogs.value = relapseLogEntries
+            } catch (e: Exception) {
+                _relapseLogs.value = emptyList()
             }
         }
     }
