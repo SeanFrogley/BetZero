@@ -55,6 +55,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.betzero.models.DailyLog
+import nz.ac.canterbury.seng303.betzero.models.UserProfile
 import nz.ac.canterbury.seng303.betzero.utils.CalendarUtil.getMonthName
 import nz.ac.canterbury.seng303.betzero.utils.CalendarUtil.stripTime
 import nz.ac.canterbury.seng303.betzero.utils.InputValidation
@@ -70,7 +71,6 @@ import java.util.Locale
 fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = koinViewModel()) {
     val userProfile by viewModel.userProfile.collectAsState()
     val dailyLogs = listOf(
-        DailyLog(id = 1, feeling = "Happy", voiceMemo = "path/to/memo1", date = "2024-10-09"),
         DailyLog(id = 1, feeling = "Happy", voiceMemo = "path/to/memo1", date = "2024-10-09"),
         DailyLog(id = 2, feeling = "Sad", voiceMemo = "path/to/memo2", date = "2024-10-10"),
         DailyLog(id = 3, feeling = "Neutral", voiceMemo = "path/to/memo3", date = "2024-10-11")
@@ -105,7 +105,13 @@ fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = 
         }
 
         if (showModal) {
-            ShowRelapseForm(viewModel = viewModel, onDismiss = { showModal = false })
+            userProfile?.let {
+                ShowRelapseForm(
+                    userProfile = it,
+                    viewModel = viewModel,
+                    onDismiss = { showModal = false }
+                )
+            }
         }
 
         Divider(Modifier.padding(16.dp))
@@ -124,8 +130,13 @@ fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = 
 }
 
 
+
 @Composable
-fun ShowRelapseForm(viewModel: CalendarViewModel, onDismiss: () -> Unit) {
+fun ShowRelapseForm(
+    userProfile: UserProfile,
+    viewModel: CalendarViewModel,
+    onDismiss: () -> Unit
+) {
     var selectedDate by remember { mutableStateOf("") }
     var amountSpent by remember { mutableStateOf("") }
     var dateError by remember { mutableStateOf<String?>(null) }
@@ -247,8 +258,17 @@ fun ShowRelapseForm(viewModel: CalendarViewModel, onDismiss: () -> Unit) {
 
                     Button(
                         onClick = {
-                            // Call the viewModel's update function
-                            viewModel.updateUserProfile(amountSpent.toDouble(), SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(selectedDate))
+                            val parsedAmount = amountSpent.toDouble()
+                            val parsedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(selectedDate)
+
+                            viewModel.updateUserProfile(
+                                id = userProfile.id,
+                                name = userProfile.name,
+                                totalSpent = userProfile.totalSpent + parsedAmount,
+                                gamblingStartDate = userProfile.gamblingStartDate,
+                                lastGambledDate = if (parsedDate.after(userProfile.lastGambledDate)) parsedDate else userProfile.lastGambledDate
+                            )
+
                             onDismiss()
                         },
                         modifier = Modifier.width(120.dp),

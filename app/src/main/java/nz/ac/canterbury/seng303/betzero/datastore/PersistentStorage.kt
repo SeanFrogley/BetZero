@@ -5,10 +5,16 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import nz.ac.canterbury.seng303.betzero.models.Identifiable
 import java.lang.reflect.Type
@@ -53,20 +59,31 @@ class PersistentStorage<T>(
     }
 
     override fun edit(identifier: Int, data: T): Flow<Int> {
-        return flow {
-            val cachedDataClone = getAll().first().toMutableList()
-            val index = cachedDataClone.indexOfFirst { it.getIdentifier() == identifier }
-            if (index != -1) {
-                cachedDataClone[index] = data  // Update the item with the new data
-                dataStore.edit {  // Save the updated list
-                    val jsonString = gson.toJson(cachedDataClone, type)
-                    it[preferenceKey] = jsonString
-                    emit(OPERATION_SUCCESS)
+        return channelFlow {
+            val flowContext = currentCoroutineContext()
+
+            val loading: Job = coroutineScope {
+                launch(flowContext) {
+                    val cachedDataClone = getAll().first().toMutableList()
+                    val index = cachedDataClone.indexOfFirst { it.getIdentifier() == identifier }
+
+                    if (index != -1) {
+                        cachedDataClone[index] = data
+
+                        dataStore.edit { preferences ->
+                            val jsonString = gson.toJson(cachedDataClone, type)
+                            preferences[preferenceKey] = jsonString
+                        }
+
+                        send(OPERATION_SUCCESS)
+                    } else {
+                        send(OPERATION_FAILURE)
+                    }
                 }
-            } else {
-                emit(OPERATION_FAILURE)  // Handle the case when the item with the given identifier is not found
             }
-        }
+
+            loading.join()
+        }.flowOn(Dispatchers.IO)
     }
 
     override fun get(where: (T) -> Boolean): Flow<T> {
