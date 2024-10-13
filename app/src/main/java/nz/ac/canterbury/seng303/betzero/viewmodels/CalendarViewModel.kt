@@ -26,7 +26,6 @@ import kotlin.random.Random
 
 class CalendarViewModel(
     private val userProfileStorage: Storage<UserProfile>,
-    private val dailyLogStorage: Storage<DailyLog>,
     private val relapseLogStorage: Storage<RelapseLog>
 ) : ViewModel() {
 

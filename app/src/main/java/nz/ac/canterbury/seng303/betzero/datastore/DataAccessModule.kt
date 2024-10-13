@@ -105,8 +105,7 @@ val dataAccessModule = module {
     viewModel {
         CalendarViewModel(
             userProfileStorage = get(named("userProfile")),
-            dailyLogStorage = get(named("dailyLog")),
-            relapseLogStorage = get(named("relapseLog")),
+            relapseLogStorage = get(named("relapseLog"))
         )
     }
 }
