@@ -9,10 +9,12 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.FlowPreview
 import nz.ac.canterbury.seng303.betzero.models.DailyLog
+import nz.ac.canterbury.seng303.betzero.models.RelapseLog
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
 import nz.ac.canterbury.seng303.betzero.screens.EmergencyScreen
 import nz.ac.canterbury.seng303.betzero.screens.GettingStartedScreen
 import nz.ac.canterbury.seng303.betzero.viewmodels.AnalyticsViewModel
+import nz.ac.canterbury.seng303.betzero.viewmodels.CalendarViewModel
 import nz.ac.canterbury.seng303.betzero.viewmodels.DailyLogViewModel
 import nz.ac.canterbury.seng303.betzero.viewmodels.EmergencyViewModel
 import nz.ac.canterbury.seng303.betzero.viewmodels.GettingStartedViewModel
@@ -39,12 +41,21 @@ val dataAccessModule = module {
         )
     }
 
-    // GamblingProfile storage
+    // Summaries storage
     single<Storage<DailyLog>>(named("dailyLog")) {
         PersistentStorage(
             gson = get(),
             type = object: TypeToken<List<DailyLog>>(){}.type,
             preferenceKey = stringPreferencesKey("dailyLog"),
+            dataStore = androidContext().dataStore
+        )
+    }
+
+    single<Storage<RelapseLog>>(named("relapseLog")) {
+        PersistentStorage(
+            gson = get(),
+            type = object: TypeToken<List<RelapseLog>>(){}.type,
+            preferenceKey = stringPreferencesKey("relapseLog"),
             dataStore = androidContext().dataStore
         )
     }
@@ -82,13 +93,19 @@ val dataAccessModule = module {
         )
     }
     viewModel {
+        EmergencyViewModel(
+            userProfileStorage = get(named("userProfile"))
+        )
+    }
+    viewModel {
         PreferencesViewModel(
             userProfileStorage = get(named("userProfile"))
         )
     }
     viewModel {
-        EmergencyViewModel(
-            userProfileStorage = get(named("userProfile"))
+        CalendarViewModel(
+            userProfileStorage = get(named("userProfile")),
+            relapseLogStorage = get(named("relapseLog"))
         )
     }
 }
