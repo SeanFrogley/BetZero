@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
             val postNotificationPermission =
                 rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
 
-            val waterNotificationService = NotificationUtil(this)
+            val NotificationUtil = NotificationUtil(this)
 
             LaunchedEffect(key1 = true) {
                 if (!postNotificationPermission.status.isGranted) {
@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
             Column {
                 Button(
                     onClick = {
-                        waterNotificationService.showBasicNotification()
+                        NotificationUtil.showBasicNotification()
                     }
                 ) {
                     Text(text = "Show basic notification")

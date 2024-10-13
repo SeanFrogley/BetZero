@@ -18,7 +18,7 @@ class MainApplication : Application() {
         }
 
         val notificationChannel = NotificationChannel(
-            "daily log reminder",
+            "daily_log_reminder",
             "daily log channel",
             NotificationManager.IMPORTANCE_HIGH
         )
