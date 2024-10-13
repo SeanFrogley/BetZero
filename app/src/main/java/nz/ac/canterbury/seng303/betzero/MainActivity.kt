@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             //set whether the system is in dark mode as it must come from a composable
             preferencesViewModel.setIsSystemInDarkTheme(isSystemInDarkTheme())
-
+            val hasLogged by preferencesViewModel.hasLogged.collectAsStateWithLifecycle()
             val isDarkTheme by preferencesViewModel.isDarkTheme.collectAsStateWithLifecycle()
 
             BetzeroTheme(darkTheme = isDarkTheme) {
@@ -76,12 +76,14 @@ class MainActivity : ComponentActivity() {
                     val iconModifier = Modifier.size(50.dp)
                     val iconColor = MaterialTheme.colorScheme.primary
 
-//                    LaunchedEffect(userProfile) {
-//                        ?.let {
-//                            showPopup.value = it.name
-//                        }
-//                    }
-
+                    LaunchedEffect(hasLogged) {
+                        hasLogged.let {
+                            if (it === false) {
+                                showPopup.value = true
+                                preferencesViewModel.toggleHasLogged()
+                            }
+                        }
+                    }
                     Scaffold(
                         topBar = {
                             val navBackStackEntry by navController.currentBackStackEntryAsState()

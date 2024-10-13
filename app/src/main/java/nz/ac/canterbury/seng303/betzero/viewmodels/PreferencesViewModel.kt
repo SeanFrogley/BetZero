@@ -23,6 +23,9 @@ class PreferencesViewModel (
     private val _isDarkTheme = MutableStateFlow(isSystemInDarkTheme) // Initially follow system theme
     val isDarkTheme: StateFlow<Boolean> = _isDarkTheme
 
+    private val _hasLogged = MutableStateFlow<Boolean>(false)
+    val hasLogged : StateFlow<Boolean> get() = _hasLogged
+
     private fun updateTheme() {
         viewModelScope.launch {
             _userProfile.value?.let { profile ->
@@ -33,6 +36,10 @@ class PreferencesViewModel (
                 }
             }
         }
+    }
+
+    fun toggleHasLogged() {
+        _hasLogged.value = !_hasLogged.value
     }
 
     fun setIsSystemInDarkTheme(enabled : Boolean) {
