@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.edit
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.Flow
@@ -93,16 +94,16 @@ class PersistentStorage<T>(
         }
     }
 
-    override fun delete(identifier: Int): Flow<Int> {
-        return flow {
-            val cachedDataClone = getAll().first().toMutableList()
-            val updatedData = cachedDataClone.filterNot { it.getIdentifier() == identifier }
-            dataStore.edit {
-                val jsonString = gson.toJson(updatedData, type)
-                it[preferenceKey] = jsonString
-                emit(OPERATION_SUCCESS)
-            }
+    override fun delete(identifier: Int): Flow<Int> = channelFlow {
+        val cachedDataClone = getAll().first().toMutableList()
+        val updatedData = cachedDataClone.filterNot { it.getIdentifier() == identifier }
+
+        dataStore.edit {
+            val jsonString = gson.toJson(updatedData, type)
+            it[preferenceKey] = jsonString
+            trySend(OPERATION_SUCCESS)
         }
+        awaitClose { /* should handle errors but cbf */ }
     }
 
     companion object {
