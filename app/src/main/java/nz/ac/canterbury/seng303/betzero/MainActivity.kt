@@ -172,7 +172,7 @@ class MainActivity : ComponentActivity() {
                                     Home(navController = navController)
                                 }
                                 composable("SummariesScreen") {
-                                    SummariesScreen(navController = navController)
+                                    SummariesScreen()
                                 }
                                 composable("EmergencyScreen") {
                                     EmergencyScreen()
