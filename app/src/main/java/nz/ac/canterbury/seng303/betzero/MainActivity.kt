@@ -205,15 +205,6 @@ class MainActivity : ComponentActivity() {
                                     PreferencesScreen(navController = navController)
                                 }
                             }
-
-                            if (showPopup.value) {
-                                Dialog(onDismissRequest = { showPopup.value = false }) {
-                                    PopupScreen(
-                                        onDismiss = { showPopup.value = false },
-                                        onSave = { /* Handles save but not needed but please leave :)*/ }
-                                    )
-                                }
-                            }
                         }
                     }
             }

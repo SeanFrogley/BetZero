@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddBox
 import androidx.compose.material.icons.filled.NewLabel
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
@@ -88,41 +89,46 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
             verticalAlignment = Alignment.CenterVertically,
             ) {
             Text(
-                text = "Welcome ${userProfile?.name}",
-                fontSize = 24.sp,
+                text = "Welcome to betZero ${userProfile?.name}",
+                fontSize = 30.sp,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
-                )
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                modifier = Modifier.padding(bottom = 15.dp)
 
+                )
             Spacer(modifier = Modifier.width(16.dp))
-
-            IconButton(
-                onClick = {
-                    showPopup.value = true // Set to true to show the popup
-                },
-            ) {
-                if (showPopup.value) {
-                    Dialog(onDismissRequest = { showPopup.value = false }) {
-                        PopupScreen(
-                            onDismiss = {
-                                showPopup.value = false
-                            },
-                            onSave = {}
-                        )
-                    }
-                }
-                Icon(
-                    modifier = Modifier.size(26.dp),
-                    imageVector = Icons.Default.NewLabel,
-                    contentDescription = "Delete",
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-
-
         }
-
         IntroMessage()
+
+        Text(
+        text = "Add your Daily logs below",
+        fontSize = 14.sp,
+        color = MaterialTheme.colorScheme.primary,
+        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+    )
+        IconButton(
+            onClick = {
+                showPopup.value = true // Set to true to show the popup
+            },
+        ) {
+            if (showPopup.value) {
+                Dialog(onDismissRequest = { showPopup.value = false }) {
+                    PopupScreen(
+                        onDismiss = {
+                            showPopup.value = false
+                        },
+                        onSave = {}
+                    )
+                }
+            }
+            Icon(
+                modifier = Modifier.size(36.dp),
+                imageVector = Icons.Filled.AddBox,
+                contentDescription = "Delete",
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
 
         Spacer(Modifier.height(16.dp))
 
@@ -136,9 +142,14 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
 
         // Iterate through stats and create progress bars for them
         Text(
-            text = "You've made it this far, Keep going!",
+            text = "Life at a glance",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
+        )
+
+        Text(
+            text = "Take control of how you spend your time...",
+            fontSize = 15.sp,
         )
 
         Spacer(Modifier.height(8.dp))
@@ -150,8 +161,6 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
 
         Spacer(Modifier.height(16.dp))
 
-
-
         Text(
             text = if (userGoals?.isEmpty() == true) "Create some Goals" else "My Goals",
             fontWeight = FontWeight.Bold,
@@ -159,7 +168,6 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
         )
 
         Spacer(Modifier.height(10.dp))
-
 
         userGoals?.forEachIndexed { index, goal ->
             Row(
@@ -272,21 +280,15 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
 
 @Composable
 fun IntroMessage() {
-    val introText = buildAnnotatedString {
-        append("Welcome to BetZero, Set goals and use the navigation tab to navigate the app.\n")
-        append("You can log your status everyday, these are accessible from the diary.\n" +
-                "Use the calendar feature and analysis tab to track activity and trace spending.\n")
-        append("Use the built in SOS slots feature to crave your gambling urges.\n")
-        append("We wish you luck on your gambling free journey.")
-    }
 
     Text(
-        text = introText,
-        fontSize = 18.sp,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        lineHeight = 24.sp
+        text = "Set goals and use the navigation tab to navigate the app.\n You can log your status everyday, these are accessible from the diary.\n" +
+                "Use the calendar feature and analysis tab to track activity and trace spending.\n" +
+                "Use the built in SOS slots feature to crave your gambling urges.\n" +
+                "We wish you luck on your gambling free journey.",
+        modifier = Modifier.padding(bottom = 15.dp),
+        fontSize = 13.sp,
+        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
     )
 }
 
