@@ -135,7 +135,8 @@ fun EmergencyScreen(viewModel: EmergencyViewModel = koinViewModel()) {
             Icon(
                 imageVector = Icons.Default.PlayCircleOutline,
                 contentDescription = "Play",
-                modifier = Modifier.size(120.dp)
+                modifier = Modifier.size(120.dp),
+                tint = Color.Yellow
             )
         }
 
