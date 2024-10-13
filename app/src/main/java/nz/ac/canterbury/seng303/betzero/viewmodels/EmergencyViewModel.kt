@@ -6,19 +6,18 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.betzero.datastore.Storage
+import nz.ac.canterbury.seng303.betzero.models.SlotShape
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
-
-enum class SlotShape {
-    Circle,
-    Rectangle,
-    Triangle
-}
 
 class EmergencyViewModel(
     private val userProfileStorage: Storage<UserProfile>
 ) : ViewModel() {
+    private val _userProfile = MutableStateFlow<UserProfile?>(null)
+    val userProfile: StateFlow<UserProfile?> get() = _userProfile
     var reel1 by mutableStateOf(SlotShape.Circle)
     var reel2 by mutableStateOf(SlotShape.Circle)
     var reel3 by mutableStateOf(SlotShape.Circle)
