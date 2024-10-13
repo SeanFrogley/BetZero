@@ -91,7 +91,7 @@ fun PreferencesScreen(navController: NavController, viewModel: PreferencesViewMo
         Button(onClick = {
             timeDialogState.show()
         }) {
-            Text(text = "Pick time")
+            Text(text = "Set Daily Log Notification Time") //this is not persisting
         }
         Text(text = formattedTime)
 

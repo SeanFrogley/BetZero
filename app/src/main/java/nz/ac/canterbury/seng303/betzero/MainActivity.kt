@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng303.betzero
 
 import AnalyticsScreen
 import HomeScreen
-import SummariesScreen
 import android.Manifest
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -64,6 +63,7 @@ import nz.ac.canterbury.seng303.betzero.screens.OnboardingScreen
 import nz.ac.canterbury.seng303.betzero.screens.PreferencesScreen
 import nz.ac.canterbury.seng303.betzero.screens.UpdateUserProfileScreen
 import nz.ac.canterbury.seng303.betzero.screens.UserProfileScreen
+import nz.ac.canterbury.seng303.betzero.screens.SummariesScreen
 import nz.ac.canterbury.seng303.betzero.utils.AlarmUtil
 import nz.ac.canterbury.seng303.betzero.utils.UserUtil
 import nz.ac.canterbury.seng303.betzero.viewmodels.PreferencesViewModel
@@ -136,100 +136,101 @@ class MainActivity : ComponentActivity() {
                                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                                 val currentDestination = navBackStackEntry?.destination
 
-                            if (currentDestination?.route !in listOf(
-                                    "OnBoardingScreen",
-                                    "GettingStartedScreen"
-                                )
-                            ) {
-                                BottomAppBar(
-                                    modifier = Modifier.height(60.dp)
+                                if (currentDestination?.route !in listOf(
+                                        "OnBoardingScreen",
+                                        "GettingStartedScreen"
+                                    )
                                 ) {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceEvenly
+                                    BottomAppBar(
+                                        modifier = Modifier.height(60.dp)
                                     ) {
-                                        IconButton(onClick = { navController.navigate("CalendarScreen") }) {
-                                            Icon(
-                                                imageVector = Icons.Default.CalendarMonth,
-                                                contentDescription = "Calendar",
-                                                modifier = iconModifier,
-                                                tint = iconColor
-                                            )
-                                        }
-                                        IconButton(onClick = { navController.navigate("AnalyticsScreen") }) {
-                                            Icon(
-                                                imageVector = Icons.Default.AttachMoney,
-                                                contentDescription = "Analytics",
-                                                modifier = iconModifier,
-                                                tint = iconColor
-                                            )
-                                        }
-                                        IconButton(onClick = { navController.navigate("Home") }) {
-                                            Icon(
-                                                imageVector = Icons.Default.Home,
-                                                contentDescription = "Home",
-                                                modifier = iconModifier,
-                                                tint = iconColor
-                                            )
-                                        }
-                                        IconButton(onClick = { navController.navigate("SummariesScreen") }) {
-                                            Icon(
-                                                imageVector = Icons.AutoMirrored.Filled.List,
-                                                contentDescription = "Summaries",
-                                                modifier = iconModifier,
-                                                tint = iconColor
-                                            )
-                                        }
-                                        IconButton(onClick = { navController.navigate("EmergencyScreen") }) {
-                                            Icon(
-                                                imageVector = Icons.Default.Sos,
-                                                contentDescription = "SOS",
-                                                modifier = iconModifier,
-                                                tint = Color.Red
-                                            )
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceEvenly
+                                        ) {
+                                            IconButton(onClick = { navController.navigate("CalendarScreen") }) {
+                                                Icon(
+                                                    imageVector = Icons.Default.CalendarMonth,
+                                                    contentDescription = "Calendar",
+                                                    modifier = iconModifier,
+                                                    tint = iconColor
+                                                )
+                                            }
+                                            IconButton(onClick = { navController.navigate("AnalyticsScreen") }) {
+                                                Icon(
+                                                    imageVector = Icons.Default.AttachMoney,
+                                                    contentDescription = "Analytics",
+                                                    modifier = iconModifier,
+                                                    tint = iconColor
+                                                )
+                                            }
+                                            IconButton(onClick = { navController.navigate("Home") }) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Home,
+                                                    contentDescription = "Home",
+                                                    modifier = iconModifier,
+                                                    tint = iconColor
+                                                )
+                                            }
+                                            IconButton(onClick = { navController.navigate("SummariesScreen") }) {
+                                                Icon(
+                                                    imageVector = Icons.AutoMirrored.Filled.List,
+                                                    contentDescription = "Summaries",
+                                                    modifier = iconModifier,
+                                                    tint = iconColor
+                                                )
+                                            }
+                                            IconButton(onClick = { navController.navigate("EmergencyScreen") }) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Sos,
+                                                    contentDescription = "SOS",
+                                                    modifier = iconModifier,
+                                                    tint = Color.Red
+                                                )
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
-                    ) {
-                        Box(modifier = Modifier.padding(it)) {
-                            NavHost(
-                                navController = navController,
-                                startDestination = "InitialScreen"
-                            ) {
-                                composable("InitialScreen") {
-                                    InitialScreen(navController = navController)
-                                }
-                                composable("OnBoardingScreen") {
-                                    OnboardingScreen(navController = navController)
-                                }
-                                composable("CalendarScreen") {
-                                    CalendarScreen(navController = navController)
-                                }
-                                composable("AnalyticsScreen") {
-                                    AnalyticsScreen(navController = navController)
-                                }
-                                composable("Home") {
-                                    Home(navController = navController)
-                                }
-                                composable("SummariesScreen") {
-                                    SummariesScreen()
-                                }
-                                composable("EmergencyScreen") {
-                                    EmergencyScreen()
-                                }
-                                composable("GettingStartedScreen") {
-                                    GettingStartedScreen(navController = navController)
-                                }
-                                composable("UserProfileScreen") {
-                                    UserProfileScreen(navController = navController)
-                                }
-                                composable("UpdateUserProfileScreen") {
-                                    UpdateUserProfileScreen(navController = navController)
-                                }
-                                composable("PreferencesScreen") {
-                                    PreferencesScreen(navController = navController)
+                        ) {
+                            Box(modifier = Modifier.padding(it)) {
+                                NavHost(
+                                    navController = navController,
+                                    startDestination = "InitialScreen"
+                                ) {
+                                    composable("InitialScreen") {
+                                        InitialScreen(navController = navController)
+                                    }
+                                    composable("OnBoardingScreen") {
+                                        OnboardingScreen(navController = navController)
+                                    }
+                                    composable("CalendarScreen") {
+                                        CalendarScreen(navController = navController)
+                                    }
+                                    composable("AnalyticsScreen") {
+                                        AnalyticsScreen(navController = navController)
+                                    }
+                                    composable("Home") {
+                                        HomeScreen(navController = navController)
+                                    }
+                                    composable("SummariesScreen") {
+                                        SummariesScreen()
+                                    }
+                                    composable("EmergencyScreen") {
+                                        EmergencyScreen()
+                                    }
+                                    composable("GettingStartedScreen") {
+                                        GettingStartedScreen(navController = navController)
+                                    }
+                                    composable("UserProfileScreen") {
+                                        UserProfileScreen(navController = navController)
+                                    }
+                                    composable("UpdateUserProfileScreen") {
+                                        UpdateUserProfileScreen(navController = navController)
+                                    }
+                                    composable("PreferencesScreen") {
+                                        PreferencesScreen(navController = navController)
+                                    }
                                 }
                             }
                         }
@@ -238,15 +239,14 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-}
     //set the notification alarm
-    private fun setAlarm(context: Context, notificationTime: LocalTime ) {
+    private fun setAlarm(context: Context, notificationTime: LocalTime) {
         val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmUtil::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent =
+            PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         val triggerTime = UserUtil.convertLocalTimeToMillis(notificationTime)
         val interval = 0L
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, triggerTime, interval, pendingIntent)
     }
-    }
+}
