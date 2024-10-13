@@ -54,11 +54,12 @@ import nz.ac.canterbury.seng303.betzero.screens.UserProfileScreen
 import nz.ac.canterbury.seng303.betzero.viewmodels.PreferencesViewModel
 import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.koinViewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
     private val preferencesViewModel: PreferencesViewModel by inject()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,9 +67,7 @@ class MainActivity : ComponentActivity() {
             //set whether the system is in dark mode as it must come from a composable
             preferencesViewModel.setIsSystemInDarkTheme(isSystemInDarkTheme())
 
-
             val isDarkTheme by preferencesViewModel.isDarkTheme.collectAsStateWithLifecycle()
-
 
             BetzeroTheme(darkTheme = isDarkTheme) {
                 BetzeroTheme {
@@ -76,6 +75,12 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     val iconModifier = Modifier.size(50.dp)
                     val iconColor = MaterialTheme.colorScheme.primary
+
+//                    LaunchedEffect(userProfile) {
+//                        ?.let {
+//                            showPopup.value = it.name
+//                        }
+//                    }
 
                     Scaffold(
                         topBar = {
@@ -217,37 +222,37 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is not in the Support Library.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = getString(R.string.channel_name)
-            val descriptionText = getString(R.string.channel_description)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-                description = descriptionText
-            }
-            // Register the channel with the system.
-            val notificationManager: NotificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
-        }
-    }
-
-    // Create an explicit intent for an Activity in your app.
-    val intent = Intent(this, AlertDetails::class.java).apply {
-        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-    }
-    val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-
-    val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-        .setSmallIcon(R.drawable.notification_icon)
-        .setContentTitle("My notification")
-        .setContentText("Hello World!")
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-        // Set the intent that fires when the user taps the notification.
-        .setContentIntent(pendingIntent)
-        .setAutoCancel(true)
+//    private fun createNotificationChannel() {
+//        // Create the NotificationChannel, but only on API 26+ because
+//        // the NotificationChannel class is not in the Support Library.
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            val name = getString(R.string.channel_name)
+//            val descriptionText = getString(R.string.channel_description)
+//            val importance = NotificationManager.IMPORTANCE_DEFAULT
+//            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+//                description = descriptionText
+//            }
+//            // Register the channel with the system.
+//            val notificationManager: NotificationManager =
+//                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//            notificationManager.createNotificationChannel(channel)
+//        }
+//    }
+//
+//    // Create an explicit intent for an Activity in your app.
+//    val intent = Intent(this, AlertDetails::class.java).apply {
+//        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//    }
+//    val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+//
+//    val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+//        .setSmallIcon(R.drawable.notification_icon)
+//        .setContentTitle("My notification")
+//        .setContentText("Hello World!")
+//        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+//        // Set the intent that fires when the user taps the notification.
+//        .setContentIntent(pendingIntent)
+//        .setAutoCancel(true)
 
 
     @Composable

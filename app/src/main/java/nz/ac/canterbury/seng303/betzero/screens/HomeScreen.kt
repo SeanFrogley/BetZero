@@ -42,11 +42,16 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.betzero.R
 import nz.ac.canterbury.seng303.betzero.viewmodels.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
-
+import PopupScreen
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.filled.NewLabel
+import androidx.compose.runtime.remember
 
 @Composable
 fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinViewModel()) {
@@ -55,6 +60,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
     val scrollState = rememberScrollState()
     val context = LocalContext.current
 
+    val showPopup = remember { mutableStateOf(true) }
     var userAge by rememberSaveable { mutableIntStateOf(0) }
     var userGoals by rememberSaveable { mutableStateOf<List<String>?>(null) }
     var newGoals: MutableList<String>? = userGoals?.toMutableList()
@@ -77,11 +83,43 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Welcome ${userProfile?.name}",
-            fontSize = 24.sp,
-            color = Color.Green
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            ) {
+            Text(
+                text = "Welcome ${userProfile?.name}",
+                fontSize = 24.sp,
+                color = Color.Green
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            IconButton(
+                onClick = {
+                    showPopup.value = true // Set to true to show the popup
+                },
+            ) {
+                if (showPopup.value) {
+                    Dialog(onDismissRequest = { showPopup.value = false }) {
+                        PopupScreen(
+                            onDismiss = { showPopup.value = false },
+                            onSave = { /* Handle save action */ }
+                        )
+                    }
+                }
+                Icon(
+                    modifier = Modifier.size(26.dp),
+                    imageVector = Icons.Default.NewLabel,
+                    contentDescription = "Delete",
+                    tint = Color.Yellow
+                )
+            }
+
+
+        }
+
 
         AgeIndicator(progress)
         IntroMessage()
