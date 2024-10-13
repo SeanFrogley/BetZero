@@ -4,42 +4,16 @@ import android.app.DatePickerDialog
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.SentimentNeutral
-import androidx.compose.material.icons.filled.SentimentVeryDissatisfied
-import androidx.compose.material.icons.filled.SentimentVerySatisfied
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,7 +28,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
-import nz.ac.canterbury.seng303.betzero.models.DailyLog
 import nz.ac.canterbury.seng303.betzero.models.RelapseLog
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
 import nz.ac.canterbury.seng303.betzero.utils.CalendarUtil.getMonthName
@@ -64,19 +37,12 @@ import nz.ac.canterbury.seng303.betzero.utils.UserUtil
 import nz.ac.canterbury.seng303.betzero.viewmodels.CalendarViewModel
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 @Composable
 fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = koinViewModel()) {
     val userProfile by viewModel.userProfile.collectAsState()
     val relapseLogs by viewModel.relapseLogs.collectAsState()
-    val dailyLogs = listOf(
-        DailyLog(id = 1, feeling = "Happy", voiceMemo = "path/to/memo1", date = "2024-10-09"),
-        DailyLog(id = 2, feeling = "Sad", voiceMemo = "path/to/memo2", date = "2024-10-10"),
-        DailyLog(id = 3, feeling = "Neutral", voiceMemo = "path/to/memo3", date = "2024-10-11")
-    )
     val startDate = userProfile?.lastGambledDate ?: Date()
     val streakDays = UserUtil.getAllDatesSinceStart(startDate)
 
@@ -124,14 +90,12 @@ fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = 
         ) {
             CustomCalendar(
                 streakDays = streakDays,
-                dailyLogs = dailyLogs,
                 relapseLogs = relapseLogs,
                 modifier = Modifier.fillMaxSize()
             )
         }
     }
 }
-
 
 @Composable
 fun ShowRelapseForm(
@@ -285,11 +249,9 @@ fun ShowRelapseForm(
     }
 }
 
-
 @Composable
 fun CustomCalendar(
     streakDays: List<Date>,
-    dailyLogs: List<DailyLog>,
     relapseLogs: List<RelapseLog>,
     modifier: Modifier = Modifier
 ) {
@@ -356,18 +318,15 @@ fun CustomCalendar(
         CalendarDatesGrid(
             streakDays = streakDays,
             calendar = calendar,
-            dailyLogs = dailyLogs,
             relapseLogs = relapseLogs
         )
     }
 }
 
-
 @Composable
 fun CalendarDatesGrid(
     streakDays: List<Date>,
     calendar: Calendar,
-    dailyLogs: List<DailyLog>,
     relapseLogs: List<RelapseLog>
 ) {
     val normalizedStreakDays = streakDays.map { stripTime(it) }
@@ -401,14 +360,12 @@ fun CalendarDatesGrid(
                         val normalizedDate = stripTime(date)
 
                         val dateStr = dateFormatter.format(normalizedDate)
-                        val hasLog = dailyLogs.any { it.date == dateStr }
                         val hasRelapse = relapseLogs.any { it.date == dateStr }
 
                         Box(modifier = Modifier.weight(1f)) {
                             DayBox(
                                 day = dayCounter,
                                 isStreakDay = normalizedStreakDays.contains(normalizedDate),
-                                hasLog = hasLog,
                                 hasRelapse = hasRelapse,
                                 onClick = {
                                     selectedDate = date
@@ -423,12 +380,10 @@ fun CalendarDatesGrid(
 
         if (selectedDate != null) {
             val selectedDateStr = dateFormatter.format(selectedDate!!)
-            val filteredLogs = dailyLogs.filter { it.date == selectedDateStr }
             val filteredRelapseLogs = relapseLogs.filter { it.date == selectedDateStr }
 
             ShowDayDetails(
                 date = selectedDate!!,
-                logs = filteredLogs,
                 relapseLogs = filteredRelapseLogs,
                 onDismiss = { selectedDate = null }
             )
@@ -437,7 +392,7 @@ fun CalendarDatesGrid(
 }
 
 @Composable
-fun ShowDayDetails(date: Date, logs: List<DailyLog>, relapseLogs: List<RelapseLog>, onDismiss: () -> Unit) {
+fun ShowDayDetails(date: Date, relapseLogs: List<RelapseLog>, onDismiss: () -> Unit) {
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false)
@@ -462,64 +417,30 @@ fun ShowDayDetails(date: Date, logs: List<DailyLog>, relapseLogs: List<RelapseLo
                         .padding(top = 16.dp)
                 )
 
-                if (logs.isNotEmpty() || relapseLogs.isNotEmpty()) {
+                if (relapseLogs.isNotEmpty()) {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp)
                     ) {
-                        if (relapseLogs.isNotEmpty()) {
-                            items(relapseLogs) { relapse ->
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(8.dp)
-                                        .background(Color.Red.copy(alpha = 0.2f))
-                                        .padding(8.dp)
-                                ) {
-                                    Column {
-                                        Text(text = "Relapse Date: ${relapse.date}", color = Color.Red)
-                                        Text(text = "Amount Spent: \$${relapse.amountSpent}", color = Color.Red)
-                                    }
-                                }
-                            }
-                        }
-
-                        items(logs) { entry ->
+                        items(relapseLogs) { relapse ->
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(8.dp)
-                                    .background(Color.LightGray)
+                                    .background(Color.Red.copy(alpha = 0.2f))
                                     .padding(8.dp)
                             ) {
                                 Column {
-                                    Text(text = "Date: ${entry.date}")
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        val moodIcon = when (entry.feeling) {
-                                            "Happy" -> Icons.Default.SentimentVerySatisfied
-                                            "Neutral" -> Icons.Default.SentimentNeutral
-                                            "Sad" -> Icons.Default.SentimentVeryDissatisfied
-                                            else -> Icons.Default.SentimentNeutral
-                                        }
-                                        Icon(
-                                            imageVector = moodIcon,
-                                            contentDescription = entry.feeling
-                                        )
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Button(onClick = { /* idk how to do this stuff but it should play the recording */ }) {
-                                            Text(text = "Play")
-                                        }
-                                    }
+                                    Text(text = "Relapse Date: ${relapse.date}", color = Color.Red)
+                                    Text(text = "Amount Spent: \$${relapse.amountSpent}", color = Color.Red)
                                 }
                             }
                         }
                     }
                 } else {
                     Text(
-                        text = "No logs or relapse available for this day",
+                        text = "No relapse available for this day",
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
                 }
@@ -547,13 +468,11 @@ fun ShowDayDetails(date: Date, logs: List<DailyLog>, relapseLogs: List<RelapseLo
 fun DayBox(
     day: Int,
     isStreakDay: Boolean,
-    hasLog: Boolean,
     hasRelapse: Boolean,
     onClick: () -> Unit
 ) {
     val backgroundColor = when {
         hasRelapse -> Color.Red
-        hasLog -> Color.Green
         isStreakDay -> Color.Yellow
         else -> Color.Transparent
     }
