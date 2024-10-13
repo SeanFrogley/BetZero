@@ -266,6 +266,7 @@ fun ShowRelapseForm(
                             viewModel.updateUserProfile(
                                 id = userProfile.id,
                                 name = userProfile.name,
+                                age = userProfile.age,
                                 totalSpent = userProfile.totalSpent + parsedAmount,
                                 gamblingStartDate = userProfile.gamblingStartDate,
                                 lastGambledDate = if (parsedDate.after(userProfile.lastGambledDate)) parsedDate else userProfile.lastGambledDate

@@ -72,6 +72,7 @@ class CalendarViewModel(
     fun updateUserProfile(
         id: Int,
         name: String,
+        age: Int,
         totalSpent: Double,
         gamblingStartDate: Date,
         lastGambledDate: Date
@@ -94,6 +95,7 @@ class CalendarViewModel(
         val userProfile = UserProfile(
             id = id,
             name = name,
+            age = age,
             totalSpent = roundedTotalSpent,
             totalSaved = roundedTotalSaved,
             gamblingStartDate = gamblingStartDate,
