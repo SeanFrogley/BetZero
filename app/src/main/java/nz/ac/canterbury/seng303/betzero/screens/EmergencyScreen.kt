@@ -87,7 +87,7 @@ fun EmergencyScreen(navController: NavController, viewModel: EmergencyViewModel 
             Button(
                 onClick = {
                     if (viewModel.balance >= 5) {
-                        showDialog = true
+                        showSlotMachineDialog = true
                     } else {
                         Toast.makeText(context, "You are out of coins!", Toast.LENGTH_SHORT).show()
                     }
