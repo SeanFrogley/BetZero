@@ -4,12 +4,33 @@ import android.app.DatePickerDialog
 import android.icu.util.Calendar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,12 +46,7 @@ import nz.ac.canterbury.seng303.betzero.utils.InputValidation
 import nz.ac.canterbury.seng303.betzero.viewmodels.GettingStartedViewModel
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
-import java.util.*
-
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarMonth
+import java.util.Locale
 
 @Composable
 fun GettingStartedScreen(navController: NavController, viewModel: GettingStartedViewModel = koinViewModel()) {
@@ -74,7 +90,7 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF87CEEB))
+            .background( if (isSystemInDarkTheme()) Color(0xFF2a6278) else Color(0xFFafddf0) )          // TODO change to colour resource and abstract to color.kt file
     ) {
         Column(
             modifier = Modifier
@@ -87,7 +103,7 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(16.dp))
-                    .background(Color.White)
+                    .background(MaterialTheme.colorScheme.background)
                     .padding(16.dp)
             ) {
                 Column(
@@ -98,7 +114,7 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                         style = androidx.compose.ui.text.TextStyle(
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.onBackground
                         ),
                         textAlign = TextAlign.Center
                     )
@@ -107,7 +123,7 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                         text = "Can you answer some questions for us?",
                         style = androidx.compose.ui.text.TextStyle(
                             fontSize = 14.sp,
-                            color = Color.Gray
+                            color = MaterialTheme.colorScheme.secondary
                         ),
                         textAlign = TextAlign.Center
                     )
@@ -123,18 +139,6 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                     nameError = if (InputValidation.validateUsersName(userName)) null else "Please enter a name that only consists of letters, -, or '."
                 },
                 label = { Text("What's your name?") },
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black,
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedBorderColor = Color.Black,
-                    unfocusedBorderColor = Color.Black,
-                    focusedLabelColor = Color.Black,
-                    unfocusedLabelColor = Color.Black,
-                    focusedTrailingIconColor = Color.Black,
-                    unfocusedTrailingIconColor = Color.Black,
-                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
@@ -160,18 +164,6 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                     totalSpentError = if (InputValidation.validateTotalSpent(totalSpent)) null else "Please enter a valid non-negative number."
                 },
                 label = { Text("How much money have you spent?") },
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black,
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedBorderColor = Color.Black,
-                    unfocusedBorderColor = Color.Black,
-                    focusedLabelColor = Color.Black,
-                    unfocusedLabelColor = Color.Black,
-                    focusedTrailingIconColor = Color.Black,
-                    unfocusedTrailingIconColor = Color.Black,
-                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
@@ -207,11 +199,11 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                         Icon(Icons.Default.CalendarMonth, contentDescription = "Select start date")
                     },
                     colors = OutlinedTextFieldDefaults.colors(
-                        disabledTextColor = Color.Black,
+                        disabledTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         disabledContainerColor = Color.Transparent,
-                        disabledBorderColor = Color.Black,
-                        disabledLabelColor = Color.Black,
-                        disabledTrailingIconColor = Color.Black
+                        disabledBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -253,11 +245,11 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                         Icon(Icons.Default.CalendarMonth, contentDescription = "Select last gambled date")
                     },
                     colors = OutlinedTextFieldDefaults.colors(
-                        disabledTextColor = Color.Black,
+                        disabledTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         disabledContainerColor = Color.Transparent,
-                        disabledBorderColor = Color.Black,
-                        disabledLabelColor = Color.Black,
-                        disabledTrailingIconColor = Color.Black
+                        disabledBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant
                     ),
                     modifier = Modifier
                         .fillMaxWidth()

@@ -11,8 +11,11 @@ class DailyLog (
     val voiceMemo: String, //filepath from file system?
     val date: String //date of the entry
 ) : Identifiable {
-
     override fun getIdentifier(): Int {
         return id;
+    }
+
+    override fun toString(): String {
+        return "DailyLog(id=$id, date=$date)"
     }
 }

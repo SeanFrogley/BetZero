@@ -92,12 +92,8 @@ fun SummariesScreen(navController: NavController) {
                         .padding(8.dp)
                 ) {
                     Column {
-                        Text(
-                            text = entry.date
-                        )
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
+                        Text(text = entry.date)
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             val moodIcon = when (entry.feeling) {
                                 "Happy" -> Icons.Default.SentimentVerySatisfied
                                 "Neutral" -> Icons.Default.SentimentNeutral
