@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -91,7 +92,8 @@ fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = 
             CustomCalendar(
                 streakDays = streakDays,
                 relapseLogs = relapseLogs,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                viewModel = viewModel
             )
         }
     }
@@ -253,7 +255,8 @@ fun ShowRelapseForm(
 fun CustomCalendar(
     streakDays: List<Date>,
     relapseLogs: List<RelapseLog>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: CalendarViewModel
 ) {
     val calendar = rememberSaveable { Calendar.getInstance() }
 
@@ -318,7 +321,8 @@ fun CustomCalendar(
         CalendarDatesGrid(
             streakDays = streakDays,
             calendar = calendar,
-            relapseLogs = relapseLogs
+            relapseLogs = relapseLogs,
+            viewModel = viewModel
         )
     }
 }
@@ -327,7 +331,8 @@ fun CustomCalendar(
 fun CalendarDatesGrid(
     streakDays: List<Date>,
     calendar: Calendar,
-    relapseLogs: List<RelapseLog>
+    relapseLogs: List<RelapseLog>,
+    viewModel: CalendarViewModel
 ) {
     val normalizedStreakDays = streakDays.map { stripTime(it) }
 
@@ -385,14 +390,17 @@ fun CalendarDatesGrid(
             ShowDayDetails(
                 date = selectedDate!!,
                 relapseLogs = filteredRelapseLogs,
-                onDismiss = { selectedDate = null }
+                onDismiss = { selectedDate = null },
+                onDeleteLog = { relapseLog ->
+                    viewModel.deleteRelapseLog(relapseLog)
+                }
             )
         }
     }
 }
 
 @Composable
-fun ShowDayDetails(date: Date, relapseLogs: List<RelapseLog>, onDismiss: () -> Unit) {
+fun ShowDayDetails(date: Date, relapseLogs: List<RelapseLog>, onDismiss: () -> Unit, onDeleteLog: (RelapseLog) -> Unit) {
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false)
@@ -403,7 +411,7 @@ fun ShowDayDetails(date: Date, relapseLogs: List<RelapseLog>, onDismiss: () -> U
                 .fillMaxHeight(0.6f)
                 .padding(16.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .background(Color.White)
+                .background(color = MaterialTheme.colorScheme.surface,)
         ) {
             Column(
                 modifier = Modifier.fillMaxSize()
@@ -431,9 +439,26 @@ fun ShowDayDetails(date: Date, relapseLogs: List<RelapseLog>, onDismiss: () -> U
                                     .background(Color.Red.copy(alpha = 0.2f))
                                     .padding(8.dp)
                             ) {
-                                Column {
-                                    Text(text = "Relapse Date: ${relapse.date}", color = Color.Red)
-                                    Text(text = "Amount Spent: \$${relapse.amountSpent}", color = Color.Red)
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column {
+                                        Text(text = "Relapse Date: ${relapse.date}", color = Color.Red)
+                                        Text(text = "Amount Spent: \$${relapse.amountSpent}", color = Color.Red)
+                                    }
+
+                                    IconButton(
+                                        onClick = { onDeleteLog(relapse) },
+                                        modifier = Modifier.size(24.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Delete,
+                                            contentDescription = "Delete relapse log",
+                                            tint = Color.Red
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -463,6 +488,7 @@ fun ShowDayDetails(date: Date, relapseLogs: List<RelapseLog>, onDismiss: () -> U
         }
     }
 }
+
 
 @Composable
 fun DayBox(

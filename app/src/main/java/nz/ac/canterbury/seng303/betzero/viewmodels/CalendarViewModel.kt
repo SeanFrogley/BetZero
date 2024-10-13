@@ -147,4 +147,20 @@ class CalendarViewModel(
             }
         }
     }
+
+    fun deleteRelapseLog(relapseLog: RelapseLog) = viewModelScope.launch {
+        try {
+            relapseLogStorage.delete(relapseLog.getIdentifier()).collect { result ->
+                if (result == 1) {
+                    _relapseLogs.value = _relapseLogs.value.filter { it.id != relapseLog.id }
+                    Log.d("RelapseLog", "Relapse log deleted successfully")
+                } else {
+                    Log.e("RelapseLog", "Failed to delete relapse log")
+                }
+            }
+        } catch (exception: Exception) {
+            Log.e("RelapseLog", "Error deleting relapse log: $exception")
+        }
+    }
+
 }
