@@ -190,22 +190,20 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
         confirmButton = {
             Button(
                 onClick = {
-                    if (voiceMemoPath != null) {
+                    if (selectedMood != null && voiceMemoPath != null) {
                         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
                         val formattedDate = dateFormat.format(Date())
                         val entry = DailyLog(
                             id = Random.nextInt(),
                             feeling = selectedMood,
                             voiceMemo = voiceMemoPath!!,
-                            date = formattedDate,
-                            completed = true // Mark log as complete
+                            date = formattedDate
                         )
-
                         onSave(entry)
                         onDismiss()
                     }
                 },
-                enabled = voiceMemoPath != null
+                enabled = selectedMood != null && voiceMemoPath != null
             ) {
                 Text("Save")
             }

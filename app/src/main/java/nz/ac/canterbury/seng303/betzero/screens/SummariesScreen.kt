@@ -109,19 +109,19 @@ fun SummariesScreen(navController: NavController) {
                             )
                             Button(
                                 onClick = {
-                                    if (currentlyPlayingId == entry.id) {
-                                        mediaPlayer?.pause()
-                                        currentlyPlayingId = null
-                                    } else {
-                                        mediaPlayer?.release()
-                                        mediaPlayer = MediaPlayer().apply {
-                                            setDataSource(RecordingUtil.getRecordingFile(context, entry.voiceMemo).absolutePath)
-                                            prepare()
-                                            start()
-                                        }
-                                        currentlyPlayingId = entry.id
+                                if (currentlyPlayingId == entry.id) {
+                                    mediaPlayer?.pause()
+                                    currentlyPlayingId = null
+                                } else {
+                                    mediaPlayer?.release()
+                                    mediaPlayer = MediaPlayer().apply {
+                                        setDataSource(RecordingUtil.getRecordingFile(context, entry.voiceMemo).absolutePath)
+                                        prepare()
+                                        start()
                                     }
-                                }) {
+                                    currentlyPlayingId = entry.id
+                                }
+                            }) {
                                 Text(if (currentlyPlayingId == entry.id) "Pause" else "Play")
                             }
                         }

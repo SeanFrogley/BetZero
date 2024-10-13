@@ -1,12 +1,9 @@
 package nz.ac.canterbury.seng303.betzero
 
 import AnalyticsScreen
-import PopupScreen
-import SummariesScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.AccountCircle
@@ -29,6 +25,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -146,7 +143,7 @@ class MainActivity : ComponentActivity() {
                                                 imageVector = Icons.Default.Sos,
                                                 contentDescription = "SOS",
                                                 modifier = iconModifier,
-                                                tint = iconColor
+                                                tint = Color.Red
                                             )
                                         }
                                     }
@@ -178,7 +175,7 @@ class MainActivity : ComponentActivity() {
                                     SummariesScreen(navController = navController)
                                 }
                                 composable("EmergencyScreen") {
-                                    EmergencyScreen(navController = navController)
+                                    EmergencyScreen()
                                 }
                                 composable("GettingStartedScreen") {
                                     GettingStartedScreen(navController = navController)
@@ -198,7 +195,7 @@ class MainActivity : ComponentActivity() {
                                 Dialog(onDismissRequest = { showPopup.value = false }) {
                                     PopupScreen(
                                         onDismiss = { showPopup.value = false },
-                                        onSave = { /* Handle save action */ }
+                                        onSave = { /* Handles save but not needed but please leave :)*/ }
                                     )
                                 }
                             }
