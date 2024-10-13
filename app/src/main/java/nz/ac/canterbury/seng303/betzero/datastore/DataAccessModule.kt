@@ -90,13 +90,16 @@ val dataAccessModule = module {
             userProfileStorage = get(named("userProfile"))
         )
     }
-
     viewModel {
         EmergencyViewModel(
             userProfileStorage = get(named("userProfile"))
         )
     }
-
+    viewModel {
+        PreferencesViewModel(
+            userProfileStorage = get(named("userProfile"))
+        )
+    }
     viewModel {
         CalendarViewModel(
             userProfileStorage = get(named("userProfile")),
