@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import nz.ac.canterbury.seng303.betzero.models.DailyLog
 import nz.ac.canterbury.seng303.betzero.models.SlotShape
@@ -65,7 +66,7 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun EmergencyScreen(viewModel: EmergencyViewModel = koinViewModel()) {
+fun EmergencyScreen(navController: NavController, viewModel: EmergencyViewModel = koinViewModel()) {
     val context = LocalContext.current
     var showArticlesDialog by rememberSaveable { mutableStateOf(false) }
     var showSlotMachineDialog by rememberSaveable { mutableStateOf(false) }
