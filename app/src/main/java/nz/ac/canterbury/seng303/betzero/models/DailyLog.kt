@@ -9,7 +9,9 @@ class DailyLog (
     val id: Int,
     val feeling: String, //emoji
     val voiceMemo: String, //filepath from file system?
-    val date: String //date of the entry
+    val date: String, //date of the entry
+    var completed: Boolean = false // checks if log completed or not
+
 ) : Identifiable {
     override fun getIdentifier(): Int {
         return id;

@@ -197,8 +197,10 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
                             id = Random.nextInt(),
                             feeling = selectedMood,
                             voiceMemo = voiceMemoPath!!,
-                            date = formattedDate
+                            date = formattedDate,
+                            completed = true // Mark log as complete
                         )
+
                         onSave(entry)
                         onDismiss()
                     }
