@@ -72,7 +72,6 @@ import java.util.Locale
 fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = koinViewModel()) {
     val userProfile by viewModel.userProfile.collectAsState()
     val relapseLogs by viewModel.relapseLogs.collectAsState()
-    Log.i("Screen", relapseLogs.toString())
     val dailyLogs = listOf(
         DailyLog(id = 1, feeling = "Happy", voiceMemo = "path/to/memo1", date = "2024-10-09"),
         DailyLog(id = 2, feeling = "Sad", voiceMemo = "path/to/memo2", date = "2024-10-10"),
