@@ -160,11 +160,11 @@ fun EmergencyScreen(viewModel: EmergencyViewModel = koinViewModel()) {
         }
 
         Spacer(
-            modifier = Modifier.height(16.dp)
+            modifier = Modifier.height(10.dp)
         )
         Divider()
         Spacer(
-            modifier = Modifier.height(16.dp)
+            modifier = Modifier.height(20.dp)
         )
 
         Text(
@@ -240,11 +240,11 @@ fun EmergencyScreen(viewModel: EmergencyViewModel = koinViewModel()) {
         }
 
         Spacer(
-            modifier = Modifier.height(20.dp)
+            modifier = Modifier.height(35.dp)
         )
         Divider()
         Spacer(
-            modifier = Modifier.height(50.dp)
+            modifier = Modifier.height(35.dp)
         )
 
         Text(
