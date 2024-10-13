@@ -5,6 +5,9 @@ import android.media.MediaRecorder
 import android.os.Environment
 import java.io.File
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class VoiceRecorder(private val context: Context) {
     private var mediaRecorder: MediaRecorder? = null
@@ -16,11 +19,12 @@ class VoiceRecorder(private val context: Context) {
             externalDir.mkdirs()
         }    // Timestamp to make file name unique
         val timeStamp = System.currentTimeMillis()
-
+        val dateFormat = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
+        val formattedDate = dateFormat.format(Date(timeStamp))
         val sanitizedMood = mood.replace(Regex("[^a-zA-Z0-9]"), "_")
 
         // File name will contain the mood and the timestamp
-        outputFile = "${externalDir?.absolutePath}/audiorecord_${sanitizedMood}_$timeStamp.mp3"
+        outputFile = "${externalDir?.absolutePath}/audiorecord_${sanitizedMood}_${formattedDate}_$timeStamp.mp3"
 
 
         mediaRecorder = MediaRecorder().apply {
