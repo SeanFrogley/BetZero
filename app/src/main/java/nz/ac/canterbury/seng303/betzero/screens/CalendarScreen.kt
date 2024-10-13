@@ -472,8 +472,8 @@ fun DayBox(
     onClick: () -> Unit
 ) {
     val backgroundColor = when {
-        hasRelapse -> Color.Red
-        isStreakDay -> Color.Yellow
+        hasRelapse -> Color(0xFFFF5252)
+        isStreakDay -> Color(0xFF50C878)
         else -> Color.Transparent
     }
 
