@@ -10,4 +10,5 @@ interface Storage<T> where T : Identifiable {
     fun delete(identifier: Int): Flow<Int>
     fun edit(identifier: Int, data: T): Flow<Int>
     fun get(where: (T) -> Boolean): Flow<T>
+
 }
