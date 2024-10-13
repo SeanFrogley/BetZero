@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng303.betzero.screens
 
 import android.content.Intent
+import android.media.MediaPlayer
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.animation.core.Animatable
@@ -29,12 +30,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.PlayCircleFilled
+import androidx.compose.material.icons.filled.PlayCircleOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -60,9 +66,14 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
+import nz.ac.canterbury.seng303.betzero.models.DailyLog
 import nz.ac.canterbury.seng303.betzero.viewmodels.EmergencyViewModel
 import nz.ac.canterbury.seng303.betzero.models.SlotShape
+import nz.ac.canterbury.seng303.betzero.utils.RecordingUtil
 import org.koin.androidx.compose.koinViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun EmergencyScreen(navController: NavController, viewModel: EmergencyViewModel = koinViewModel()) {
@@ -70,6 +81,31 @@ fun EmergencyScreen(navController: NavController, viewModel: EmergencyViewModel 
     val context = LocalContext.current
     var showArticlesDialog by rememberSaveable { mutableStateOf(false) }
     var showSlotMachineDialog by rememberSaveable { mutableStateOf(false) }
+    var happyRecordings by remember { mutableStateOf(emptyList<DailyLog>()) }
+    var mediaPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
+    var currentlyPlayingId by remember { mutableStateOf<Int?>(null) }
+
+
+    LaunchedEffect(Unit) {
+        happyRecordings = RecordingUtil.getAllRecordings(context)
+            .filter { RecordingUtil.getMoodFromFile(it) == "Happy" } // Filter for happy recordings
+            .sortedByDescending { it.lastModified() }
+            .mapNotNull { file ->
+                DailyLog(
+                    id = file.hashCode(),
+                    feeling = "Happy",
+                    voiceMemo = file.name,
+                    date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(file.lastModified()))
+                )
+            }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            mediaPlayer?.release()
+            mediaPlayer = null
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -78,7 +114,45 @@ fun EmergencyScreen(navController: NavController, viewModel: EmergencyViewModel 
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(
+            text = "So... you're feeling down? Let's cheer you up! \nRemember this time when you were happy?",
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 26.dp)
+        )
+        IconButton(
+            onClick = {
+                // Logic to play a random recording with the mood "Happy"
+                if (happyRecordings.isNotEmpty()) {
+                    val randomRecording = happyRecordings.random()
+                    if (currentlyPlayingId == randomRecording.id) {
+                        mediaPlayer?.pause()
+                        currentlyPlayingId = null
+                    } else {
+                        mediaPlayer?.release()
+                        mediaPlayer = MediaPlayer().apply {
+                            setDataSource(RecordingUtil.getRecordingFile(context, randomRecording.voiceMemo).absolutePath)
+                            prepare()
+                            start()
+                        }
+                        currentlyPlayingId = randomRecording.id
+                    }
+                } else {
+                    Toast.makeText(context, "No happy recordings found", Toast.LENGTH_SHORT).show()
+                }
+            },
+            modifier = Modifier
+                .size(100.dp)
+                .padding(8.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.PlayCircleOutline,
+                contentDescription = "Play",
+                modifier = Modifier.size(120.dp)
+            )
+        }
+
         Row(
+
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),

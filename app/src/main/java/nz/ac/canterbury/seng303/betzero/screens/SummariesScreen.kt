@@ -1,3 +1,5 @@
+package nz.ac.canterbury.seng303.betzero.screens
+
 import android.media.MediaPlayer
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

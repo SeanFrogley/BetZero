@@ -1,3 +1,5 @@
+package nz.ac.canterbury.seng303.betzero.screens
+
 import android.Manifest
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult

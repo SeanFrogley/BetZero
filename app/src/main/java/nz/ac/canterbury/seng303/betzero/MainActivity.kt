@@ -1,8 +1,6 @@
 package nz.ac.canterbury.seng303.betzero
 
 import AnalyticsScreen
-import PopupScreen
-import SummariesScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -29,6 +27,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -146,7 +145,7 @@ class MainActivity : ComponentActivity() {
                                                 imageVector = Icons.Default.Sos,
                                                 contentDescription = "SOS",
                                                 modifier = iconModifier,
-                                                tint = iconColor
+                                                tint = Color.Red
                                             )
                                         }
                                     }
