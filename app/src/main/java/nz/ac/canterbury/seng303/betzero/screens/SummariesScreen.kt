@@ -55,6 +55,7 @@ import java.util.Locale
  *
  * @author Michelle Lee
  */
+
 @Composable
 fun SummariesScreen() {
     val context = LocalContext.current
@@ -96,48 +97,56 @@ fun SummariesScreen() {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        LazyColumn {
-            items(recordings) { entry ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                        .background(Color.LightGray)
-                        .padding(8.dp)
-                ) {
-                    Column {
-                        Text(text = entry.date)
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            val moodIcon = when (entry.feeling) {
-                                "Happy" -> Icons.Default.SentimentVerySatisfied
-                                "Neutral" -> Icons.Default.SentimentNeutral
-                                "Sad" -> Icons.Default.SentimentVeryDissatisfied
-                                else -> Icons.Default.QuestionMark
-                            }
-                            Icon(
-                                imageVector = moodIcon,
-                                contentDescription = entry.feeling
-                            )
-                            Spacer(
-                                modifier = Modifier.width(8.dp)
-                            )
-                            Button(
-                                onClick = {
-                                    if (currentlyPlayingId == entry.id) {
-                                        mediaPlayer?.pause()
-                                        currentlyPlayingId = null
-                                    } else {
-                                        mediaPlayer?.release()
-                                        mediaPlayer = MediaPlayer().apply {
-                                            setDataSource(RecordingUtil.getRecordingFile(context, entry.voiceMemo).absolutePath)
-                                            prepare()
-                                            start()
+        if (recordings.isEmpty()) {
+            // Display a message when there are no recordings
+            Text(
+                text = "No summaries available, please log one!",
+                modifier = Modifier.padding(16.dp)
+            )
+        } else {
+            LazyColumn {
+                items(recordings) { entry ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                            .background(Color.LightGray)
+                            .padding(8.dp)
+                    ) {
+                        Column {
+                            Text(text = entry.date)
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                val moodIcon = when (entry.feeling) {
+                                    "Happy" -> Icons.Default.SentimentVerySatisfied
+                                    "Neutral" -> Icons.Default.SentimentNeutral
+                                    "Sad" -> Icons.Default.SentimentVeryDissatisfied
+                                    else -> Icons.Default.QuestionMark
+                                }
+                                Icon(
+                                    imageVector = moodIcon,
+                                    contentDescription = entry.feeling
+                                )
+                                Spacer(
+                                    modifier = Modifier.width(8.dp)
+                                )
+                                Button(
+                                    onClick = {
+                                        if (currentlyPlayingId == entry.id) {
+                                            mediaPlayer?.pause()
+                                            currentlyPlayingId = null
+                                        } else {
+                                            mediaPlayer?.release()
+                                            mediaPlayer = MediaPlayer().apply {
+                                                setDataSource(RecordingUtil.getRecordingFile(context, entry.voiceMemo).absolutePath)
+                                                prepare()
+                                                start()
+                                            }
+                                            currentlyPlayingId = entry.id
                                         }
-                                        currentlyPlayingId = entry.id
-                                    }
-                                },
+                                    },
                                 ) {
-                                Text(if (currentlyPlayingId == entry.id) "Pause" else "Play")
+                                    Text(if (currentlyPlayingId == entry.id) "Pause" else "Play")
+                                }
                             }
                         }
                     }
