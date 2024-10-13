@@ -84,8 +84,7 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
                 IconButton(onClick = { showExitConfirmation = true }, modifier = Modifier.size(24.dp)) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Close",
-                        tint = Color.Black
+                        contentDescription = "Close"
                     )
                 }
             }
