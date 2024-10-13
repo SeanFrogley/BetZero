@@ -8,17 +8,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.betzero.datastore.Storage
+import nz.ac.canterbury.seng303.betzero.models.DailyLogState
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
 
 class HomeViewModel (
-    private val userProfileStorage: Storage<UserProfile>
+    private val userProfileStorage: Storage<UserProfile>,
+    private val dailyLogStateStorage: Storage<DailyLogState>
+
 ) : ViewModel() {
 
     private val _userProfile = MutableStateFlow<UserProfile?>(null)
     val userProfile: StateFlow<UserProfile?> get() = _userProfile
 
-    private val _hasLogged = MutableStateFlow<Boolean>(false)
-    val hasLogged : StateFlow<Boolean> get() = _hasLogged
+    private val _dailyLogState = MutableStateFlow<DailyLogState?>(null)
+    val dailyLogState : StateFlow<DailyLogState?> get() = _dailyLogState
 
     val GOAL_INPUT_ERROR: String = "Please enter a goal that is not empty"
     val LIFE_EXPECTANCY: Int = 85 //arbitary not too small number
@@ -27,8 +30,15 @@ class HomeViewModel (
         viewModelScope.launch {
             try {
                 val userProfiles = userProfileStorage.getAll().first()
+                val hasLogged = dailyLogStateStorage.getAll().first()
                 if (userProfiles.isNotEmpty()) {
                     _userProfile.value = userProfiles.first()
+                } else {
+                    _userProfile.value = null
+                }
+
+                if (hasLogged.isNotEmpty()) {
+                    _dailyLogState.value = hasLogged.first()
                 } else {
                     _userProfile.value = null
                 }
@@ -38,8 +48,31 @@ class HomeViewModel (
         }
     }
 
-    fun toggleHasLogged() {
-        _hasLogged.value = !_hasLogged.value
+    fun toggleHasLogged(dailyLogState: DailyLogState) {
+        viewModelScope.launch {
+            val updatedDailyLogState = DailyLogState(
+                dailyLogState.id,
+                dailyLogState.date, //new date?
+                !dailyLogState.loggedToday, //flip the daily log
+            )
+
+            try {
+                val result =
+                    dailyLogStateStorage.edit(dailyLogState.getIdentifier(), updatedDailyLogState).first()
+                if (result == 1) {
+                    Log.d("DAILY_LOG_VM", "Daily Log State edited successfully")
+                    _dailyLogState.value = dailyLogState
+                } else {
+                    Log.e("DAILY_LOG_VM", "Daily Log State update failed")
+                }
+                userProfileStorage.getAll()
+                    .collect { dailyLogState ->
+                        Log.i("UpdateHomeViewModel", "Daily Log State: $dailyLogState")
+                    }
+            } catch (exception: Exception) {
+                Log.e("USER_PROFILE_VM", "Could not update daily log state: $exception")
+            }
+        }
     }
 
     /**
@@ -84,7 +117,7 @@ class HomeViewModel (
                 }
                 userProfileStorage.getAll()
                     .collect { profiles ->
-                        Log.i("UpdateUserProfileViewModel", "User Profiles: $profiles")
+                        Log.i("UpdateHomeViewModel", "User Profiles: $profiles")
                     }
             } catch (exception: Exception) {
                 Log.e("USER_PROFILE_VM", "Could not update user profile: $exception")

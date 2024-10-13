@@ -46,6 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.betzero.R
 import nz.ac.canterbury.seng303.betzero.viewmodels.HomeViewModel
@@ -58,13 +59,22 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
     val scrollState = rememberScrollState()
     val context = LocalContext.current
 
-    val showPopup = remember { mutableStateOf(true) }
+    val showPopup = remember { mutableStateOf(false) }
+    val hasLogged by viewModel.hasLogged.collectAsStateWithLifecycle()
+
     var userAge by rememberSaveable { mutableIntStateOf(0) }
     var userGoals by rememberSaveable { mutableStateOf<List<String>?>(null) }
     var newGoals: MutableList<String>? = userGoals?.toMutableList()
     var newGoal by rememberSaveable { mutableStateOf("") }
     var showDialog by rememberSaveable { mutableStateOf(false) }
     var goalInputError by rememberSaveable { mutableStateOf("") }
+
+    LaunchedEffect(hasLogged) {
+        hasLogged.let {
+            //                viewModel.toggleHasLogged()
+            showPopup.value = it === false
+        }
+    }
 
     LaunchedEffect(userProfile) {
         userProfile?.let {
@@ -102,7 +112,10 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
                 if (showPopup.value) {
                     Dialog(onDismissRequest = { showPopup.value = false }) {
                         PopupScreen(
-                            onDismiss = { showPopup.value = false },
+                            onDismiss = {
+                                //showPopup.value = false
+                                viewModel.toggleHasLogged()
+                            },
                             onSave = { /* Handle save action */ }
                         )
                     }
