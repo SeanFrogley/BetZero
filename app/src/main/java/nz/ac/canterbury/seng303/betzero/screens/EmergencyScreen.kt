@@ -27,8 +27,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.PlayCircleOutline
+import androidx.compose.material.icons.filled.Textsms
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -52,6 +55,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import kotlinx.coroutines.delay
@@ -103,10 +107,25 @@ fun EmergencyScreen(viewModel: EmergencyViewModel = koinViewModel()) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "So... you're feeling down? Let's cheer you up! \nRemember this time when you were happy?",
+            text = "So you're feeling down...?",
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 26.dp)
+            modifier = Modifier.padding(bottom = 15.dp),
+            fontSize = 30.sp,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            color = Color.Red
         )
+        Text(
+            text = "Let us cheer you up! ",
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+        )
+        Text(
+            text = "Remember this time when you were doing amazing?!\n Let's listen to some happy recordings and celebrate your success!",
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            fontSize = 13.sp,
+        )
+
         IconButton(
             onClick = {
                 // Logic to play a random recording with the mood "Happy"
@@ -139,6 +158,26 @@ fun EmergencyScreen(viewModel: EmergencyViewModel = koinViewModel()) {
                 tint = Color.Yellow
             )
         }
+
+        Spacer(
+            modifier = Modifier.height(16.dp)
+        )
+        Divider()
+        Spacer(
+            modifier = Modifier.height(16.dp)
+        )
+
+        Text(
+            text = "If that's not enough... don't be ashamed! \nWe have some other ways to cheer you up!",
+            fontSize = 17.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        Text(
+            text = "Have a go at a non-risk gamble with the slot machine\n or read some inspiring articles to keep you going!",
+            fontSize = 13.sp,
+            modifier = Modifier.padding(top = 16.dp)
+        )
 
         Row(
             modifier = Modifier
@@ -197,7 +236,50 @@ fun EmergencyScreen(viewModel: EmergencyViewModel = koinViewModel()) {
                     Spacer(modifier = Modifier.width(8.dp))
                 }
             }
+
         }
+
+        Spacer(
+            modifier = Modifier.height(20.dp)
+        )
+        Divider()
+        Spacer(
+            modifier = Modifier.height(50.dp)
+        )
+
+        Text(
+            text = "Want to talk to someone?",
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            color = Color.Red
+        )
+        Text(
+            text = "Reach out to Gambling Helpline Aoteroa available 24/7\n See contact details below",
+            fontSize = 12.sp,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+        )
+        Spacer(
+            modifier = Modifier.height(16.dp)
+        )
+        Row {
+            Icon(
+                imageVector = Icons.Default.Phone ,
+                contentDescription = "Phone Icon",
+                Modifier.padding(start = 8.dp)
+                )
+            Text(text ="0800 654 655", modifier = Modifier.padding(start = 8.dp))
+        }
+
+        Row {
+            Icon(
+                imageVector = Icons.Default.Textsms ,
+                contentDescription = "Phone Icon",
+                Modifier.padding(start = 8.dp)
+            )
+            Text(text ="8006", modifier = Modifier.padding(start = 8.dp))
+        }
+
 
         if (showSlotMachineDialog) {
             SlotMachinePopup(
