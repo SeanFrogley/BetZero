@@ -66,24 +66,24 @@ class MainActivity : ComponentActivity() {
         setContent {
             //set whether the system is in dark mode as it must come from a composable
             preferencesViewModel.setIsSystemInDarkTheme(isSystemInDarkTheme())
-            val hasLogged by preferencesViewModel.hasLogged.collectAsStateWithLifecycle()
+//            val hasLogged by preferencesViewModel.hasLogged.collectAsStateWithLifecycle()
             val isDarkTheme by preferencesViewModel.isDarkTheme.collectAsStateWithLifecycle()
 
             BetzeroTheme(darkTheme = isDarkTheme) {
                 BetzeroTheme {
-                    val showPopup = remember { mutableStateOf(true) }
+//                    val showPopup = remember { mutableStateOf(true) }
                     val navController = rememberNavController()
                     val iconModifier = Modifier.size(50.dp)
                     val iconColor = MaterialTheme.colorScheme.primary
 
-                    LaunchedEffect(hasLogged) {
-                        hasLogged.let {
-                            if (it === false) {
-                                showPopup.value = true
-                                preferencesViewModel.toggleHasLogged()
-                            }
-                        }
-                    }
+//                    LaunchedEffect(hasLogged) {
+//                        hasLogged.let {
+//                            if (it === false) {
+//                                showPopup.value = true
+//                                preferencesViewModel.toggleHasLogged()
+//                            }
+//                        }
+//                    }
                     Scaffold(
                         topBar = {
                             val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -208,63 +208,10 @@ class MainActivity : ComponentActivity() {
                                     PreferencesScreen(navController = navController)
                                 }
                             }
-
-                            if (showPopup.value) {
-                                Dialog(onDismissRequest = { showPopup.value = false }) {
-                                    PopupScreen(
-                                        onDismiss = { showPopup.value = false },
-                                        onSave = { /* Handle save action */ }
-                                    )
-                                }
-                            }
                         }
                     }
                 }
             }
-        }
-    }
-
-//    private fun createNotificationChannel() {
-//        // Create the NotificationChannel, but only on API 26+ because
-//        // the NotificationChannel class is not in the Support Library.
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            val name = getString(R.string.channel_name)
-//            val descriptionText = getString(R.string.channel_description)
-//            val importance = NotificationManager.IMPORTANCE_DEFAULT
-//            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-//                description = descriptionText
-//            }
-//            // Register the channel with the system.
-//            val notificationManager: NotificationManager =
-//                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//            notificationManager.createNotificationChannel(channel)
-//        }
-//    }
-//
-//    // Create an explicit intent for an Activity in your app.
-//    val intent = Intent(this, AlertDetails::class.java).apply {
-//        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-//    }
-//    val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-//
-//    val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-//        .setSmallIcon(R.drawable.notification_icon)
-//        .setContentTitle("My notification")
-//        .setContentText("Hello World!")
-//        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-//        // Set the intent that fires when the user taps the notification.
-//        .setContentIntent(pendingIntent)
-//        .setAutoCancel(true)
-
-
-    @Composable
-    fun Home(navController: NavController, viewModel: PreferencesViewModel = koinViewModel()) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text("Main Screen")
         }
     }
 }

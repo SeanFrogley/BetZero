@@ -17,6 +17,9 @@ class HomeViewModel (
     private val _userProfile = MutableStateFlow<UserProfile?>(null)
     val userProfile: StateFlow<UserProfile?> get() = _userProfile
 
+    private val _hasLogged = MutableStateFlow<Boolean>(false)
+    val hasLogged : StateFlow<Boolean> get() = _hasLogged
+
     val GOAL_INPUT_ERROR: String = "Please enter a goal that is not empty"
     val LIFE_EXPECTANCY: Int = 85 //arbitary not too small number
 
@@ -33,6 +36,10 @@ class HomeViewModel (
                 _userProfile.value = null
             }
         }
+    }
+
+    fun toggleHasLogged() {
+        _hasLogged.value = !_hasLogged.value
     }
 
     /**
