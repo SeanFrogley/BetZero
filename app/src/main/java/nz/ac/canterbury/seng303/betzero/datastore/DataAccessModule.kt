@@ -11,6 +11,7 @@ import kotlinx.coroutines.FlowPreview
 import nz.ac.canterbury.seng303.betzero.models.DailyLog
 import nz.ac.canterbury.seng303.betzero.models.RelapseLog
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
+import nz.ac.canterbury.seng303.betzero.screens.EmergencyScreen
 import nz.ac.canterbury.seng303.betzero.screens.GettingStartedScreen
 import nz.ac.canterbury.seng303.betzero.viewmodels.AnalyticsViewModel
 import nz.ac.canterbury.seng303.betzero.viewmodels.CalendarViewModel
@@ -20,6 +21,7 @@ import nz.ac.canterbury.seng303.betzero.viewmodels.GettingStartedViewModel
 import nz.ac.canterbury.seng303.betzero.viewmodels.InitialViewModel
 import nz.ac.canterbury.seng303.betzero.viewmodels.UpdateUserProfileViewModel
 import nz.ac.canterbury.seng303.betzero.viewmodels.UserProfileViewModel
+import nz.ac.canterbury.seng303.betzero.viewmodels.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
