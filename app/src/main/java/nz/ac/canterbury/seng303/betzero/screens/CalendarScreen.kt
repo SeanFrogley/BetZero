@@ -465,7 +465,7 @@ fun ShowDayDetails(date: Date, relapseLogs: List<RelapseLog>, onDismiss: () -> U
                     }
                 } else {
                     Text(
-                        text = "No relapse available for this day",
+                        text = "No logs available for this day",
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
                 }

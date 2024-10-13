@@ -33,9 +33,6 @@ class CalendarViewModel(
     private val _userProfile = MutableStateFlow<UserProfile?>(null)
     val userProfile: StateFlow<UserProfile?> get() = _userProfile
 
-    private val _dailyLogs = MutableStateFlow<List<DailyLog>>(emptyList())
-    val dailyLogs: StateFlow<List<DailyLog>> get() = _dailyLogs
-
     private val _relapseLogs = MutableStateFlow<List<RelapseLog>>(emptyList())
     val relapseLogs: StateFlow<List<RelapseLog>> get() = _relapseLogs
 
@@ -51,13 +48,6 @@ class CalendarViewModel(
                 }
             } catch (e: Exception) {
                 _userProfile.value = null
-            }
-
-            try {
-                val logs = dailyLogStorage.getAll().first()
-                _dailyLogs.value = logs
-            } catch (e: Exception) {
-                _dailyLogs.value = emptyList()
             }
 
             try {
@@ -104,12 +94,11 @@ class CalendarViewModel(
         Log.d("DataStoreInsert", "Updating user profile: $userProfile")
 
         try {
-            // Perform DataStore update in IO thread
             userProfileStorage.edit(userProfile.getIdentifier(), userProfile)
-                .flowOn(Dispatchers.IO) // Ensure flow operates on IO
+                .flowOn(Dispatchers.IO)
                 .collect { result ->
                     if (result == 1) {
-                        withContext(Dispatchers.Main) { // Switch to Main thread for UI updates
+                        withContext(Dispatchers.Main) {
                             Log.d("USER_PROFILE_VM", "User profile updated successfully")
                             _userProfile.value = userProfile
                         }
@@ -136,10 +125,8 @@ class CalendarViewModel(
             amountSpent = parsedAmount
         )
 
-        // Insert the new relapse log into the storage
         relapseLogStorage.insert(newRelapseLog).collect { result ->
             if (result == 1) {
-                // Update the relapse logs state
                 _relapseLogs.value = _relapseLogs.value + newRelapseLog
                 Log.d("RelapseLog", "Relapse log inserted successfully")
             } else {
