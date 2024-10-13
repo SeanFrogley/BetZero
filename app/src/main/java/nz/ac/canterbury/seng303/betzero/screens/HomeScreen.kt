@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import nz.ac.canterbury.seng303.betzero.screens.PopupScreen
 import nz.ac.canterbury.seng303.betzero.viewmodels.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
 

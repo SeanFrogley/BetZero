@@ -2,8 +2,6 @@ package nz.ac.canterbury.seng303.betzero
 
 import AnalyticsScreen
 import HomeScreen
-import PopupScreen
-import SummariesScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -53,7 +51,9 @@ import nz.ac.canterbury.seng303.betzero.screens.EmergencyScreen
 import nz.ac.canterbury.seng303.betzero.screens.GettingStartedScreen
 import nz.ac.canterbury.seng303.betzero.screens.InitialScreen
 import nz.ac.canterbury.seng303.betzero.screens.OnboardingScreen
+import nz.ac.canterbury.seng303.betzero.screens.PopupScreen
 import nz.ac.canterbury.seng303.betzero.screens.PreferencesScreen
+import nz.ac.canterbury.seng303.betzero.screens.SummariesScreen
 import nz.ac.canterbury.seng303.betzero.screens.UpdateUserProfileScreen
 import nz.ac.canterbury.seng303.betzero.screens.UserProfileScreen
 import nz.ac.canterbury.seng303.betzero.viewmodels.PreferencesViewModel
