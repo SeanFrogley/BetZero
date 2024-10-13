@@ -25,10 +25,21 @@ import java.util.Locale
 import kotlin.random.Random
 
 @Composable
-fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
+fun PopupScreen(
+    onDismiss: () -> Unit,
+    onSave: (DailyLog) -> Unit
+) {
     val context = LocalContext.current
-    val quotes = listOf("The safest way to double your money is to fold it over and put it in your pocket.", "Gambling: The sure way of getting nothing for something.", "The house always wins. Remember that when you're tempted to play", "Gambling is a way of playing for a better future that often leads to a worse present.", "Each time you gamble, you gamble your future for a fleeting moment of excitement.", "Don't let gambling steal your joy; true happiness can't be bought.")
+    val quotes = listOf(
+        "The safest way to double your money is to fold it over and put it in your pocket.",
+        "Gambling: The sure way of getting nothing for something.",
+        "The house always wins. Remember that when you're tempted to play",
+        "Gambling is a way of playing for a better future that often leads to a worse present.",
+        "Each time you gamble, you gamble your future for a fleeting moment of excitement.",
+        "Don't let gambling steal your joy; true happiness can't be bought."
+    )
     val randomQuote = quotes[Random.nextInt(quotes.size)]
+
     var hasRecordingPermission by remember { mutableStateOf(false) }
     var isRecording by remember { mutableStateOf(false) }
     val voiceRecorder = remember { VoiceRecorder(context) }
@@ -40,7 +51,9 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
     // Request permission for recording
     val requestPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean -> hasRecordingPermission = isGranted }
+    ) { isGranted: Boolean ->
+        hasRecordingPermission = isGranted
+    }
 
     LaunchedEffect(Unit) {
         when (PackageManager.PERMISSION_GRANTED) {
@@ -52,6 +65,7 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
             }
         }
     }
+
     // If the user wants to exit the pop-up dialog, display warning
     if (showExitConfirmation) {
         AlertDialog(
@@ -59,10 +73,12 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
             title = { Text("Exit Confirmation") },
             text = { Text("You cannot come back and record. Are you sure you want to exit?") },
             confirmButton = {
-                Button(onClick = {
-                    showExitConfirmation = false
-                    onDismiss()
-                }) {
+                Button(
+                    onClick = {
+                        showExitConfirmation = false
+                        onDismiss()
+                    }
+                ) {
                     Text("Yes")
                 }
             },
@@ -82,8 +98,15 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("Welcome Back!", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                IconButton(onClick = { showExitConfirmation = true }, modifier = Modifier.size(24.dp)) {
+                Text(
+                    "Welcome Back!",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                IconButton(
+                    onClick = { showExitConfirmation = true },
+                    modifier = Modifier.size(24.dp)
+                ) {
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "Close",
@@ -97,7 +120,11 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("How are you feeling today?", fontSize = 18.sp, modifier = Modifier.align(Alignment.CenterHorizontally))
+                Text(
+                    "How are you feeling today?",
+                    fontSize = 18.sp,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
@@ -127,7 +154,8 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
                     }
 
                     IconButton(
-                        onClick = { selectedMood = "Happy" }, modifier = Modifier.size(64.dp)
+                        onClick = { selectedMood = "Happy" },
+                        modifier = Modifier.size(64.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.SentimentVerySatisfied,
@@ -168,9 +196,12 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
                         )
                     }
                 } else {
-                    Text("Recording permission is required.", fontSize = 16.sp, modifier = Modifier.align(Alignment.CenterHorizontally))
+                    Text(
+                        "Recording permission is required.",
+                        fontSize = 16.sp,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
                 }
-
                 // Displaying error message if any
                 errorMessage?.let {
                     Spacer(modifier = Modifier.height(8.dp))
@@ -184,9 +215,18 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Divider()
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Daily Quote:", fontSize = 18.sp, modifier = Modifier.align(Alignment.CenterHorizontally))
+                Text(
+                    "Daily Quote:",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(randomQuote, fontSize = 16.sp, modifier = Modifier.align(Alignment.CenterHorizontally))
+                Text(
+                    randomQuote,
+                    fontSize = 16.sp,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
             }
         },
         confirmButton = {
@@ -202,7 +242,6 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
                             date = formattedDate,
                             completed = true // Mark log as complete
                         )
-
                         onSave(entry)
                         onDismiss()
                     }
