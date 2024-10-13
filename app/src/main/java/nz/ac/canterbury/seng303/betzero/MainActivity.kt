@@ -4,7 +4,6 @@ import AnalyticsScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.AccountCircle
@@ -177,7 +175,7 @@ class MainActivity : ComponentActivity() {
                                     SummariesScreen(navController = navController)
                                 }
                                 composable("EmergencyScreen") {
-                                    EmergencyScreen(navController = navController)
+                                    EmergencyScreen()
                                 }
                                 composable("GettingStartedScreen") {
                                     GettingStartedScreen(navController = navController)
@@ -197,7 +195,7 @@ class MainActivity : ComponentActivity() {
                                 Dialog(onDismissRequest = { showPopup.value = false }) {
                                     PopupScreen(
                                         onDismiss = { showPopup.value = false },
-                                        onSave = { /* Handle save action */ }
+                                        onSave = { /* Handles save but not needed but please leave :)*/ }
                                     )
                                 }
                             }
