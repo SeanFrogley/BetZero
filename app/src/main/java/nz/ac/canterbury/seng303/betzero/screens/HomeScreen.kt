@@ -124,6 +124,8 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
 
         IntroMessage()
 
+        Spacer(Modifier.height(16.dp))
+
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
             thickness = 4.dp,
@@ -227,9 +229,9 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
                     .clickable { showDialog = true }
             )
         }
+        Spacer(Modifier.height(16.dp))
     }
 
-    Spacer(Modifier.height(16.dp))
 
     if (showDialog) {
         AlertDialog(
