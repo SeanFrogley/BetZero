@@ -41,17 +41,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import nz.ac.canterbury.seng303.betzero.R
 import nz.ac.canterbury.seng303.betzero.viewmodels.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
+
 
 @Composable
 fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinViewModel()) {
@@ -124,10 +122,6 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
 
         }
 
-        for (percent in percentsThroughTimeList) {
-            AgeIndicator(percent)
-        }
-
         IntroMessage()
 
         HorizontalDivider(
@@ -135,7 +129,26 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
             thickness = 4.dp,
             color = MaterialTheme.colorScheme.primary
         )
-        Spacer(Modifier.height(10.dp))
+
+        Spacer(Modifier.height(16.dp))
+
+        // Iterate through stats and create progress bars for them
+        Text(
+            text = "You've made it this far, Keep going!",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(Modifier.height(8.dp))
+
+
+        for ((percent, period) in percentsThroughTimeList) {
+            AgeIndicator(percent, period)
+        }
+
+        Spacer(Modifier.height(16.dp))
+
+
 
         Text(
             text = if (userGoals?.isEmpty() == true) "Create some Goals" else "My Goals",
@@ -143,9 +156,13 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
             fontSize = 20.sp
         )
 
+        Spacer(Modifier.height(10.dp))
+
+
         userGoals?.forEachIndexed { index, goal ->
             Row(
-                Modifier.fillMaxWidth()
+                Modifier
+                    .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -212,6 +229,8 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
         }
     }
 
+    Spacer(Modifier.height(16.dp))
+
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
@@ -272,28 +291,39 @@ fun IntroMessage() {
 //https://foso.github.io/Jetpack-Compose-Playground/material/circularprogressindicator/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AgeIndicator(progress: Float) {
+fun AgeIndicator(progress: Float, period: String) {
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Spacer(Modifier.height(10.dp))
-        Text("Percentage through life - lets stop gambling!")
-        Text(
-            text = "${(progress * 100).toInt()}%",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(Modifier.height(8.dp))
 
-        LinearProgressIndicator(
-            modifier = Modifier
-                .height(10.dp),
+    Column(horizontalAlignment = Alignment.Start) {
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            LinearProgressIndicator(
+                    modifier = Modifier
+                        .height(10.dp)
+                        .weight(1f),
             progress = { (progress) },
-            color = Color(0xFFFFA500),
-            trackColor = MaterialTheme.colorScheme.secondaryContainer,
-            strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
-            gapSize = (-3).dp //trying to remove default gap
-        )
+                    color = Color(0xFFFFA500),
+                    trackColor = MaterialTheme.colorScheme.secondaryContainer,
+                    strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
+                    gapSize = (-8).dp //trying to remove default gap
+                )
 
-        Spacer(Modifier.height(16.dp))
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+
+            Text(
+                    text = "${(period)} ${(progress * 100).toInt()}%",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+            Spacer(modifier = Modifier.width(16.dp))
+        }
     }
 }

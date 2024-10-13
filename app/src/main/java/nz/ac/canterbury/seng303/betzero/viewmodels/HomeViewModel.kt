@@ -10,9 +10,7 @@ import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.betzero.datastore.Storage
 import nz.ac.canterbury.seng303.betzero.models.DailyLogState
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
-import java.time.LocalDateTime
-import java.time.temporal.ChronoField
-import java.time.temporal.TemporalAdjusters
+import nz.ac.canterbury.seng303.betzero.utils.HomeStatsCalculatorUtil
 
 class HomeViewModel (
     private val userProfileStorage: Storage<UserProfile>,
@@ -22,10 +20,6 @@ class HomeViewModel (
     val userProfile: StateFlow<UserProfile?> get() = _userProfile
 
     val GOAL_INPUT_ERROR: String = "Please enter a goal that is not empty"
-    val LIFE_EXPECTANCY = 85f //arbitary not too small number
-    val DAYS_IN_A_WEEK = 7f
-    val SECONDS_IN_A_DAY = 86400f
-    val TOTAL_DAYS_IN_YEAR = 365f
 
 
     init {
@@ -50,42 +44,16 @@ class HomeViewModel (
     }
 
     /**
-     * Returns the percentage of the user's life based on their age.
-     */
-    private fun calculateLife(age: Int) : Float {
-        if (age < 0) return 0f
-
-        return if (age >= LIFE_EXPECTANCY) {
-            100f
-        } else {
-            (age / LIFE_EXPECTANCY.toFloat())
-        }
-    }
-
-    /**
-     * Helper function to calculate the percentages through the current month, week, and day.
-     */
-    private fun calculatePercentThroughTime(): List<Float> {
-        val now = LocalDateTime.now()
-
-        val percentThroughMonth = (now.dayOfMonth.toFloat() / now.with(TemporalAdjusters.lastDayOfMonth()).dayOfMonth.toFloat())
-        val percentThroughWeek = (now.get(ChronoField.DAY_OF_WEEK).toFloat() / DAYS_IN_A_WEEK)
-        val percentThroughDay = (now.toLocalTime().toSecondOfDay().toFloat() / SECONDS_IN_A_DAY)
-        val percentThroughYear = (now.dayOfYear.toFloat() / TOTAL_DAYS_IN_YEAR)
-
-        return listOf( percentThroughYear, percentThroughMonth, percentThroughWeek, percentThroughDay)
-    }
-
-    /**
      * Main function to return the percentages for life, month, week, day, and year based on the user's age.
+     * Uses HomeStatsCalculatorUtil to calculate the percentages.
      */
-    fun calculateTimePercentages(age: Int): List<Float> {
-        val percentThroughLife = calculateLife(age)
-        val timePercentages = calculatePercentThroughTime()
+    fun calculateTimePercentages(age: Int): List<Pair<Float, String>> {
+        val percentThroughLife = HomeStatsCalculatorUtil.calculateLife(age)
+
+        val timePercentages = HomeStatsCalculatorUtil.calculatePercentThroughTime()
 
         return listOf(percentThroughLife) + timePercentages
     }
-
     /**
      * uses the user id to store the edited user
      */
