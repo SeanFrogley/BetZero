@@ -75,7 +75,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
             userAge = it.age
         }
     }
-    var progress = viewModel.calculateLife(userAge)
+    val percentsThroughTimeList = viewModel.calculateTimePercentages(userAge)
 
     Column(
         modifier = Modifier
@@ -92,8 +92,9 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
             Text(
                 text = "Welcome ${userProfile?.name}",
                 fontSize = 24.sp,
-                color = MaterialTheme.colorScheme.primary
-            )
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold,
+                )
 
             Spacer(modifier = Modifier.width(16.dp))
 
@@ -116,15 +117,17 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
                     modifier = Modifier.size(26.dp),
                     imageVector = Icons.Default.NewLabel,
                     contentDescription = "Delete",
-                    tint = Color.Yellow
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
 
 
         }
 
+        for (percent in percentsThroughTimeList) {
+            AgeIndicator(percent)
+        }
 
-        AgeIndicator(progress)
         IntroMessage()
 
         HorizontalDivider(
@@ -175,7 +178,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
                     Icon(
                         imageVector = Icons.Outlined.Delete,
                         contentDescription = "Delete",
-                        tint = Color.Red
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -274,6 +277,11 @@ fun AgeIndicator(progress: Float) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(Modifier.height(10.dp))
         Text("Percentage through life - lets stop gambling!")
+        Text(
+            text = "${(progress * 100).toInt()}%",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold
+        )
         Spacer(Modifier.height(8.dp))
 
         LinearProgressIndicator(

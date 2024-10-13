@@ -22,10 +22,10 @@ class HomeViewModel (
     val userProfile: StateFlow<UserProfile?> get() = _userProfile
 
     val GOAL_INPUT_ERROR: String = "Please enter a goal that is not empty"
-    val LIFE_EXPECTANCY: Int = 85 //arbitary not too small number
-    val DAYS_IN_A_WEEK = 7                      // Days in a week
-    val SECONDS_IN_A_DAY = 86400
-    val TOTAL_DAYS_IN_YEAR = 365
+    val LIFE_EXPECTANCY = 85f //arbitary not too small number
+    val DAYS_IN_A_WEEK = 7f
+    val SECONDS_IN_A_DAY = 86400f
+    val TOTAL_DAYS_IN_YEAR = 365f
 
 
     init {
@@ -52,7 +52,7 @@ class HomeViewModel (
     /**
      * Returns the percentage of the user's life based on their age.
      */
-    fun calculateLife(age: Int) : Float {
+    private fun calculateLife(age: Int) : Float {
         if (age < 0) return 0f
 
         return if (age >= LIFE_EXPECTANCY) {
@@ -65,25 +65,13 @@ class HomeViewModel (
     /**
      * Helper function to calculate the percentages through the current month, week, and day.
      */
-    fun calculatePercentThroughTime(): List<Float> {
+    private fun calculatePercentThroughTime(): List<Float> {
         val now = LocalDateTime.now()
 
-        // Calculate percent through the month
-        val currentDayOfMonth = now.dayOfMonth
-        val totalDaysInMonth = now.with(TemporalAdjusters.lastDayOfMonth()).dayOfMonth
-        val percentThroughMonth = (currentDayOfMonth.toFloat() / totalDaysInMonth.toFloat())
-
-        // Calculate percent through the week
-        val currentDayOfWeek = now.get(ChronoField.DAY_OF_WEEK)  // 1 = Monday, 7 = Sunday (default in ISO)
-        val percentThroughWeek = (currentDayOfWeek.toFloat() / DAYS_IN_A_WEEK.toFloat())
-
-        // Calculate percent through the day
-        val currentSecondOfDay = now.toLocalTime().toSecondOfDay()
-        val percentThroughDay = (currentSecondOfDay.toFloat() / SECONDS_IN_A_DAY.toFloat())
-
-        // Calculate percent through the year
-        val dayOfYear = now.dayOfYear
-        val percentThroughYear = (dayOfYear.toFloat() / TOTAL_DAYS_IN_YEAR.toFloat())
+        val percentThroughMonth = (now.dayOfMonth.toFloat() / now.with(TemporalAdjusters.lastDayOfMonth()).dayOfMonth.toFloat())
+        val percentThroughWeek = (now.get(ChronoField.DAY_OF_WEEK).toFloat() / DAYS_IN_A_WEEK)
+        val percentThroughDay = (now.toLocalTime().toSecondOfDay().toFloat() / SECONDS_IN_A_DAY)
+        val percentThroughYear = (now.dayOfYear.toFloat() / TOTAL_DAYS_IN_YEAR)
 
         return listOf( percentThroughYear, percentThroughMonth, percentThroughWeek, percentThroughDay)
     }
@@ -91,7 +79,7 @@ class HomeViewModel (
     /**
      * Main function to return the percentages for life, month, week, day, and year based on the user's age.
      */
-    fun calculateLifePercentages(age: Int): List<Float> {
+    fun calculateTimePercentages(age: Int): List<Float> {
         val percentThroughLife = calculateLife(age)
         val timePercentages = calculatePercentThroughTime()
 
