@@ -68,6 +68,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
+
 @Composable
 fun EmergencyScreen(viewModel: EmergencyViewModel = koinViewModel()) {
     val context = LocalContext.current
@@ -77,10 +80,9 @@ fun EmergencyScreen(viewModel: EmergencyViewModel = koinViewModel()) {
     var mediaPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
     var currentlyPlayingId by remember { mutableStateOf<Int?>(null) }
 
-
     LaunchedEffect(Unit) {
         happyRecordings = RecordingUtil.getAllRecordings(context)
-            .filter { RecordingUtil.getMoodFromFile(it) == "Happy" } // Filter for happy recordings
+            .filter { RecordingUtil.getMoodFromFile(it) == "Happy" }
             .sortedByDescending { it.lastModified() }
             .mapNotNull { file ->
                 DailyLog(
@@ -99,197 +101,186 @@ fun EmergencyScreen(viewModel: EmergencyViewModel = koinViewModel()) {
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "So you're feeling down...?",
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 15.dp),
-            fontSize = 30.sp,
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-            color = Color.Red
-        )
-        Text(
-            text = "Let us cheer you up! ",
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-        )
-        Text(
-            text = "Remember this time when you were doing amazing?!\n Let's listen to some happy recordings and celebrate your success!",
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-            fontSize = 13.sp,
-        )
+    Box(modifier = Modifier.verticalScroll(rememberScrollState())) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "So you're feeling down...?",
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 15.dp),
+                fontSize = 30.sp,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                color = Color.Red
+            )
+            Text(
+                text = "Let us cheer you up! ",
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            )
+            Text(
+                text = "Remember this time when you were doing amazing?!\n Let's listen to some happy recordings and celebrate your success!",
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                fontSize = 13.sp,
+            )
 
-        IconButton(
-            onClick = {
-                // Logic to play a random recording with the mood "Happy"
-                if (happyRecordings.isNotEmpty()) {
-                    val randomRecording = happyRecordings.random()
-                    if (currentlyPlayingId == randomRecording.id) {
-                        mediaPlayer?.pause()
-                        currentlyPlayingId = null
-                    } else {
-                        mediaPlayer?.release()
-                        mediaPlayer = MediaPlayer().apply {
-                            setDataSource(RecordingUtil.getRecordingFile(context, randomRecording.voiceMemo).absolutePath)
-                            prepare()
-                            start()
+            IconButton(
+                onClick = {
+                    if (happyRecordings.isNotEmpty()) {
+                        val randomRecording = happyRecordings.random()
+                        if (currentlyPlayingId == randomRecording.id) {
+                            mediaPlayer?.pause()
+                            currentlyPlayingId = null
+                        } else {
+                            mediaPlayer?.release()
+                            mediaPlayer = MediaPlayer().apply {
+                                setDataSource(RecordingUtil.getRecordingFile(context, randomRecording.voiceMemo).absolutePath)
+                                prepare()
+                                start()
+                            }
+                            currentlyPlayingId = randomRecording.id
                         }
-                        currentlyPlayingId = randomRecording.id
-                    }
-                } else {
-                    Toast.makeText(context, "No happy recordings found", Toast.LENGTH_SHORT).show()
-                }
-            },
-            modifier = Modifier
-                .size(100.dp)
-                .padding(8.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.PlayCircleOutline,
-                contentDescription = "Play",
-                modifier = Modifier.size(120.dp),
-                tint = Color.Yellow
-            )
-        }
-
-        Spacer(
-            modifier = Modifier.height(10.dp)
-        )
-        HorizontalDivider()
-        Spacer(
-            modifier = Modifier.height(20.dp)
-        )
-
-        Text(
-            text = "If that's not enough... don't be ashamed! \nWe have some other ways to cheer you up!",
-            fontSize = 17.sp,
-            fontWeight = FontWeight.Bold
-        )
-
-        Text(
-            text = "Have a go at a non-risk gamble with the slot machine\n or read some inspiring articles to keep you going!",
-            fontSize = 13.sp,
-            modifier = Modifier.padding(top = 16.dp)
-        )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            Button(
-                onClick = {
-                    if (viewModel.balance >= 5) {
-                        showSlotMachineDialog = true
                     } else {
-                        Toast.makeText(context, "You are out of coins!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "No happy recordings found", Toast.LENGTH_SHORT).show()
                     }
                 },
                 modifier = Modifier
-                    .weight(1f)
-                    .height(100.dp)
-                    .padding(8.dp),
-                shape = RoundedCornerShape(12.dp)
+                    .size(100.dp)
+                    .padding(8.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.AttachMoney,
-                        contentDescription = "Open Slots",
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                }
-            }
-
-            Button(
-                onClick = {
-                    showArticlesDialog = true
-                },
-                modifier = Modifier
-                    .weight(1f)
-                    .height(100.dp)
-                    .padding(8.dp),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.MenuBook,
-                        contentDescription = "Articles Icon",
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                }
-            }
-
-        }
-
-        Spacer(
-            modifier = Modifier.height(35.dp)
-        )
-        HorizontalDivider()
-        Spacer(
-            modifier = Modifier.height(35.dp)
-        )
-
-        Text(
-            text = "Want to talk to someone?",
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-            color = Color.Red
-        )
-        Text(
-            text = "Reach out to Gambling Helpline Aoteroa available 24/7\n See contact details below",
-            fontSize = 12.sp,
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-        )
-        Spacer(
-            modifier = Modifier.height(16.dp)
-        )
-        Row {
-            Icon(
-                imageVector = Icons.Default.Phone ,
-                contentDescription = "Phone Icon",
-                Modifier.padding(start = 8.dp)
+                Icon(
+                    imageVector = Icons.Default.PlayCircleOutline,
+                    contentDescription = "Play",
+                    modifier = Modifier.size(120.dp),
+                    tint = Color.Yellow
                 )
-            Text(text ="0800 654 655", modifier = Modifier.padding(start = 8.dp))
-        }
+            }
 
-        Row {
-            Icon(
-                imageVector = Icons.Default.Textsms ,
-                contentDescription = "Phone Icon",
-                Modifier.padding(start = 8.dp)
+            Spacer(modifier = Modifier.height(10.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                text = "If that's not enough... don't be ashamed! \nWe have some other ways to cheer you up!",
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Bold
             )
-            Text(text ="8006", modifier = Modifier.padding(start = 8.dp))
-        }
 
-
-        if (showSlotMachineDialog) {
-            SlotMachinePopup(
-                onClose = { showSlotMachineDialog = false },
-                viewModel = viewModel
+            Text(
+                text = "Have a go at a non-risk gamble with the slot machine\n or read some inspiring articles to keep you going!",
+                fontSize = 13.sp,
+                modifier = Modifier.padding(top = 16.dp)
             )
-        }
 
-        if (showArticlesDialog) {
-            ArticlesPopup(onClose = { showArticlesDialog = false })
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Button(
+                    onClick = {
+                        if (viewModel.balance >= 5) {
+                            showSlotMachineDialog = true
+                        } else {
+                            Toast.makeText(context, "You are out of coins!", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(100.dp)
+                        .padding(8.dp),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AttachMoney,
+                            contentDescription = "Open Slots",
+                            tint = Color.White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                }
+
+                Button(
+                    onClick = {
+                        showArticlesDialog = true
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(100.dp)
+                        .padding(8.dp),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.MenuBook,
+                            contentDescription = "Articles Icon",
+                            tint = Color.White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(35.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(35.dp))
+
+            Text(
+                text = "Want to talk to someone?",
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                color = Color.Red
+            )
+            Text(
+                text = "Reach out to Gambling Helpline Aoteroa available 24/7\n See contact details below",
+                fontSize = 12.sp,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Row {
+                Icon(
+                    imageVector = Icons.Default.Phone,
+                    contentDescription = "Phone Icon",
+                    Modifier.padding(start = 8.dp)
+                )
+                Text(text = "0800 654 655", modifier = Modifier.padding(start = 8.dp))
+            }
+
+            Row {
+                Icon(
+                    imageVector = Icons.Default.Textsms,
+                    contentDescription = "Phone Icon",
+                    Modifier.padding(start = 8.dp)
+                )
+                Text(text = "8006", modifier = Modifier.padding(start = 8.dp))
+            }
+
+            if (showSlotMachineDialog) {
+                SlotMachinePopup(
+                    onClose = { showSlotMachineDialog = false },
+                    viewModel = viewModel
+                )
+            }
+
+            if (showArticlesDialog) {
+                ArticlesPopup(onClose = { showArticlesDialog = false })
+            }
         }
     }
 }
