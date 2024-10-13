@@ -4,11 +4,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material.icons.filled.SentimentNeutral
-import androidx.compose.material.icons.filled.SentimentVeryDissatisfied
-import androidx.compose.material.icons.filled.SentimentVerySatisfied
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -34,15 +30,15 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
     var hasRecordingPermission by remember { mutableStateOf(false) }
     var isRecording by remember { mutableStateOf(false) }
     val voiceRecorder = remember { VoiceRecorder(context) }
-    var selectedMood by remember { mutableStateOf<String?>(null) }
+    var selectedMood by remember { mutableStateOf("Neutral") }
     var voiceMemoPath by remember { mutableStateOf<String?>(null) }
     var showExitConfirmation by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
+    // Request permission for recording
     val requestPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        hasRecordingPermission = isGranted
-    }
+    ) { isGranted: Boolean -> hasRecordingPermission = isGranted }
 
     LaunchedEffect(Unit) {
         when (PackageManager.PERMISSION_GRANTED) {
@@ -54,7 +50,7 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
             }
         }
     }
-
+    // If the user wants to exit the pop-up dialog, display warning
     if (showExitConfirmation) {
         AlertDialog(
             onDismissRequest = { showExitConfirmation = false },
@@ -76,6 +72,7 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
         )
     }
 
+    // Main content of the popup dialog
     AlertDialog(
         onDismissRequest = { showExitConfirmation = true },
         title = {
@@ -98,56 +95,15 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Record how you are feeling today:", fontSize = 18.sp, modifier = Modifier.align(Alignment.CenterHorizontally))
-                Spacer(modifier = Modifier.height(8.dp))
-                Divider()
-                Spacer(modifier = Modifier.height(8.dp))
-                if (hasRecordingPermission) {
-                    Button(
-                        onClick = {
-                            if (isRecording) {
-                                voiceMemoPath = voiceRecorder.stopRecording()
-                            } else {
-                                voiceRecorder.startRecording()
-                            }
-                            isRecording = !isRecording
-                        },
-                        modifier = Modifier.size(100.dp).align(Alignment.CenterHorizontally)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Mic,
-                            contentDescription = if (isRecording) "Stop Recording" else "Record",
-                            modifier = Modifier.size(64.dp)
-                        )
-                    }
-                } else {
-                    Text("Recording permission is required.", fontSize = 16.sp, modifier = Modifier.align(Alignment.CenterHorizontally))
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                Divider()
-                Spacer(modifier = Modifier.height(8.dp))
-                Text("Choose an option:", fontSize = 18.sp, modifier = Modifier.align(Alignment.CenterHorizontally))
+                Text("How are you feeling today?", fontSize = 18.sp, modifier = Modifier.align(Alignment.CenterHorizontally))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    IconButton(onClick = { selectedMood = "Happy" }, modifier = Modifier.size(48.dp)) {
-                        Icon(
-                            imageVector = Icons.Default.SentimentVerySatisfied,
-                            contentDescription = "Happy",
-                            modifier = Modifier.size(48.dp),
-                            tint = if (selectedMood == "Happy") Color.Yellow else Color.Gray
-                        )
-                    }
-                    IconButton(onClick = { selectedMood = "Neutral" }, modifier = Modifier.size(48.dp)) {
-                        Icon(
-                            imageVector = Icons.Default.SentimentNeutral,
-                            contentDescription = "Neutral",
-                            modifier = Modifier.size(48.dp),
-                            tint = if (selectedMood == "Neutral") Color.Yellow else Color.Gray
-                        )
-                    }
-                    IconButton(onClick = { selectedMood = "Sad" }, modifier = Modifier.size(48.dp)) {
+                    IconButton(
+                        onClick = { selectedMood = "Sad" },
+                        modifier = Modifier.size(64.dp)
+                    ) {
                         Icon(
                             imageVector = Icons.Default.SentimentVeryDissatisfied,
                             contentDescription = "Sad",
@@ -155,6 +111,73 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
                             tint = if (selectedMood == "Sad") Color.Blue else Color.Gray
                         )
                     }
+
+                    IconButton(
+                        onClick = { selectedMood = "Neutral" },
+                        modifier = Modifier.size(64.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.SentimentNeutral,
+                            contentDescription = "Neutral",
+                            modifier = Modifier.size(48.dp),
+                            tint = if (selectedMood == "Neutral") Color.Green else Color.Gray
+                        )
+                    }
+
+                    IconButton(
+                        onClick = { selectedMood = "Happy" }, modifier = Modifier.size(64.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.SentimentVerySatisfied,
+                            contentDescription = "Happy",
+                            modifier = Modifier.size(48.dp),
+                            tint = if (selectedMood == "Happy") Color.Yellow else Color.Gray
+                        )
+                    }
+                }
+                // Dividers!
+                Spacer(modifier = Modifier.height(16.dp))
+                Divider()
+                Spacer(modifier = Modifier.height(8.dp))
+
+                if (hasRecordingPermission) {
+                    Button(
+                        onClick = {
+                            if (selectedMood != "Neutral") {
+                                if (isRecording) {
+                                    voiceMemoPath = voiceRecorder.stopRecording()
+                                } else {
+                                    voiceRecorder.startRecording(selectedMood) // Pass mood for file name
+                                }
+                                isRecording = !isRecording
+                                errorMessage = null // Clear error if action is successful
+                            } else {
+                                errorMessage = "Please select a mood before recording."
+                            }
+                        },
+                        enabled = selectedMood != "Neutral", // Disable if the mood is not selected
+                        modifier = Modifier.size(100.dp).align(Alignment.CenterHorizontally)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Mic,
+                            contentDescription = if (isRecording) "Stop Recording" else "Record",
+                            modifier = Modifier.size(64.dp),
+                            tint = if (selectedMood == "Neutral") Color.Gray else Color.Unspecified // Change icon color based on mood
+                        )
+                    }
+                } else {
+                    Text("Recording permission is required.", fontSize = 16.sp, modifier = Modifier.align(Alignment.CenterHorizontally))
+                }
+
+                // Displaying error message if any
+                errorMessage?.let {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = it,
+                        color = Color.Red,
+                        fontSize = 16.sp,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Divider()
@@ -167,20 +190,20 @@ fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
         confirmButton = {
             Button(
                 onClick = {
-                    if (selectedMood != null && voiceMemoPath != null) {
+                    if (voiceMemoPath != null) {
                         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
                         val formattedDate = dateFormat.format(Date())
                         val entry = DailyLog(
                             id = Random.nextInt(),
-                            feeling = selectedMood !!,
-                            voiceMemo = voiceMemoPath ?: "",
+                            feeling = selectedMood,
+                            voiceMemo = voiceMemoPath!!,
                             date = formattedDate
                         )
                         onSave(entry)
                         onDismiss()
                     }
                 },
-                enabled = selectedMood != null && voiceMemoPath != null
+                enabled = voiceMemoPath != null
             ) {
                 Text("Save")
             }

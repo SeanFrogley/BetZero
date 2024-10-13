@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.QuestionMark
+import androidx.compose.material.icons.filled.SendTimeExtension
 import androidx.compose.material.icons.filled.SentimentNeutral
 import androidx.compose.material.icons.filled.SentimentVeryDissatisfied
 import androidx.compose.material.icons.filled.SentimentVerySatisfied
@@ -35,6 +37,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.betzero.models.DailyLog
 import nz.ac.canterbury.seng303.betzero.utils.RecordingUtil
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -49,14 +52,21 @@ fun SummariesScreen(navController: NavController) {
 
     LaunchedEffect(Unit) {
         coroutineScope.launch {
-            recordings = RecordingUtil.getAllRecordings(context).map { file ->
-                DailyLog(
-                    id = file.hashCode(),
-                    feeling = "Happy",
-                    voiceMemo = file.name,
-                    date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(file.lastModified()))
-                )
-            }
+            recordings = RecordingUtil.getAllRecordings(context)
+                .sortedByDescending { it.lastModified() }
+                .mapNotNull { file ->
+                    val feeling = RecordingUtil.getMoodFromFile(file)
+                    if (feeling != null) {
+                        DailyLog(
+                            id = file.hashCode(),
+                            feeling = feeling,
+                            voiceMemo = file.name,
+                            date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(file.lastModified()))
+                        )
+                    } else {
+                        null // Skip entries without a valid mood
+                    }
+                }
         }
     }
 
@@ -88,24 +98,30 @@ fun SummariesScreen(navController: NavController) {
                                 "Happy" -> Icons.Default.SentimentVerySatisfied
                                 "Neutral" -> Icons.Default.SentimentNeutral
                                 "Sad" -> Icons.Default.SentimentVeryDissatisfied
-                                else -> Icons.Default.SentimentNeutral
+                                else -> Icons.Default.QuestionMark
                             }
-                            Icon(imageVector = moodIcon, contentDescription = entry.feeling)
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Button(onClick = {
-                                if (currentlyPlayingId == entry.id) {
-                                    mediaPlayer?.pause()
-                                    currentlyPlayingId = null
-                                } else {
-                                    mediaPlayer?.release()
-                                    mediaPlayer = MediaPlayer().apply {
-                                        setDataSource(RecordingUtil.getRecordingFile(context, entry.voiceMemo).absolutePath)
-                                        prepare()
-                                        start()
+                            Icon(
+                                imageVector = moodIcon,
+                                contentDescription = entry.feeling
+                            )
+                            Spacer(
+                                modifier = Modifier.width(8.dp)
+                            )
+                            Button(
+                                onClick = {
+                                    if (currentlyPlayingId == entry.id) {
+                                        mediaPlayer?.pause()
+                                        currentlyPlayingId = null
+                                    } else {
+                                        mediaPlayer?.release()
+                                        mediaPlayer = MediaPlayer().apply {
+                                            setDataSource(RecordingUtil.getRecordingFile(context, entry.voiceMemo).absolutePath)
+                                            prepare()
+                                            start()
+                                        }
+                                        currentlyPlayingId = entry.id
                                     }
-                                    currentlyPlayingId = entry.id
-                                }
-                            }) {
+                                }) {
                                 Text(if (currentlyPlayingId == entry.id) "Pause" else "Play")
                             }
                         }
