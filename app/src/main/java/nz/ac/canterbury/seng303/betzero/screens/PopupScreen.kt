@@ -27,7 +27,7 @@ import kotlin.random.Random
 @Composable
 fun PopupScreen(onDismiss: () -> Unit, onSave: (DailyLog) -> Unit) {
     val context = LocalContext.current
-    val quotes = listOf("Quote 1", "Quote 2", "Quote 3")
+    val quotes = listOf("The safest way to double your money is to fold it over and put it in your pocket.", "Gambling: The sure way of getting nothing for something.", "The house always wins. Remember that when you're tempted to play", "Gambling is a way of playing for a better future that often leads to a worse present.", "Each time you gamble, you gamble your future for a fleeting moment of excitement.", "Don't let gambling steal your joy; true happiness can't be bought.")
     val randomQuote = quotes[Random.nextInt(quotes.size)]
     var hasRecordingPermission by remember { mutableStateOf(false) }
     var isRecording by remember { mutableStateOf(false) }
