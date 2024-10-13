@@ -112,7 +112,6 @@ fun SummariesScreen(navController: NavController) {
                                 contentDescription = entry.feeling
                             )
                             Spacer(modifier = Modifier.width(8.dp)) // Space between the icon and text
-                            Text(text = entry.feeling)
                         }
 
                         // Play icon aligned to the far right
