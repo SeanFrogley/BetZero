@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.betzero.datastore.Storage
+import nz.ac.canterbury.seng303.betzero.models.DailyLogState
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
 import nz.ac.canterbury.seng303.betzero.utils.UserUtil.calculateDailySavings
 import nz.ac.canterbury.seng303.betzero.utils.UserUtil.calculateTotalSavings
@@ -24,6 +25,7 @@ class GettingStartedViewModel(
 
     fun saveUserProfile(
         name: String,
+        age: Int,
         totalSpent: Double,
         gamblingStartDate: Date,
         lastGambledDate: Date
@@ -46,6 +48,7 @@ class GettingStartedViewModel(
         val userProfile = UserProfile(
             id = Random.nextInt(0, Int.MAX_VALUE),
             name = name,
+            age = age,
             totalSpent = roundedTotalSpent,
             totalSaved = roundedTotalSaved,
             gamblingStartDate = gamblingStartDate,
@@ -69,4 +72,5 @@ class GettingStartedViewModel(
             Log.e("USER_PROFILE_VM", "Could not insert user profile: $exception")
         }
     }
+
 }

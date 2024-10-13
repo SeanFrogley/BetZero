@@ -71,11 +71,13 @@ class PreferencesViewModel (
                 val updatedProfile = UserProfile(
                     currentProfile.id,
                     currentProfile.name,
+                    currentProfile.age,
                     currentProfile.totalSpent,
                     currentProfile.totalSaved,
                     currentProfile.dailySavings,
                     currentProfile.gamblingStartDate,
                     currentProfile.lastGambledDate,
+                    currentProfile.goals,
                     isDarkMode,
                     isUserEnforcedTheme
                 )

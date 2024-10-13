@@ -1,9 +1,19 @@
 package nz.ac.canterbury.seng303.betzero
 
 import AnalyticsScreen
+import HomeScreen
+import PopupScreen
+import SummariesScreen
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.AccountCircle
@@ -28,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.core.app.NotificationCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
@@ -43,6 +55,8 @@ import nz.ac.canterbury.seng303.betzero.screens.UserProfileScreen
 import nz.ac.canterbury.seng303.betzero.viewmodels.PreferencesViewModel
 import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.koinViewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
@@ -169,13 +183,13 @@ class MainActivity : ComponentActivity() {
                                     AnalyticsScreen(navController = navController)
                                 }
                                 composable("Home") {
-                                    Home(navController = navController)
+                                    HomeScreen(navController = navController)
                                 }
                                 composable("SummariesScreen") {
                                     SummariesScreen(navController = navController)
                                 }
                                 composable("EmergencyScreen") {
-                                    EmergencyScreen()
+                                    EmergencyScreen(navController = navController)
                                 }
                                 composable("GettingStartedScreen") {
                                     GettingStartedScreen(navController = navController)

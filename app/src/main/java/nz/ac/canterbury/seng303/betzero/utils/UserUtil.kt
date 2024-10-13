@@ -79,6 +79,7 @@ object UserUtil {
 
         val id = 1
         val name = "John Doe"
+        val age = 42
         val totalSpent = 1000.0
         val totalSaved = 0.0
         val balance = 10000
@@ -95,6 +96,7 @@ object UserUtil {
         return UserProfile(
             id = id,
             name = name,
+            age = age,
             totalSpent = roundedTotalSpent,
             totalSaved = roundedTotalSaved,
             dailySavings = dailySavings,

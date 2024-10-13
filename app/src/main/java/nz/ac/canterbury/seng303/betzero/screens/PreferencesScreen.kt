@@ -29,6 +29,7 @@ fun PreferencesScreen(navController: NavController, viewModel: PreferencesViewMo
 
     var isDarkMode by rememberSaveable { mutableStateOf(false) }
     var isUserEnforcedTheme by rememberSaveable { mutableStateOf(false) }
+    var dailyLog by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(userProfile) {
         userProfile?.let {

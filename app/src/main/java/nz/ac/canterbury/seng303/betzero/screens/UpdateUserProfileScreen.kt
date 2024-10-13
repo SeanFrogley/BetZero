@@ -55,6 +55,7 @@ fun UpdateUserProfileScreen(navController: NavController, viewModel: UpdateUserP
 
     var userName by rememberSaveable { mutableStateOf("") }
     var totalSpent by rememberSaveable { mutableStateOf("") }
+    var age by rememberSaveable { mutableStateOf("") }
     var selectedStartDate by rememberSaveable { mutableStateOf("") }
     var selectedLastGambledDate by rememberSaveable { mutableStateOf("") }
 
@@ -63,6 +64,7 @@ fun UpdateUserProfileScreen(navController: NavController, viewModel: UpdateUserP
         userProfile?.let {
             userName = it.name
             totalSpent = it.totalSpent.toString() // Convert to String
+            age = it.age.toString()
             selectedStartDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(it.gamblingStartDate)
             selectedLastGambledDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(it.lastGambledDate)
         }
@@ -70,6 +72,7 @@ fun UpdateUserProfileScreen(navController: NavController, viewModel: UpdateUserP
 
     var nameError by rememberSaveable { mutableStateOf<String?>(null) }
     var totalSpentError by rememberSaveable { mutableStateOf<String?>(null) }
+    var ageError by rememberSaveable { mutableStateOf<String?>(null) }
     var startDateError by rememberSaveable { mutableStateOf<String?>(null) }
     var lastGambledDateError by rememberSaveable { mutableStateOf<String?>(null) }
 
@@ -186,6 +189,32 @@ fun UpdateUserProfileScreen(navController: NavController, viewModel: UpdateUserP
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            OutlinedTextField(
+                value = age,
+                onValueChange = {
+                    age = it
+                    ageError = if (InputValidation.validateTotalSpent(age)) null else "Please enter a valid non-negative number."
+                },
+                label = { Text("How old are you?") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                textStyle = androidx.compose.ui.text.TextStyle(fontSize = 16.sp),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                singleLine = true,
+                isError = ageError != null
+            )
+            if (ageError != null) {
+                Text(
+                    text = ageError ?: "",
+                    color = MaterialTheme.colorScheme.error,
+                    style = androidx.compose.ui.text.TextStyle(fontSize = 12.sp),
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
 
             Box(
                 modifier = Modifier
@@ -284,6 +313,7 @@ fun UpdateUserProfileScreen(navController: NavController, viewModel: UpdateUserP
                         viewModel.updateUserProfile(
                             id = userProfile?.id ?: 0,
                             name = userName,
+                            age = age.toInt(),
                             totalSpent = totalSpent.toDouble(),
                             gamblingStartDate = SimpleDateFormat("yyyy-MM-dd").parse(selectedStartDate),
                             lastGambledDate = SimpleDateFormat("yyyy-MM-dd").parse(selectedLastGambledDate)

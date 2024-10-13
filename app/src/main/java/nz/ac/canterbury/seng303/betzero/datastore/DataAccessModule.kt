@@ -108,4 +108,9 @@ val dataAccessModule = module {
             relapseLogStorage = get(named("relapseLog"))
         )
     }
+    viewModel {
+        HomeViewModel(
+            userProfileStorage = get(named("userProfile"))
+        )
+    }
 }
