@@ -30,6 +30,13 @@ import org.koin.android.ext.android.inject
 import com.google.accompanist.permissions.rememberPermissionState
 import nz.ac.canterbury.seng303.betzero.utils.NotificationUtil
 import android.Manifest
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.sp
+import nz.ac.canterbury.seng303.betzero.utils.AlarmUtil
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
@@ -42,8 +49,8 @@ class MainActivity : ComponentActivity() {
             //set whether the system is in dark mode as it must come from a composable
             preferencesViewModel.setIsSystemInDarkTheme(isSystemInDarkTheme())
             val isDarkTheme by preferencesViewModel.isDarkTheme.collectAsStateWithLifecycle()
+            val context = LocalContext.current
 
-            //tut onwards
             val postNotificationPermission =
                 rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
 
@@ -56,14 +63,20 @@ class MainActivity : ComponentActivity() {
             }
 
             Column {
+                //alarm start
+                Text(
+                    text = "Set Alarm Time : 10 Seconds",
+                    modifier = Modifier
+                        .padding(10.dp),
+                    fontSize = 16.sp
+                )
                 Button(
                     onClick = {
-                        NotificationUtil.showBasicNotification()
+                        setAlarm(context)
                     }
                 ) {
-                    Text(text = "Show basic notification")
+                    Text(text = "Set Alarm")
                 }
-                //tut END
 
                 BetzeroTheme(darkTheme = isDarkTheme) {
                     BetzeroTheme {
@@ -201,5 +214,13 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun setAlarm(context: Context) {
+        val timeSec = System.currentTimeMillis() + 10000
+        val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, AlarmUtil::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        alarmManager.set(AlarmManager.RTC_WAKEUP, timeSec, pendingIntent)
     }
 }
