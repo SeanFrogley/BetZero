@@ -22,6 +22,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.ProgressIndicatorDefaults
@@ -91,7 +92,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
             Text(
                 text = "Welcome ${userProfile?.name}",
                 fontSize = 24.sp,
-                color = Color.Green
+                color = MaterialTheme.colorScheme.primary
             )
 
             Spacer(modifier = Modifier.width(16.dp))
@@ -129,7 +130,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
             thickness = 4.dp,
-            color = colorResource(id = R.color.md_theme_primaryFixed_highContrast)
+            color = MaterialTheme.colorScheme.primary
         )
         Spacer(Modifier.height(10.dp))
 
@@ -148,7 +149,6 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
             ) {
                 Text(
                     text = goal,
-                    color = Color.White,
                     fontSize = 18.sp,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
@@ -196,11 +196,11 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
                     Icon(Icons.Default.Add, contentDescription = "Add a new goal")
                 },
                 colors = OutlinedTextFieldDefaults.colors(
-                    disabledTextColor = Color.White,
+                    disabledTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     disabledContainerColor = Color.Transparent,
-                    disabledBorderColor = Color.White,
-                    disabledLabelColor = Color.White,
-                    disabledTrailingIconColor = Color.White
+                    disabledBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -259,7 +259,6 @@ fun IntroMessage() {
     Text(
         text = introText,
         fontSize = 18.sp,
-        color = Color.White,
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
@@ -282,7 +281,7 @@ fun AgeIndicator(progress: Float) {
                 .height(10.dp),
             progress = { (progress) },
             color = Color(0xFFFFA500),
-            trackColor = Color.White,
+            trackColor = MaterialTheme.colorScheme.secondaryContainer,
             strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
             gapSize = (-3).dp //trying to remove default gap
         )

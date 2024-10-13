@@ -1,4 +1,4 @@
-package com.example.compose
+package nz.ac.canterbury.seng303.betzero.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF49672E)
