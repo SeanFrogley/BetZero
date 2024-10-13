@@ -77,6 +77,7 @@ fun EmergencyScreen(viewModel: EmergencyViewModel = koinViewModel()) {
     LaunchedEffect(Unit) {
         happyRecordings = RecordingUtil.getAllRecordings(context)
             .filter { RecordingUtil.getMoodFromFile(it) == "Happy" } // Filter for happy recordings
+            .sortedByDescending { it.lastModified() }
             .mapNotNull { file ->
                 DailyLog(
                     id = file.hashCode(),

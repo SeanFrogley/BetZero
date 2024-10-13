@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material.icons.filled.SentimentNeutral
 import androidx.compose.material.icons.filled.SentimentVeryDissatisfied
@@ -138,10 +136,7 @@ fun SummariesScreen(navController: NavController) {
                                     }
                                 }
                             ) {
-                                Icon(
-                                    imageVector = if (currentlyPlayingId == entry.id) Icons.Default.Pause else Icons.Default.PlayArrow,
-                                    contentDescription = if (currentlyPlayingId == entry.id) "Pause" else "Play"
-                                )
+                                Text(if (currentlyPlayingId == entry.id) "Pause" else "Play")
                             }
                         }
                     }

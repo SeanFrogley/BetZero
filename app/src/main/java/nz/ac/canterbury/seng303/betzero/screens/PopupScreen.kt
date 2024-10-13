@@ -19,8 +19,10 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import nz.ac.canterbury.seng303.betzero.models.DailyLog
 import nz.ac.canterbury.seng303.betzero.utils.VoiceRecorder
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Date
 import java.util.Locale
 import kotlin.random.Random
 

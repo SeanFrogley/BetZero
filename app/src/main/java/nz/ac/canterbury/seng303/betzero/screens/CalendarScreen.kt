@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng303.betzero.screens
 
 import android.app.DatePickerDialog
-import android.media.MediaPlayer
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -61,7 +60,6 @@ import nz.ac.canterbury.seng303.betzero.models.UserProfile
 import nz.ac.canterbury.seng303.betzero.utils.CalendarUtil.getMonthName
 import nz.ac.canterbury.seng303.betzero.utils.CalendarUtil.stripTime
 import nz.ac.canterbury.seng303.betzero.utils.InputValidation
-import nz.ac.canterbury.seng303.betzero.utils.RecordingUtil
 import nz.ac.canterbury.seng303.betzero.utils.UserUtil
 import nz.ac.canterbury.seng303.betzero.viewmodels.CalendarViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -74,14 +72,12 @@ import java.util.Locale
 fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = koinViewModel()) {
     val userProfile by viewModel.userProfile.collectAsState()
     val relapseLogs by viewModel.relapseLogs.collectAsState()
-   // val dailyLogs by viewModel.dailyLogs.collectAsState()
     Log.i("Screen", relapseLogs.toString())
- /**   val dailyLogs = listOf(
+    val dailyLogs = listOf(
         DailyLog(id = 1, feeling = "Happy", voiceMemo = "path/to/memo1", date = "2024-10-09"),
         DailyLog(id = 2, feeling = "Sad", voiceMemo = "path/to/memo2", date = "2024-10-10"),
         DailyLog(id = 3, feeling = "Neutral", voiceMemo = "path/to/memo3", date = "2024-10-11")
-    )**/
-
+    )
     val startDate = userProfile?.lastGambledDate ?: Date()
     val streakDays = UserUtil.getAllDatesSinceStart(startDate)
 
@@ -443,26 +439,6 @@ fun CalendarDatesGrid(
 
 @Composable
 fun ShowDayDetails(date: Date, logs: List<DailyLog>, relapseLogs: List<RelapseLog>, onDismiss: () -> Unit) {
-    val context = LocalContext.current
-    var dateRecordings by remember { mutableStateOf(emptyList<DailyLog>()) }
-    var mediaPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
-    var currentlyPlayingId by remember { mutableStateOf<Int?>(null) }
-
-    LaunchedEffect(Unit) {
-        dateRecordings = RecordingUtil.getAllRecordings(context)
-            .filter { RecordingUtil.getDateFromFile(it) == date.toString()} // Filter for current date
-            .mapNotNull { file ->
-                val feeling = RecordingUtil.getMoodFromFile(file)
-                DailyLog(
-                    id = file.hashCode(),
-                    feeling = feeling ?: "Unknown",
-                    voiceMemo = file.name,
-                    date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date)
-                )
-            }
-        }
-    
-
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false)
@@ -534,7 +510,7 @@ fun ShowDayDetails(date: Date, logs: List<DailyLog>, relapseLogs: List<RelapseLo
                                             contentDescription = entry.feeling
                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
-                                        Button(onClick = { playRecording(entry.voiceMemo) }) {
+                                        Button(onClick = { /* idk how to do this stuff but it should play the recording */ }) {
                                             Text(text = "Play")
                                         }
                                     }
@@ -568,17 +544,6 @@ fun ShowDayDetails(date: Date, logs: List<DailyLog>, relapseLogs: List<RelapseLo
     }
 }
 
-fun playRecording(filePath: String) {
-    try {
-        val mediaPlayer = MediaPlayer().apply {
-            setDataSource(filePath)
-            prepare()
-            start()
-        }
-    } catch (e: Exception) {
-        Log.e("ShowDayDetails", "Error playing recording", e)
-    }
-}
 @Composable
 fun DayBox(
     day: Int,

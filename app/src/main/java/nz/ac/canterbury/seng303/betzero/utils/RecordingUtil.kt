@@ -27,11 +27,11 @@ object RecordingUtil {
     fun getMoodFromFile(file: File): String? {
         val fileName = file.nameWithoutExtension // Get the file name without the .mp3
         val parts = fileName.split("_") // Split the name using "_"
-        return if (parts.size >= 3) parts[1] else null // Return the mood
+        return if (parts.size >= 2) parts[1] else null // Return the mood
     }
-    fun getDateFromFile(file: File): String? {
+    fun getTimeStampFromFile(file: File): String? {
         val fileName = file.nameWithoutExtension // Get the file name without the .mp3
         val parts = fileName.split("_") // Split the name using "_"
-        return if (parts.size >= 3) parts[2] else null // Return the timestamp
+        return if (parts.size >= 2) parts[2] else null // Return the timestamp
     }
 }
