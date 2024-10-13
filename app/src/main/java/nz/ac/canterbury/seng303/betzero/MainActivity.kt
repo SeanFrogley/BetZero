@@ -3,11 +3,23 @@ package nz.ac.canterbury.seng303.betzero
 import AnalyticsScreen
 import HomeScreen
 import SummariesScreen
+import android.Manifest
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.AccountCircle
@@ -15,28 +27,47 @@ import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Sos
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.*
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.compose.BetzeroTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
-import nz.ac.canterbury.seng303.betzero.screens.*
+import com.google.accompanist.permissions.rememberPermissionState
+import nz.ac.canterbury.seng303.betzero.screens.CalendarScreen
+import nz.ac.canterbury.seng303.betzero.screens.EmergencyScreen
+import nz.ac.canterbury.seng303.betzero.screens.GettingStartedScreen
+import nz.ac.canterbury.seng303.betzero.screens.InitialScreen
+import nz.ac.canterbury.seng303.betzero.screens.OnboardingScreen
+import nz.ac.canterbury.seng303.betzero.screens.PreferencesScreen
+import nz.ac.canterbury.seng303.betzero.screens.UpdateUserProfileScreen
+import nz.ac.canterbury.seng303.betzero.screens.UserProfileScreen
+import nz.ac.canterbury.seng303.betzero.utils.AlarmUtil
+import nz.ac.canterbury.seng303.betzero.utils.UserUtil
 import nz.ac.canterbury.seng303.betzero.viewmodels.PreferencesViewModel
 import org.koin.android.ext.android.inject
-import com.google.accompanist.permissions.rememberPermissionState
-import nz.ac.canterbury.seng303.betzero.utils.NotificationUtil
-import android.Manifest
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.sp
-import nz.ac.canterbury.seng303.betzero.utils.AlarmUtil
+import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
@@ -48,41 +79,33 @@ class MainActivity : ComponentActivity() {
         setContent {
             //set whether the system is in dark mode as it must come from a composable
             preferencesViewModel.setIsSystemInDarkTheme(isSystemInDarkTheme())
+
+            val userProfile by preferencesViewModel.userProfile.collectAsState()
+            var notificationTime by rememberSaveable { mutableStateOf(LocalTime.NOON) }
             val isDarkTheme by preferencesViewModel.isDarkTheme.collectAsStateWithLifecycle()
             val context = LocalContext.current
 
             val postNotificationPermission =
                 rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
 
-            val NotificationUtil = NotificationUtil(this)
-
             LaunchedEffect(key1 = true) {
                 if (!postNotificationPermission.status.isGranted) {
                     postNotificationPermission.launchPermissionRequest()
                 }
             }
+            LaunchedEffect(userProfile) {
+                userProfile?.let {
+                    notificationTime = it.notificationTime
+                }
+            }
 
             Column {
-                //alarm start
-                Text(
-                    text = "Set Alarm Time : 10 Seconds",
-                    modifier = Modifier
-                        .padding(10.dp),
-                    fontSize = 16.sp
-                )
-                Button(
-                    onClick = {
-                        setAlarm(context)
-                    }
-                ) {
-                    Text(text = "Set Alarm")
-                }
-
                 BetzeroTheme(darkTheme = isDarkTheme) {
                     BetzeroTheme {
                         val navController = rememberNavController()
                         val iconModifier = Modifier.size(50.dp)
                         val iconColor = MaterialTheme.colorScheme.primary
+                        setAlarm(context, notificationTime)
 
                         Scaffold(
                             topBar = {
@@ -216,11 +239,14 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun setAlarm(context: Context) {
-        val timeSec = System.currentTimeMillis() + 10000
+    //set the notification alarm
+    private fun setAlarm(context: Context, notificationTime: LocalTime ) {
         val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmUtil::class.java)
         val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-        alarmManager.set(AlarmManager.RTC_WAKEUP, timeSec, pendingIntent)
+        val triggerTime = UserUtil.convertLocalTimeToMillis(notificationTime)
+        val interval = 0L
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, triggerTime, interval, pendingIntent)
     }
+
 }

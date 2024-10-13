@@ -38,6 +38,7 @@ import nz.ac.canterbury.seng303.betzero.utils.UserUtil
 import nz.ac.canterbury.seng303.betzero.viewmodels.CalendarViewModel
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
+import java.time.LocalTime
 import java.util.*
 
 @Composable
@@ -234,7 +235,8 @@ fun ShowRelapseForm(
                                 age = userProfile.age,
                                 totalSpent = userProfile.totalSpent + parsedAmount,
                                 gamblingStartDate = userProfile.gamblingStartDate,
-                                lastGambledDate = if (parsedDate.after(userProfile.lastGambledDate)) parsedDate else userProfile.lastGambledDate
+                                lastGambledDate = if (parsedDate.after(userProfile.lastGambledDate)) parsedDate else userProfile.lastGambledDate,
+                                notificationTime = LocalTime.NOON
                             )
                             viewModel.insertRelapseLog(selectedDate, amountSpent)
 

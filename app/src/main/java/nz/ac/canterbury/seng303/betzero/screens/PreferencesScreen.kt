@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng303.betzero.screens
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.background
@@ -20,24 +21,42 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.datetime.time.timepicker
+import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import nz.ac.canterbury.seng303.betzero.viewmodels.PreferencesViewModel
 import org.koin.androidx.compose.koinViewModel
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun PreferencesScreen(navController: NavController, viewModel: PreferencesViewModel = koinViewModel()) {
     val userProfile by viewModel.userProfile.collectAsState()
+    val context = LocalContext.current
 
     var isDarkMode by rememberSaveable { mutableStateOf(false) }
     var isUserEnforcedTheme by rememberSaveable { mutableStateOf(false) }
     var dailyLog by rememberSaveable { mutableStateOf(false) }
+    var pickedTime by rememberSaveable { mutableStateOf(LocalTime.NOON) }
 
     LaunchedEffect(userProfile) {
         userProfile?.let {
             isDarkMode = it.isDarkMode
             isUserEnforcedTheme = it.isUserEnforcedTheme
+            pickedTime = it.notificationTime ?: LocalTime.now() //goes here
+            Log.d("PreferencesScreen", "Picked time: $pickedTime")
         }
     }
 
+    val formattedTime by remember {
+        derivedStateOf {
+            DateTimeFormatter
+                .ofPattern("hh:mm")
+                .format(pickedTime)
+        }
+    }
+
+    val timeDialogState = rememberMaterialDialogState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -64,15 +83,41 @@ fun PreferencesScreen(navController: NavController, viewModel: PreferencesViewMo
             selectedOption = selectedOption,
             onOptionSelected = { newIndex ->
                 selectedOption = newIndex
-                viewModel.updateThemeSettings(newIndex)
+                viewModel.updateThemeSettings(newIndex, userProfile, pickedTime)
             }
         )
 
-
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = {
+            timeDialogState.show()
+        }) {
+            Text(text = "Pick time")
+        }
+        Text(text = formattedTime)
 
     }
+    MaterialDialog(
+        dialogState = timeDialogState,
+        buttons = {
+            positiveButton(text = "Ok") {
+                Toast.makeText(
+                    context,
+                    "Clicked ok",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            negativeButton(text = "Cancel")
+        }
+    ) {
+        timepicker(
+            initialTime = LocalTime.NOON,
+            title = "Pick a time",
+            timeRange = LocalTime.MIDNIGHT..LocalTime.NOON
+        ) {
+            pickedTime = it
+        }
+    }
 }
-
 
 @Composable
 fun ThreePositionSwitch(
@@ -103,7 +148,11 @@ fun ThreePositionSwitch(
                 Button(
                     onClick = {
                         onOptionSelected(index)
-                        Toast.makeText(context, "Theme applied! App restart required!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            context,
+                            "Theme applied! App restart required!",
+                            Toast.LENGTH_LONG
+                        ).show()
                     },
                     modifier = Modifier
                         .weight(1f)
@@ -116,7 +165,7 @@ fun ThreePositionSwitch(
                         text = option,
                         color = if (selectedOption == index) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimaryContainer
                     )
-                }
+                    }
             }
         }
     }

@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng303.betzero.models
 
+import java.time.LocalTime
 import java.util.Date
 
 /**
@@ -17,7 +18,8 @@ class UserProfile (
     val goals: List<String>? = null,
     //Preferences data
     val isDarkMode: Boolean = false,
-    val isUserEnforcedTheme: Boolean = false
+    val isUserEnforcedTheme: Boolean = false,
+    val notificationTime : LocalTime = LocalTime.NOON
 ) : Identifiable {
     override fun getIdentifier(): Int {
         return id;
