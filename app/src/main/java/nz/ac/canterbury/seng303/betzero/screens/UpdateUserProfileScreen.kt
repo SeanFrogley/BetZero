@@ -318,20 +318,39 @@ fun UpdateUserProfileScreen(navController: NavController, viewModel: UpdateUserP
                             gamblingStartDate = SimpleDateFormat("yyyy-MM-dd").parse(selectedStartDate),
                             lastGambledDate = SimpleDateFormat("yyyy-MM-dd").parse(selectedLastGambledDate)
                         )
-                        navController.navigate("userProfileScreen")
+                        navController.popBackStack()
                     }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                     .height(56.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4AB7D6)),
                 shape = MaterialTheme.shapes.medium,
                 elevation = ButtonDefaults.buttonElevation(8.dp),
                 enabled = (userName.isNotEmpty() && totalSpent.isNotEmpty() && selectedStartDate.isNotEmpty() && selectedLastGambledDate.isNotEmpty())
                         && (nameError == null && totalSpentError == null && startDateError == null && lastGambledDateError == null)
             ) {
-                Text(text = "Submit", color = Color.White, fontSize = 16.sp)
+                Text(text = "Submit", fontSize = 16.sp)
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = {
+                    navController.popBackStack()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .height(56.dp),
+                shape = MaterialTheme.shapes.medium,
+                elevation = ButtonDefaults.buttonElevation(8.dp)
+            ) {
+                Text(text = "Cancel", fontSize = 16.sp)
             }
         }
     }
