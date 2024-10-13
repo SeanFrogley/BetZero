@@ -13,15 +13,10 @@ import nz.ac.canterbury.seng303.betzero.models.UserProfile
 
 class HomeViewModel (
     private val userProfileStorage: Storage<UserProfile>,
-    private val dailyLogStateStorage: Storage<DailyLogState>
-
 ) : ViewModel() {
 
     private val _userProfile = MutableStateFlow<UserProfile?>(null)
     val userProfile: StateFlow<UserProfile?> get() = _userProfile
-
-    private val _dailyLogState = MutableStateFlow<DailyLogState?>(null)
-    val dailyLogState : StateFlow<DailyLogState?> get() = _dailyLogState
 
     val GOAL_INPUT_ERROR: String = "Please enter a goal that is not empty"
     val LIFE_EXPECTANCY: Int = 85 //arbitary not too small number
@@ -30,15 +25,8 @@ class HomeViewModel (
         viewModelScope.launch {
             try {
                 val userProfiles = userProfileStorage.getAll().first()
-                val hasLogged = dailyLogStateStorage.getAll().first()
                 if (userProfiles.isNotEmpty()) {
                     _userProfile.value = userProfiles.first()
-                } else {
-                    _userProfile.value = null
-                }
-
-                if (hasLogged.isNotEmpty()) {
-                    _dailyLogState.value = hasLogged.first()
                 } else {
                     _userProfile.value = null
                 }
@@ -50,28 +38,7 @@ class HomeViewModel (
 
     fun toggleHasLogged(dailyLogState: DailyLogState) {
         viewModelScope.launch {
-            val updatedDailyLogState = DailyLogState(
-                dailyLogState.id,
-                dailyLogState.date, //new date?
-                !dailyLogState.loggedToday, //flip the daily log
-            )
-
-            try {
-                val result =
-                    dailyLogStateStorage.edit(dailyLogState.getIdentifier(), updatedDailyLogState).first()
-                if (result == 1) {
-                    Log.d("DAILY_LOG_VM", "Daily Log State edited successfully")
-                    _dailyLogState.value = dailyLogState
-                } else {
-                    Log.e("DAILY_LOG_VM", "Daily Log State update failed")
-                }
-                userProfileStorage.getAll()
-                    .collect { dailyLogState ->
-                        Log.i("UpdateHomeViewModel", "Daily Log State: $dailyLogState")
-                    }
-            } catch (exception: Exception) {
-                Log.e("USER_PROFILE_VM", "Could not update daily log state: $exception")
-            }
+            //update userProfile lastLogged
         }
     }
 

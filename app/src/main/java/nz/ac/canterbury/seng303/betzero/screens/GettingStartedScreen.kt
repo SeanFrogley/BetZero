@@ -313,13 +313,6 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                             gamblingStartDate = SimpleDateFormat("yyyy-MM-dd").parse(selectedStartDate),
                             lastGambledDate = SimpleDateFormat("yyyy-MM-dd").parse(selectedLastGambledDate)
                         )
-                        viewModel.saveDailyLogState(
-                            name = userName,
-                            age = age.toInt(),
-                            totalSpent = totalSpent.toDouble(),
-                            gamblingStartDate = SimpleDateFormat("yyyy-MM-dd").parse(selectedStartDate),
-                            lastGambledDate = SimpleDateFormat("yyyy-MM-dd").parse(selectedLastGambledDate)
-                        )
                         navController.navigate("Home")
                     }
                 },

@@ -9,7 +9,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.FlowPreview
 import nz.ac.canterbury.seng303.betzero.models.DailyLog
-import nz.ac.canterbury.seng303.betzero.models.DailyLogState
 import nz.ac.canterbury.seng303.betzero.models.RelapseLog
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
 import nz.ac.canterbury.seng303.betzero.screens.EmergencyScreen
@@ -61,15 +60,6 @@ val dataAccessModule = module {
         )
     }
 
-    single<Storage<DailyLogState>>(named("dailyLogState")) {
-        PersistentStorage(
-            gson = get(),
-            type = object: TypeToken<List<RelapseLog>>(){}.type,
-            preferenceKey = stringPreferencesKey("dailyLogState"),
-            dataStore = androidContext().dataStore
-        )
-    }
-
     single { Gson() }
 
     viewModel {
@@ -89,9 +79,7 @@ val dataAccessModule = module {
     }
     viewModel {
         GettingStartedViewModel(
-            userProfileStorage = get(named("userProfile")),
-            dailyLogStateStorage = get(named("dailyLogState"))
-
+            userProfileStorage = get(named("userProfile"))
         )
     }
     viewModel {
@@ -123,8 +111,7 @@ val dataAccessModule = module {
     }
     viewModel {
         HomeViewModel(
-            userProfileStorage = get(named("userProfile")),
-            dailyLogStateStorage = get(named("dailyLogState"))
+            userProfileStorage = get(named("userProfile"))
         )
     }
 }

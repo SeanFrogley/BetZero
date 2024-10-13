@@ -59,8 +59,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
     val scrollState = rememberScrollState()
     val context = LocalContext.current
 
-    val showPopup = remember { mutableStateOf(false) }
-    val hasLogged by viewModel.hasLogged.collectAsStateWithLifecycle()
+    val showPopup = remember { mutableStateOf(true) }
 
     var userAge by rememberSaveable { mutableIntStateOf(0) }
     var userGoals by rememberSaveable { mutableStateOf<List<String>?>(null) }
@@ -68,13 +67,6 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
     var newGoal by rememberSaveable { mutableStateOf("") }
     var showDialog by rememberSaveable { mutableStateOf(false) }
     var goalInputError by rememberSaveable { mutableStateOf("") }
-
-    LaunchedEffect(hasLogged) {
-        hasLogged.let {
-            //                viewModel.toggleHasLogged()
-            showPopup.value = it === false
-        }
-    }
 
     LaunchedEffect(userProfile) {
         userProfile?.let {
@@ -113,10 +105,9 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
                     Dialog(onDismissRequest = { showPopup.value = false }) {
                         PopupScreen(
                             onDismiss = {
-                                //showPopup.value = false
-                                viewModel.toggleHasLogged()
+                                showPopup.value = false
                             },
-                            onSave = { /* Handle save action */ }
+                            onSave = {}
                         )
                     }
                 }
