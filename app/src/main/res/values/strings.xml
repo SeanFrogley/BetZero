@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">betzero</string>
+
+    <!-- Analytics Screen -->
+    <string name="overall_savings">Overall savings</string>
+    <string name="weekly">Weekly</string>
+    <string name="monthly">Monthly</string>
+    <string name="money_saved_per_day">Money saved per day</string>
+    <string name="days_since_start_date">Days since start date</string>
+    <string name="overall_saved">Overall saved</string>
+    <string name="day">day</string>
+    <string name="days">days</string>
+    <string name="projected_savings">Projected savings</string>
+    <string name="projected_monthly_savings">Projected monthly savings</string>
+    <string name="projected_yearly_savings">Projected yearly savings</string>
+    <string name="saved_format">Saved: $%1$s</string>
+
 </resources>

@@ -28,12 +28,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.navigation.NavController
+import nz.ac.canterbury.seng303.betzero.R
 import nz.ac.canterbury.seng303.betzero.utils.UserUtil
 import nz.ac.canterbury.seng303.betzero.viewmodels.AnalyticsViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -68,8 +70,7 @@ fun AnalyticsScreen(navController: NavController, viewModel: AnalyticsViewModel 
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        Text(text = "Overall savings", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+        Text(text = stringResource(R.string.overall_savings), fontWeight = FontWeight.Bold, fontSize = 20.sp)
 
         Text(
             text = "$${String.format(Locale.US, "%.2f", overallSavings)}",
@@ -84,7 +85,7 @@ fun AnalyticsScreen(navController: NavController, viewModel: AnalyticsViewModel 
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.padding(vertical = 16.dp)
         ) {
-            Text(text = "Weekly", fontSize = 16.sp)
+            Text(text = stringResource(R.string.weekly), fontSize = 16.sp)
             Switch(
                 checked = isMonthlyView,
                 onCheckedChange = { isMonthlyView = it },
@@ -99,7 +100,7 @@ fun AnalyticsScreen(navController: NavController, viewModel: AnalyticsViewModel 
                     uncheckedBorderColor = MaterialTheme.colorScheme.primary
                 )
             )
-            Text(text = "Monthly", fontSize = 16.sp)
+            Text(text = stringResource(R.string.monthly), fontSize = 16.sp)
         }
 
         BarChart(
@@ -110,29 +111,36 @@ fun AnalyticsScreen(navController: NavController, viewModel: AnalyticsViewModel 
 
         Divider(modifier = Modifier.padding(vertical = 8.dp))
 
-        InfoRow(title = "Money saved per day", value = "$${String.format(Locale.US, "%.2f", dailySavings)}")
+        InfoRow(title = stringResource(R.string.money_saved_per_day), value = "$${String.format(Locale.US, "%.2f", dailySavings)}")
 
         InfoRow(
-            title = "Days since start date",
+            title = stringResource(R.string.days_since_start_date),
             value = "$daysSinceStart",
-            rightValue = "$daysSinceStart ${if (daysSinceStart == 1L) "day" else "days"}"
+            rightValue = "$daysSinceStart ${if (daysSinceStart == 1L) stringResource(R.string.day) else stringResource(R.string.days)}"
         )
 
         InfoRow(
-            title = "Overall saved",
-            value = "$${String.format(Locale.US, "%.2f", dailySavings)} × $daysSinceStart days",
+            title = stringResource(R.string.overall_saved),
+            value = "$${String.format(Locale.US, "%.2f", dailySavings)} × $daysSinceStart ${stringResource(R.string.days)}",
             rightValue = "$${String.format(Locale.US, "%.2f", dailySavings * daysSinceStart)}"
         )
 
         Divider(modifier = Modifier.padding(vertical = 8.dp))
 
-        Text(text = "Projected savings", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+        Text(text = stringResource(R.string.projected_savings), fontWeight = FontWeight.Bold, fontSize = 20.sp)
 
-        InfoRow(title = "Projected monthly savings", value = "$${String.format(Locale.US, "%.2f", projectedMonthlySavings)}")
+        InfoRow(
+            title = stringResource(R.string.projected_monthly_savings),
+            value = "$${String.format(Locale.US, "%.2f", projectedMonthlySavings)}"
+        )
 
-        InfoRow(title = "Projected yearly savings", value = "$${String.format(Locale.US, "%.2f", projectedYearlySavings)}")
+        InfoRow(
+            title = stringResource(R.string.projected_yearly_savings),
+            value = "$${String.format(Locale.US, "%.2f", projectedYearlySavings)}"
+        )
     }
 }
+
 
 @Composable
 fun InfoRow(title: String, value: String, rightValue: String? = null) {
@@ -245,7 +253,7 @@ fun BarChart(
                         .padding(8.dp)
                 ) {
                     Text(
-                        text = "${dateFormatter.format(selectedDate)}\nSaved: $${String.format(Locale.US, "%.2f", selectedValue)}",
+                        text = "${dateFormatter.format(selectedDate)}\n${stringResource(R.string.saved_format, String.format(Locale.US, "%.2f", selectedValue))}",
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
