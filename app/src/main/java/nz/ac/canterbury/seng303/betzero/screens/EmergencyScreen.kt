@@ -73,7 +73,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
 
 @Composable
-fun EmergencyScreen(navController: NavController, viewModel: EmergencyViewModel = koinViewModel()) {
+fun EmergencyScreen(viewModel: EmergencyViewModel = koinViewModel()) {
     val context = LocalContext.current
     var showArticlesDialog by rememberSaveable { mutableStateOf(false) }
     var showSlotMachineDialog by rememberSaveable { mutableStateOf(false) }
