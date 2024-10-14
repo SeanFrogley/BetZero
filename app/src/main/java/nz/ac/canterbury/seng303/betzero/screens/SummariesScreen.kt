@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.betzero.models.DailyLog
 import nz.ac.canterbury.seng303.betzero.utils.RecordingUtil
@@ -113,7 +114,7 @@ fun SummariesScreen() {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
-                            .background(Color.LightGray)
+                            .background(MaterialTheme.colorScheme.secondaryContainer)
                             .padding(8.dp)
                     ) {
                         Column {

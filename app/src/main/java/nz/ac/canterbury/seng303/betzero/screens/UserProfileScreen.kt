@@ -3,8 +3,10 @@ package nz.ac.canterbury.seng303.betzero.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,6 +20,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -65,25 +68,34 @@ fun UserProfileScreen(navController: NavController, viewModel: UserProfileViewMo
             value = "$currentStreak ${if (currentStreak == 1L) "day" else "days"}"
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
+
         Button(
             onClick = { navController.navigate("UpdateUserProfileScreen")},
-            shape = RoundedCornerShape(8.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp)
+                .padding(horizontal = 16.dp)
+                .height(56.dp)
+                .clip(RoundedCornerShape(8.dp)),
+            elevation = ButtonDefaults.buttonElevation(8.dp)
         ) {
             Text(text = "Update User Profile", fontSize = 16.sp)
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
+
         Button(
             onClick = { navController.navigate("PreferencesScreen")},
-            shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.onSecondary
             ),
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .height(56.dp)
+                .clip(RoundedCornerShape(8.dp)),
+            elevation = ButtonDefaults.buttonElevation(8.dp)
         ) {
             Text(text = "Preferences", fontSize = 16.sp)
         }
