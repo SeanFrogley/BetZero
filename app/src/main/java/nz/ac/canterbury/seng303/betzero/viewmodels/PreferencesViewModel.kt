@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.betzero.datastore.Storage
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
+import java.time.LocalTime
+import java.util.Calendar
 
 class PreferencesViewModel (
     private val userProfileStorage: Storage<UserProfile>,
@@ -19,7 +21,6 @@ class PreferencesViewModel (
     val userProfile: StateFlow<UserProfile?> get() = _userProfile
 
     private var isSystemInDarkTheme: Boolean = false
-
     private val _isDarkTheme = MutableStateFlow(isSystemInDarkTheme) // Initially follow system theme
     val isDarkTheme: StateFlow<Boolean> = _isDarkTheme
 
@@ -40,9 +41,9 @@ class PreferencesViewModel (
         updateTheme()
     }
 
-    fun updateThemeSettings(selectedOption: Int) {
+    fun updateThemeSettings(selectedOption: Int, currentProfile : UserProfile?, pickedTime : LocalTime) {
         viewModelScope.launch {
-            val currentProfile = userProfile.firstOrNull()
+//            val currentProfile = userProfile.firstOrNull()
             var isUserEnforcedTheme = false
             var isDarkMode = false
 
@@ -71,13 +72,17 @@ class PreferencesViewModel (
                 val updatedProfile = UserProfile(
                     currentProfile.id,
                     currentProfile.name,
+                    currentProfile.age,
                     currentProfile.totalSpent,
                     currentProfile.totalSaved,
                     currentProfile.dailySavings,
                     currentProfile.gamblingStartDate,
                     currentProfile.lastGambledDate,
+                    currentProfile.goals,
                     isDarkMode,
-                    isUserEnforcedTheme
+                    isUserEnforcedTheme,
+                    notificationTime = pickedTime
+
                 )
 
                 Log.d("DataStoreInsert", "Updating user profile: $updatedProfile")

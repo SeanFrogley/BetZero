@@ -54,6 +54,8 @@ fun UserProfileScreen(navController: NavController, viewModel: UserProfileViewMo
 
         InfoRow(title = "Name", value = userProfile?.name ?: "N/A")
 
+        InfoRow(title = "Age", value = (userProfile?.age ?: "N/A").toString())
+
         InfoRow(title = "You Began Gambling", value = startDate)
 
         InfoRow(title = "You Last Gambled", value = lastGambledDate)
