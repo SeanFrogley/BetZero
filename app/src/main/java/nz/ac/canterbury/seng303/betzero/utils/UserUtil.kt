@@ -3,6 +3,11 @@ package nz.ac.canterbury.seng303.betzero.utils
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -65,6 +70,16 @@ object UserUtil {
         return datesList
     }
 
+    //convert LocalTime to Long for notification alarm via chatgpt
+    fun convertLocalTimeToMillis(localTime: LocalTime): Long {
+        val currentDate = LocalDate.now()
+        val localDateTime = LocalDateTime.of(currentDate, LocalTime.NOON) //alarm debugging
+
+        val zonedDateTime = ZonedDateTime.of(localDateTime, ZoneId.systemDefault())
+
+        return zonedDateTime.toInstant().toEpochMilli()
+    }
+
     fun createUser(): UserProfile {
         val calendar = Calendar.getInstance()
 
@@ -79,6 +94,7 @@ object UserUtil {
 
         val id = 1
         val name = "John Doe"
+        val age = 42
         val totalSpent = 1000.0
         val totalSaved = 0.0
         val balance = 10000
@@ -95,11 +111,13 @@ object UserUtil {
         return UserProfile(
             id = id,
             name = name,
+            age = age,
             totalSpent = roundedTotalSpent,
             totalSaved = roundedTotalSaved,
             dailySavings = dailySavings,
             gamblingStartDate = gamblingStartDate,
-            lastGambledDate = lastGambledDate
+            lastGambledDate = lastGambledDate,
+            notificationTime = LocalTime.MIDNIGHT
         )
     }
 }

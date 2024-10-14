@@ -11,6 +11,8 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.example.ui.theme.AppTypography
+import nz.ac.canterbury.seng303.betzero.ui.theme.*
+
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,

@@ -117,9 +117,15 @@ fun PopupScreen(
     // If the user wants to exit the pop-up dialog, display warning
     if (showExitConfirmation) {
         AlertDialog(
-            onDismissRequest = { showExitConfirmation = false },
-            title = { Text("Exit Confirmation") },
-            text = { Text("You cannot come back and record. Are you sure you want to exit?") },
+            onDismissRequest = {
+                showExitConfirmation = false
+                               },
+            title = {
+                Text("Exit Confirmation")
+                    },
+            text = {
+                Text("You cannot come back and record. Are you sure you want to exit?")
+                   },
             confirmButton = {
                 Button(
                     onClick = {
@@ -131,8 +137,14 @@ fun PopupScreen(
                 }
             },
             dismissButton = {
-                Button(onClick = { showExitConfirmation = false }) {
-                    Text("No")
+                Button(
+                    onClick = {
+                    showExitConfirmation = false
+                })
+                {
+                    Text(
+                        "No"
+                    )
                 }
             }
         )
@@ -140,7 +152,9 @@ fun PopupScreen(
 
     // Main content of the popup dialog
     AlertDialog(
-        onDismissRequest = { showExitConfirmation = true },
+        onDismissRequest = {
+            showExitConfirmation = true
+                           },
         title = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -152,13 +166,14 @@ fun PopupScreen(
                     fontWeight = FontWeight.Bold
                 )
                 IconButton(
-                    onClick = { showExitConfirmation = true },
+                    onClick = {
+                        showExitConfirmation = true
+                              },
                     modifier = Modifier.size(24.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Close",
-                        tint = Color.Black
+                        contentDescription = "Close"
                     )
                 }
             }
