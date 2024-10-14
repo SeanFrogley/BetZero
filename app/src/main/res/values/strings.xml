@@ -49,4 +49,28 @@
     <string name="open_slots_icon_description">Open slots icon description</string>
     <string name="articles_icon_description">Articles icon description</string>
 
+    <!-- Getting Started Screen -->
+    <string name="get_started_title">Let\'s get started!</string>
+    <string name="get_started_question">Can you answer some questions for us?</string>
+    <string name="name_label">What\'s your name?</string>
+    <string name="name_error">Please enter a name that only consists of letters, -, or \'.</string>
+    <string name="total_spent_label">How much money have you spent?</string>
+    <string name="total_spent_error">Please enter a valid non-negative number.</string>
+    <string name="age_label">How old are you?</string>
+    <string name="age_error">Please enter a valid non-negative number.</string>
+    <string name="start_date_label">When did you start gambling?</string>
+    <string name="start_date_validation_error">Start date must be before last gambled date.</string>
+    <string name="last_gambled_label">When did you last gamble?</string>
+    <string name="last_gambled_date_error">Please select a valid last gambled date.</string>
+    <string name="calendar_description">Select date</string>
+    <string name="submit_button">Submit</string>
+    <string name="name_hint">Enter your name</string>
+    <string name="total_spent_hint">Enter total amount spent</string>
+    <string name="age_hint">Enter your age</string>
+    <string name="start_date_hint">Select your gambling start date</string>
+    <string name="start_date_error">Please select a valid start date.</string>
+    <string name="last_gambled_date_hint">Select your last gambled date</string>
+    <string name="get_started_button">Get Started</string>
+    <string name="calendar_icon_description">Calendar Icon</string>
+
 </resources>

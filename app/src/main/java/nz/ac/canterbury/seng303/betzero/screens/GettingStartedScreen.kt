@@ -36,12 +36,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import nz.ac.canterbury.seng303.betzero.R
 import nz.ac.canterbury.seng303.betzero.utils.InputValidation
 import nz.ac.canterbury.seng303.betzero.viewmodels.GettingStartedViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -89,10 +91,11 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
         calendar.get(Calendar.DAY_OF_MONTH)
     )
 
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background( if (isSystemInDarkTheme()) Color(0xFF2a6278) else Color(0xFFafddf0) )          // TODO change to colour resource and abstract to color.kt file
+            .background(if (isSystemInDarkTheme()) Color(0xFF2a6278) else Color(0xFFafddf0))
     ) {
         Column(
             modifier = Modifier
@@ -108,11 +111,9 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                     .background(MaterialTheme.colorScheme.background)
                     .padding(16.dp)
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "Let's get started!",
+                        text = stringResource(R.string.get_started_title),
                         style = androidx.compose.ui.text.TextStyle(
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
@@ -122,7 +123,7 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Can you answer some questions for us?",
+                        text = stringResource(R.string.get_started_question),
                         style = androidx.compose.ui.text.TextStyle(
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.secondary
@@ -140,7 +141,7 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                     userName = it
                     nameError = if (InputValidation.validateUsersName(userName)) null else "Please enter a name that only consists of letters, -, or '."
                 },
-                label = { Text("What's your name?") },
+                label = { Text(stringResource(R.string.name_hint)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
@@ -165,7 +166,7 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                     totalSpent = it
                     totalSpentError = if (InputValidation.validateTotalSpent(totalSpent)) null else "Please enter a valid non-negative number."
                 },
-                label = { Text("How much money have you spent?") },
+                label = { Text(stringResource(R.string.total_spent_hint)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
@@ -191,7 +192,7 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                     age = it
                     ageError = if (InputValidation.validateTotalSpent(totalSpent)) null else "Please enter a valid non-negative number."
                 },
-                label = { Text("How old are you?") },
+                label = { Text(stringResource(R.string.age_hint)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
@@ -211,7 +212,7 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
 
             Spacer(modifier = Modifier.height(16.dp))
 
-
+            // Start Date Picker
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -221,10 +222,10 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                     value = selectedStartDate,
                     onValueChange = { },
                     readOnly = true,
-                    label = { Text("When did you start gambling?") },
+                    label = { Text(stringResource(R.string.start_date_hint)) },
                     enabled = false,
                     trailingIcon = {
-                        Icon(Icons.Default.CalendarMonth, contentDescription = "Select start date")
+                        Icon(Icons.Default.CalendarMonth, contentDescription = stringResource(R.string.calendar_icon_description))
                     },
                     colors = OutlinedTextFieldDefaults.colors(
                         disabledTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -240,10 +241,10 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
             }
 
             startDateError = if (selectedStartDate.isNotEmpty() && !InputValidation.validateDate(selectedStartDate)) {
-                "Please enter a valid start date that isn't in the future."
+                stringResource(R.string.start_date_error)
             } else if (selectedStartDate.isNotEmpty() && selectedLastGambledDate.isNotEmpty()
                 && !InputValidation.validateStartAndLastGambledDate(selectedStartDate, selectedLastGambledDate)) {
-                "The start date should be before or the same as the last gambled date."
+                stringResource(R.string.start_date_validation_error)
             } else {
                 null
             }
@@ -258,6 +259,7 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Last Gamboled Date Picker
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -267,10 +269,10 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                     value = selectedLastGambledDate,
                     onValueChange = { },
                     readOnly = true,
-                    label = { Text("When did you last gamble?") },
+                    label = { Text(stringResource(R.string.last_gambled_date_hint)) },
                     enabled = false,
                     trailingIcon = {
-                        Icon(Icons.Default.CalendarMonth, contentDescription = "Select last gambled date")
+                        Icon(Icons.Default.CalendarMonth, contentDescription = stringResource(R.string.calendar_icon_description))
                     },
                     colors = OutlinedTextFieldDefaults.colors(
                         disabledTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -284,11 +286,12 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                         .clickable { datePickerDialogLastGambled.show() }
                 )
             }
+
             lastGambledDateError = if (selectedLastGambledDate.isNotEmpty() && !InputValidation.validateDate(selectedLastGambledDate)) {
-                "Please enter a valid last gambled date that isn't in the future."
-            } else if (selectedLastGambledDate.isNotEmpty() && selectedLastGambledDate.isNotEmpty()
+                stringResource(R.string.last_gambled_date_error)
+            } else if (selectedLastGambledDate.isNotEmpty() && selectedStartDate.isNotEmpty()
                 && !InputValidation.validateStartAndLastGambledDate(selectedStartDate, selectedLastGambledDate)) {
-                "The start date should be before or the same as the last gambled date."
+                stringResource(R.string.start_date_validation_error)
             } else {
                 null
             }
@@ -316,17 +319,9 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
                         navController.navigate("Home")
                     }
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .height(56.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4AB7D6)),
-                shape = MaterialTheme.shapes.medium,
-                elevation = ButtonDefaults.buttonElevation(8.dp),
-                enabled = (userName.isNotEmpty() && totalSpent.isNotEmpty() && selectedStartDate.isNotEmpty() && selectedLastGambledDate.isNotEmpty())
-                        && (nameError == null && totalSpentError == null && startDateError == null && lastGambledDateError == null)
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Submit", color = Color.White, fontSize = 16.sp)
+                Text(text = stringResource(R.string.submit_button))
             }
         }
     }
