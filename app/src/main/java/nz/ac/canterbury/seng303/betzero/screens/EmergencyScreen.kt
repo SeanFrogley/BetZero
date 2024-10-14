@@ -71,6 +71,8 @@ import java.util.Locale
 
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.ui.res.stringResource
+import nz.ac.canterbury.seng303.betzero.R
 
 @Composable
 fun EmergencyScreen(viewModel: EmergencyViewModel = koinViewModel()) {
@@ -111,7 +113,7 @@ fun EmergencyScreen(viewModel: EmergencyViewModel = koinViewModel()) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "So you're feeling down...?",
+                text = stringResource(R.string.feeling_down),
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 15.dp),
                 fontSize = 30.sp,
@@ -119,13 +121,13 @@ fun EmergencyScreen(viewModel: EmergencyViewModel = koinViewModel()) {
                 color = Color.Red
             )
             Text(
-                text = "Let us cheer you up! ",
+                text = stringResource(R.string.let_us_cheer_you_up),
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center,
             )
             Text(
-                text = "Remember this time when you were doing amazing?!\n Let's listen to some happy recordings and celebrate your success!",
+                text = stringResource(R.string.remember_good_times),
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                 fontSize = 13.sp,
             )
@@ -156,7 +158,7 @@ fun EmergencyScreen(viewModel: EmergencyViewModel = koinViewModel()) {
             ) {
                 Icon(
                     imageVector = Icons.Default.PlayCircleOutline,
-                    contentDescription = "Play",
+                    contentDescription = stringResource(R.string.play_icon_description),
                     modifier = Modifier.size(120.dp),
                     tint = Color.Yellow
                 )
@@ -167,13 +169,13 @@ fun EmergencyScreen(viewModel: EmergencyViewModel = koinViewModel()) {
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = "If that's not enough... don't be ashamed! \nWe have some other ways to cheer you up!",
+                text = stringResource(R.string.more_help_needed),
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Bold
             )
 
             Text(
-                text = "Have a go at a non-risk gamble with the slot machine\n or read some inspiring articles to keep you going!",
+                text = stringResource(R.string.try_gambling_or_reading),
                 fontSize = 13.sp,
                 modifier = Modifier.padding(top = 16.dp)
             )
@@ -204,7 +206,7 @@ fun EmergencyScreen(viewModel: EmergencyViewModel = koinViewModel()) {
                     ) {
                         Icon(
                             imageVector = Icons.Default.AttachMoney,
-                            contentDescription = "Open Slots",
+                            contentDescription = stringResource(R.string.open_slots_icon_description),
                             tint = Color.White,
                             modifier = Modifier.size(24.dp)
                         )
@@ -228,7 +230,7 @@ fun EmergencyScreen(viewModel: EmergencyViewModel = koinViewModel()) {
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.MenuBook,
-                            contentDescription = "Articles Icon",
+                            contentDescription = stringResource(R.string.articles_icon_description),
                             tint = Color.White,
                             modifier = Modifier.size(24.dp)
                         )
@@ -242,14 +244,14 @@ fun EmergencyScreen(viewModel: EmergencyViewModel = koinViewModel()) {
             Spacer(modifier = Modifier.height(35.dp))
 
             Text(
-                text = "Want to talk to someone?",
+                text = stringResource(R.string.want_to_talk),
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                 color = Color.Red
             )
             Text(
-                text = "Reach out to Gambling Helpline Aoteroa available 24/7\n See contact details below",
+                text = stringResource(R.string.reach_out_helpline),
                 fontSize = 12.sp,
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center,
             )
@@ -257,7 +259,7 @@ fun EmergencyScreen(viewModel: EmergencyViewModel = koinViewModel()) {
             Row {
                 Icon(
                     imageVector = Icons.Default.Phone,
-                    contentDescription = "Phone Icon",
+                    contentDescription = stringResource(R.string.phone_icon_description),
                     Modifier.padding(start = 8.dp)
                 )
                 Text(text = "0800 654 655", modifier = Modifier.padding(start = 8.dp))
@@ -266,7 +268,7 @@ fun EmergencyScreen(viewModel: EmergencyViewModel = koinViewModel()) {
             Row {
                 Icon(
                     imageVector = Icons.Default.Textsms,
-                    contentDescription = "Phone Icon",
+                    contentDescription = stringResource(R.string.sms_icon_description),
                     Modifier.padding(start = 8.dp)
                 )
                 Text(text = "8006", modifier = Modifier.padding(start = 8.dp))
@@ -301,7 +303,7 @@ fun SlotMachinePopup(onClose: () -> Unit, viewModel: EmergencyViewModel) {
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 Text(
-                    text = "Balance: ${viewModel.balance}",
+                    text = stringResource(R.string.balance, viewModel.balance),
                     modifier = Modifier
                         .align(Alignment.TopStart)
                         .padding(16.dp),
@@ -328,7 +330,7 @@ fun SlotMachinePopup(onClose: () -> Unit, viewModel: EmergencyViewModel) {
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    val outcomeColor = if (viewModel.outcomeMessage == "You win!") Color.Green else Color.Red
+                    val outcomeColor = if (viewModel.outcomeMessage == stringResource(R.string.you_win)) Color.Green else Color.Red
                     Text(
                         text = viewModel.outcomeMessage,
                         color = outcomeColor,
@@ -348,7 +350,7 @@ fun SlotMachinePopup(onClose: () -> Unit, viewModel: EmergencyViewModel) {
                         modifier = Modifier.width(120.dp),
                         shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text(text = "Close")
+                        Text(text = stringResource(R.string.close))
                     }
 
                     Button(
@@ -357,7 +359,7 @@ fun SlotMachinePopup(onClose: () -> Unit, viewModel: EmergencyViewModel) {
                         modifier = Modifier.width(120.dp),
                         shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text(text = "Spin")
+                        Text(text = stringResource(R.string.spin))
                     }
                 }
             }

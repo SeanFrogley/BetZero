@@ -29,6 +29,24 @@
     <string name="cancel">Cancel</string>
     <string name="submit">Submit</string>
 
-
+    <!-- Emergency Screen -->
+    <string name="feeling_down">Feeling Down?</string>
+    <string name="let_us_cheer_you_up">Let us cheer you up!</string>
+    <string name="remember_good_times">Remember the good times?</string>
+    <string name="no_happy_recordings">No happy recordings available!</string>
+    <string name="out_of_coins">You are out of coins!</string>
+    <string name="more_help_needed">Need more help?</string>
+    <string name="try_gambling_or_reading">Try gambling or reading!</string>
+    <string name="want_to_talk">Want to talk?</string>
+    <string name="reach_out_helpline">Reach out to the helpline:</string>
+    <string name="phone_icon_description">Phone icon</string>
+    <string name="sms_icon_description">SMS icon</string>
+    <string name="balance">Your balance: %1$d</string>
+    <string name="you_win">You Win!</string>
+    <string name="close">Close</string>
+    <string name="spin">Spin!</string>
+    <string name="play_icon_description">Play icon description</string>
+    <string name="open_slots_icon_description">Open slots icon description</string>
+    <string name="articles_icon_description">Articles icon description</string>
 
 </resources>
