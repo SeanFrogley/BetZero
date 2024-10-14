@@ -117,7 +117,7 @@ object UserUtil {
             dailySavings = dailySavings,
             gamblingStartDate = gamblingStartDate,
             lastGambledDate = lastGambledDate,
-            notificationTime = LocalTime.MIDNIGHT
+            notificationTime = LocalTime.NOON
         )
     }
 }

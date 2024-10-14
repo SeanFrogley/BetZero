@@ -5,10 +5,17 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import nz.ac.canterbury.seng303.betzero.models.Identifiable
 import java.lang.reflect.Type
@@ -52,21 +59,32 @@ class PersistentStorage<T>(
         }
     }
 
-    override fun edit(identifier: Int, data: T): Flow<Int> = flow {
-        withContext(Dispatchers.IO) {
-            val cachedDataClone = getAll().first().toMutableList()
-            val index = cachedDataClone.indexOfFirst { it.getIdentifier() == identifier }
-            if (index != -1) {
-                cachedDataClone[index] = data  // Update the item with the new data
-                dataStore.edit {  preferences ->
-                    val jsonString = gson.toJson(cachedDataClone, type)
-                    preferences[preferenceKey] = jsonString
+    override fun edit(identifier: Int, data: T): Flow<Int> {
+        return channelFlow {
+            val flowContext = currentCoroutineContext()
+
+            val loading: Job = coroutineScope {
+                launch(flowContext) {
+                    val cachedDataClone = getAll().first().toMutableList()
+                    val index = cachedDataClone.indexOfFirst { it.getIdentifier() == identifier }
+
+                    if (index != -1) {
+                        cachedDataClone[index] = data
+
+                        dataStore.edit { preferences ->
+                            val jsonString = gson.toJson(cachedDataClone, type)
+                            preferences[preferenceKey] = jsonString
+                        }
+
+                        send(OPERATION_SUCCESS)
+                    } else {
+                        send(OPERATION_FAILURE)
+                    }
                 }
-            } else {
-                emit(OPERATION_FAILURE)  // Handle the case when the item with the given identifier is not found
             }
-        }
-        emit(OPERATION_SUCCESS)
+
+            loading.join()
+        }.flowOn(Dispatchers.IO)
     }
 
     override fun get(where: (T) -> Boolean): Flow<T> {
@@ -76,16 +94,16 @@ class PersistentStorage<T>(
         }
     }
 
-    override fun delete(identifier: Int): Flow<Int> {
-        return flow {
-            val cachedDataClone = getAll().first().toMutableList()
-            val updatedData = cachedDataClone.filterNot { it.getIdentifier() == identifier }
-            dataStore.edit {
-                val jsonString = gson.toJson(updatedData, type)
-                it[preferenceKey] = jsonString
-                emit(OPERATION_SUCCESS)
-            }
+    override fun delete(identifier: Int): Flow<Int> = channelFlow {
+        val cachedDataClone = getAll().first().toMutableList()
+        val updatedData = cachedDataClone.filterNot { it.getIdentifier() == identifier }
+
+        dataStore.edit {
+            val jsonString = gson.toJson(updatedData, type)
+            it[preferenceKey] = jsonString
+            trySend(OPERATION_SUCCESS)
         }
+        awaitClose { /* should handle errors but cbf */ }
     }
 
     companion object {

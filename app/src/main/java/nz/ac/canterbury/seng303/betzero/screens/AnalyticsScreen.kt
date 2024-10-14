@@ -89,14 +89,11 @@ fun AnalyticsScreen(navController: NavController, viewModel: AnalyticsViewModel 
                 checked = isMonthlyView,
                 onCheckedChange = { isMonthlyView = it },
                 colors = SwitchDefaults.colors(
-                    checkedThumbColor = MaterialTheme.colorScheme.primary,
+                    checkedThumbColor =MaterialTheme.colorScheme.primary,
                     uncheckedThumbColor = MaterialTheme.colorScheme.primary,
 
                     checkedTrackColor = MaterialTheme.colorScheme.onPrimary,
-                    uncheckedTrackColor = MaterialTheme.colorScheme.onPrimary,
-
-                    checkedBorderColor = MaterialTheme.colorScheme.primary,
-                    uncheckedBorderColor = MaterialTheme.colorScheme.primary
+                    uncheckedTrackColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
             Text(text = "Monthly", fontSize = 16.sp)

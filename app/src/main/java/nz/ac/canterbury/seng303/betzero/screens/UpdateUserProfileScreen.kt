@@ -324,8 +324,8 @@ fun UpdateUserProfileScreen(navController: NavController, viewModel: UpdateUserP
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .height(56.dp)
-                    .clip(RoundedCornerShape(8.dp)),
+                    .height(56.dp),
+                shape = MaterialTheme.shapes.medium,
                 elevation = ButtonDefaults.buttonElevation(8.dp),
                 enabled = (userName.isNotEmpty() && totalSpent.isNotEmpty() && selectedStartDate.isNotEmpty() && selectedLastGambledDate.isNotEmpty())
                         && (nameError == null && totalSpentError == null && startDateError == null && lastGambledDateError == null)
@@ -346,13 +346,12 @@ fun UpdateUserProfileScreen(navController: NavController, viewModel: UpdateUserP
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .height(56.dp)
-                    .clip(RoundedCornerShape(8.dp)),
+                    .height(56.dp),
+                shape = MaterialTheme.shapes.medium,
                 elevation = ButtonDefaults.buttonElevation(8.dp)
             ) {
                 Text(text = "Cancel", fontSize = 16.sp)
             }
-
         }
     }
 }

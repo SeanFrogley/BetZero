@@ -133,7 +133,7 @@ fun ShowRelapseForm(
                 .fillMaxWidth(0.9f)
                 .fillMaxHeight(0.7f)
                 .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.secondaryContainer)
+                .background(Color.White)
                 .padding(16.dp)
         ) {
             Column(
@@ -164,11 +164,11 @@ fun ShowRelapseForm(
                         )
                     },
                     colors = OutlinedTextFieldDefaults.colors(
-                        disabledTextColor = MaterialTheme.colorScheme.onSurface,
-                        disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        disabledBorderColor = MaterialTheme.colorScheme.primary,
-                        disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                        disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        disabledTextColor = Color.Black,
+                        disabledContainerColor = Color.Transparent,
+                        disabledBorderColor = Color.Black,
+                        disabledLabelColor = Color.Black,
+                        disabledTrailingIconColor = Color.Black
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -219,11 +219,9 @@ fun ShowRelapseForm(
                     Button(
                         onClick = { onDismiss() },
                         modifier = Modifier.width(120.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary
-                        ),                    ) {
-                        Text("Cancel", fontSize = 16.sp)
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
+                    ) {
+                        Text("Cancel", color = Color.White, fontSize = 16.sp)
                     }
 
                     Button(
@@ -246,8 +244,9 @@ fun ShowRelapseForm(
                         },
                         modifier = Modifier.width(120.dp),
                         enabled = (selectedDate.isNotEmpty() && amountSpent.isNotEmpty() && dateError == null && amountSpentError == null),
+                        colors = ButtonDefaults.buttonColors(containerColor = if (dateError == null && amountSpentError == null) Color.Green else Color.Gray)
                     ) {
-                        Text("Submit", fontSize = 16.sp)
+                        Text("Submit", color = Color.White, fontSize = 16.sp)
                     }
                 }
             }
