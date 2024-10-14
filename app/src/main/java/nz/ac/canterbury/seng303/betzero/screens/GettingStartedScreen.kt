@@ -4,7 +4,6 @@ import android.app.DatePickerDialog
 import android.icu.util.Calendar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -92,7 +91,7 @@ fun GettingStartedScreen(navController: NavController, viewModel: GettingStarted
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background( if (isSystemInDarkTheme()) Color(0xFF2a6278) else Color(0xFFafddf0) )          // TODO change to colour resource and abstract to color.kt file
+            .background(Color(0xFFafddf0) )
     ) {
         Column(
             modifier = Modifier
