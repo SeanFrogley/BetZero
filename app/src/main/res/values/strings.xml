@@ -15,4 +15,20 @@
     <string name="projected_yearly_savings">Projected yearly savings</string>
     <string name="saved_format">Saved: $%1$s</string>
 
+    <!-- Calender Screen -->
+    <string name="streak_message">You have been gamble free for %1$d %2$s</string>
+    <string name="day_exclamation">day!</string>
+    <string name="days_exclamation">days!</string>
+    <string name="log_relapse">Log Relapse</string>
+    <string name="log_relapse_title">Log relapse</string>
+    <string name="when_relapse">When did you relapse?</string>
+    <string name="select_relapse_date">Select relapse date</string>
+    <string name="date_error">Please select a valid date.</string>
+    <string name="how_much_spent">How much did you spend?</string>
+    <string name="amount_error">Please enter a valid non-negative number.</string>
+    <string name="cancel">Cancel</string>
+    <string name="submit">Submit</string>
+
+
+
 </resources>

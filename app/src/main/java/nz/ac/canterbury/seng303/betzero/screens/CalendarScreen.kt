@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
+import nz.ac.canterbury.seng303.betzero.R
 import nz.ac.canterbury.seng303.betzero.models.RelapseLog
 import nz.ac.canterbury.seng303.betzero.models.UserProfile
 import nz.ac.canterbury.seng303.betzero.utils.CalendarUtil.getMonthName
@@ -58,7 +60,11 @@ fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = 
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "You have been gamble free for ${streakDays.size - 1} ${if (streakDays.size - 1 == 1) "day!" else "days!"}",
+            text = stringResource(
+                id = R.string.streak_message,
+                streakDays.size - 1,
+                if (streakDays.size - 1 == 1) stringResource(R.string.day_exclamation) else stringResource(R.string.days_exclamation)
+            ),
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
@@ -71,7 +77,7 @@ fun CalendarScreen(navController: NavController, viewModel: CalendarViewModel = 
                 .height(56.dp)
                 .clip(RoundedCornerShape(8.dp))
         ) {
-            Text("Log Relapse", color = Color.White, fontSize = 16.sp)
+            Text(stringResource(R.string.log_relapse), color = Color.White, fontSize = 16.sp)
         }
 
         if (showModal) {
@@ -142,7 +148,7 @@ fun ShowRelapseForm(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Log relapse",
+                    text = stringResource(R.string.log_relapse_title),
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp
@@ -154,12 +160,12 @@ fun ShowRelapseForm(
                     value = selectedDate,
                     onValueChange = { },
                     readOnly = true,
-                    label = { Text("When did you relapse?") },
+                    label = { Text(stringResource(R.string.when_relapse)) },
                     enabled = false,
                     trailingIcon = {
                         Icon(
                             Icons.Default.CalendarMonth,
-                            contentDescription = "Select relapse date",
+                            contentDescription = stringResource(R.string.select_relapse_date),
                             modifier = Modifier.clickable { datePickerDialog.show() }
                         )
                     },
@@ -193,7 +199,7 @@ fun ShowRelapseForm(
                         amountSpent = it
                         amountSpentError = if (InputValidation.validateTotalSpent(amountSpent)) null else "Please enter a valid non-negative number."
                     },
-                    label = { Text("How much did you spend?") },
+                    label = { Text(stringResource(R.string.how_much_spent)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth(),
                     isError = amountSpentError != null
@@ -222,8 +228,9 @@ fun ShowRelapseForm(
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = MaterialTheme.colorScheme.onSecondary
-                        ),                    ) {
-                        Text("Cancel", fontSize = 16.sp)
+                        ),
+                    ) {
+                        Text(stringResource(R.string.cancel), fontSize = 16.sp)
                     }
 
                     Button(
@@ -247,7 +254,7 @@ fun ShowRelapseForm(
                         modifier = Modifier.width(120.dp),
                         enabled = (selectedDate.isNotEmpty() && amountSpent.isNotEmpty() && dateError == null && amountSpentError == null),
                     ) {
-                        Text("Submit", fontSize = 16.sp)
+                        Text(stringResource(R.string.submit), fontSize = 16.sp)
                     }
                 }
             }
