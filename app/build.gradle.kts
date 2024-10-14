@@ -50,7 +50,8 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
+//    implementation(libs.androidx.core.ktx)
+    implementation("com.google.accompanist:accompanist-permissions:0.31.1-alpha")
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -67,6 +68,7 @@ dependencies {
     implementation("io.insert-koin:koin-android:3.1.4")
     implementation("io.insert-koin:koin-androidx-compose:3.4.5")
     implementation ("androidx.datastore:datastore-preferences:1.0.0")
+    implementation ("io.github.vanpra.compose-material-dialogs:datetime:0.8.1-rc")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

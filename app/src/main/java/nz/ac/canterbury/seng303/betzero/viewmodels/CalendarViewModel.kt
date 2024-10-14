@@ -19,6 +19,7 @@ import nz.ac.canterbury.seng303.betzero.utils.UserUtil.calculateTotalSavings
 import nz.ac.canterbury.seng303.betzero.utils.UserUtil.roundToTwoDecimalPlaces
 import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
 import java.util.Date
 import java.util.Locale
@@ -64,7 +65,8 @@ class CalendarViewModel(
         age: Int,
         totalSpent: Double,
         gamblingStartDate: Date,
-        lastGambledDate: Date
+        lastGambledDate: Date,
+        notificationTime : LocalTime
     ) = viewModelScope.launch(Dispatchers.IO) {
         val startDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())
         val dailySavings = calculateDailySavings(
@@ -89,7 +91,8 @@ class CalendarViewModel(
             totalSaved = roundedTotalSaved,
             gamblingStartDate = gamblingStartDate,
             dailySavings = dailySavings,
-            lastGambledDate = lastGambledDate
+            lastGambledDate = lastGambledDate,
+            notificationTime = notificationTime
         )
 
         Log.d("DataStoreInsert", "Updating user profile: $userProfile")
