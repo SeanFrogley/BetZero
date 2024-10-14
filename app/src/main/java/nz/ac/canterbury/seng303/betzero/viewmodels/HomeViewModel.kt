@@ -70,7 +70,9 @@ class HomeViewModel (
                 userProfile.lastGambledDate,
                 goals,
                 userProfile.isDarkMode,
-                userProfile.isUserEnforcedTheme
+                userProfile.isUserEnforcedTheme,
+                notificationTime = userProfile.notificationTime
+
             )
 
             try {
